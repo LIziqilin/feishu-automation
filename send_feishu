@@ -1,0 +1,110 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+将抓取的数据推送到飞书群机器人
+支持签名验证
+"""
+import os
+import json
+import time
+import hmac
+import hashlib
+import base64
+import requests
+from datetime import datetime
+
+def gen_sign(secret):
+    """生成飞书群机器人签名"""
+    timestamp = str(int(time.time()))
+    string_to_sign = timestamp + '\n' + secret
+    hmac_code = hmac.new(string_to_sign.encode('utf-8'), b'', hashlib.sha256).digest()
+    sign = base64.b64encode(hmac_code).decode('utf-8')
+    return timestamp, sign
+
+def send_feishu_message(webhook, secret, content):
+    """发送飞书消息"""
+    timestamp, sign = gen_sign(secret)
+    
+    payload = {
+        'timestamp': timestamp,
+        'sign': sign,
+        'msg_type': 'interactive',
+        'card': {
+            'header': {
+                'title': {
+                    'tag': 'plain_text',
+                    'content': '🌤️ 每日资讯推送'
+                },
+                'template': 'blue'
+            },
+            'elements': content
+        }
+    }
+    
+    resp = requests.post(webhook, json=payload, timeout=10)
+    result = resp.json()
+    print(f"推送结果: code={result.get('code')}, msg={result.get('msg')}")
+    return result
+
+def build_content():
+    """构建消息内容"""
+    elements = []
+    
+    # 天气部分
+    if os.path.exists('weather_result.json'):
+        with open('weather_result.json', 'r', encoding='utf-8') as f:
+            weather = json.load(f)
+        elements.append({
+            'tag': 'div',
+            'text': {
+                'tag': 'lark_md',
+                'content': f"**🌡️ {weather['city']}天气**\n{weather['text']} {weather['temp']}°C\n{weather['windDir']} {weather['windScale']}级 | 湿度{weather['humidity']}%"
+            }
+        })
+        elements.append({'tag': 'hr'})
+    
+    # RSS部分
+    if os.path.exists('rss_result.json'):
+        with open('rss_result.json', 'r', encoding='utf-8') as f:
+            rss_list = json.load(f)
+        if rss_list:
+            rss_text = "**📰 今日资讯**\n"
+            for i, item in enumerate(rss_list[:8], 1):
+                rss_text += f"{i}. [{item['title']}]({item['link']})\n"
+            elements.append({
+                'tag': 'div',
+                'text': {
+                    'tag': 'lark_md',
+                    'content': rss_text
+                }
+            })
+    
+    # 底部
+    elements.append({'tag': 'hr'})
+    elements.append({
+        'tag': 'note',
+        'elements': [{
+            'tag': 'plain_text',
+            'content': f"推送时间: {datetime.now().strftime('%Y-%m-%d %H:%M')} | 由GitHub Actions自动抓取"
+        }]
+    })
+    
+    return elements
+
+def main():
+    webhook = os.environ.get('FEISHU_WEBHOOK', '')
+    secret = os.environ.get('FEISHU_SECRET', '')
+    
+    if not webhook:
+        print("未配置FEISHU_WEBHOOK，跳过推送")
+        return
+    
+    content = build_content()
+    if len(content) <= 2:  # 只有分割线和底部，没有实际内容
+        print("没有可推送的内容，跳过")
+        return
+    
+    send_feishu_message(webhook, secret, content)
+
+if __name__ == '__main__':
+    main()
