@@ -2,27 +2,26 @@ name: 每日早报-测试版
 
 on:
   schedule:
-      - cron: '0 0 * * *'
-        workflow_dispatch:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
-        env:
-          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+env:
+  FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
 
-          jobs:
-            daily-digest:
-                runs-on: ubuntu-latest
-                    steps:
-                          - name: 检出代码
-                                  uses: actions/checkout@v4
+jobs:
+  daily-digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
 
-                                        - name: 设置Python
-                                                uses: actions/setup-python@v5
-                                                        with:
-                                                                  python-version: '3.10'
+      - name: 设置Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
 
-                                                                        - name: 安装依赖
-                                                                                run: pip install requests
+      - name: 安装依赖
+        run: pip install requests
 
-                                                                                      - name: 生成早报并推送
-                                                                                              run: python push_daily_digest.py
-                                                                                              
+      - name: 生成早报并推送
+        run: python push_daily_digest.py
