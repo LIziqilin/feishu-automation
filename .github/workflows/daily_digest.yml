@@ -1,14 +1,12 @@
-name: 每日早报-西安天气+学习内容推送
+name: 每日早报-测试版
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 每天UTC 0:00 = 北京时间8:00
-  workflow_dispatch:  # 支持手动触发
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 env:
   FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
-  WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
-  WEATHER_CITY: xian
 
 jobs:
   daily-digest:
@@ -23,26 +21,7 @@ jobs:
           python-version: '3.10'
 
       - name: 安装依赖
-        run: pip install requests feedparser
+        run: pip install requests
 
-      - name: 抓取西安天气
-        run: python scripts/fetch_weather.py
-        continue-on-error: true
-
-      - name: 抓取学习类内容
-        run: python scripts/fetch_learning_content.py
-        continue-on-error: true
-
-      - name: 生成每日早报并推送
-        run: python scripts/push_daily_digest.py
-
-      - name: 上传运行日志
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: daily-digest-output
-          path: |
-            weather_data.json
-            learning_articles.json
-            daily_digest.txt
-          retention-days: 7
+      - name: 生成早报并推送
+        run: python push_daily_digest.py
