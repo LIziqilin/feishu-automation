@@ -1,88 +1,48 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""每日早报推送脚本 - 简化版"""
-import os
-import json
-import requests
-from datetime import datetime
+name: 每日早报-西安天气+学习内容推送
 
-def main():
-    # 读取天气数据
-    weather = None
-    if os.path.exists('weather_data.json'):
-        with open('weather_data.json', 'r', encoding='utf-8') as f:
-            data = json.load(f)
-            if data:
-                weather = data[0]
-    
-    # 读取学习内容
-    articles = []
-    if os.path.exists('learning_articles.json'):
-        with open('learning_articles.json', 'r', encoding='utf-8') as f:
-            articles = json.load(f)
-    
-    # 格式化消息
-    today = datetime.now().strftime('%Y年%m月%d日')
-    message = f"📅 紫麒麟智能助理·每日早报\n{today}\n\n"
-    
-    # 天气部分
-    if weather:
-        temp = weather.get('温度', '未知')
-        weather_text = weather.get('天气', '未知')
-        humidity = weather.get('湿度', '未知')
-        message += "🌤️ 西安今日天气\n"
-        message += "━━━━━━━━━━━━━\n"
-        message += f"天气：{weather_text}\n"
-        message += f"温度：{temp}°C\n"
-        message += f"湿度：{humidity}%\n\n"
-    else:
-        message += "🌤️ 西安今日天气：暂无数据\n\n"
-    
-    # 学习内容部分
-    if articles:
-        message += "📚 今日学习精选\n"
-        message += "━━━━━━━━━━━━━\n"
-        for i, article in enumerate(articles[:6]):
-            title = article.get('标题', '')[:50]
-            source = article.get('来源', '')
-            category = article.get('分类', '')
-            message += f"\n{i+1}. 【{category}】{title}\n"
-            message += f"   来源：{source}\n"
-        message += f"\n\n💡 共筛选出 {len(articles)} 条学习内容\n"
-    else:
-        message += "📚 今日学习精选：暂无相关内容\n"
-    
-    message += "\n━━━━━━━━━━━━━\n"
-    message += "🤖 由紫麒麟智能助理自动推送\n"
-    message += "⏰ 每天早上8:00准时送达"
-    
-    # 打印消息
-    print("=" * 50)
-    print(message)
-    print("=" * 50)
-    
-    # 保存到文件
-    with open('daily_digest.txt', 'w', encoding='utf-8') as f:
-        f.write(message)
-    
-    # 推送到飞书群
-    webhook = os.environ.get('FEISHU_WEBHOOK', '')
-    if webhook:
-        payload = {
-            "msg_type": "text",
-            "content": {"text": message}
-        }
-        try:
-            response = requests.post(webhook, json=payload, timeout=10)
-            data = response.json()
-            if data.get('code') == 0:
-                print("飞书消息推送成功")
-            else:
-                print(f"飞书消息推送失败: {data}")
-        except Exception as e:
-            print(f"飞书消息推送异常: {e}")
-    else:
-        print("未配置FEISHU_WEBHOOK，跳过推送")
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天UTC 0:00 = 北京时间8:00
+  workflow_dispatch:  # 支持手动触发
 
-if __name__ == '__main__':
-    main()
+env:
+  FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+  WEATHER_API_KEY: ${{ secrets.WEATHER_API_KEY }}
+  WEATHER_CITY: xian
+
+jobs:
+  daily-digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 安装依赖
+        run: pip install requests feedparser
+
+      - name: 抓取西安天气
+        run: python scripts/fetch_weather.py
+        continue-on-error: true
+
+      - name: 抓取学习类内容
+        run: python scripts/fetch_learning_content.py
+        continue-on-error: true
+
+      - name: 生成每日早报并推送
+        run: python scripts/push_daily_digest.py
+
+      - name: 上传运行日志
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-digest-output
+          path: |
+            weather_data.json
+            learning_articles.json
+            daily_digest.txt
+          retention-days: 7
