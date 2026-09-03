@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""每日早报推送脚本 - 完整版（含签名校验、富文本、天气、学习内容）"""
+"""每日早报推送脚本 - 完整版V2（含天气、学习内容、签名校验、富文本）"""
 import os
 import sys
 import json
@@ -54,68 +54,129 @@ def send_feishu_message(webhook, secret, msg_type, content):
         return False
 
 # ============================================================
-# 获取西安天气（和风天气API）
+# 获取西安天气（多源备用：wttr.in -> 中国天气网）
 # ============================================================
-def get_weather(api_key):
-    """获取西安今日天气"""
-    if not api_key:
-        return "暂无数据（需配置和风天气API）"
-    
+def get_weather_xian():
+    """获取西安今日天气（多源备用）"""
+    # 方式1：wttr.in免费API
     try:
-        # 和风天气API - 西安城市ID: 101110101
-        url = f"https://devapi.qweather.com/v7/weather/now?location=101110101&key={api_key}"
-        response = requests.get(url, timeout=10)
+        print("  尝试wttr.in...")
+        url = "https://wttr.in/Xian?format=j1&lang=zh"
+        headers = {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+        response = requests.get(url, headers=headers, timeout=20)
         data = response.json()
         
-        if data.get('code') == '200':
-            now = data.get('now', {})
-            temp = now.get('temp', '未知')
-            text = now.get('text', '未知')
-            wind_dir = now.get('windDir', '未知')
-            wind_scale = now.get('windScale', '未知')
-            humidity = now.get('humidity', '未知')
-            return f"{text} {temp}°C，{wind_dir}风{wind_scale}级，湿度{humidity}%"
-        else:
-            return f"获取失败: {data.get('code')}"
+        current = data.get('current_condition', [{}])[0]
+        temp_c = current.get('temp_C', '未知')
+        feels_like = current.get('FeelsLikeC', '未知')
+        humidity = current.get('humidity', '未知')
+        weather_desc = current.get('lang_zh', [{}])[0].get('value', 
+                      current.get('weatherDesc', [{}])[0].get('value', '未知'))
+        wind_dir = current.get('winddir16Point', '未知')
+        wind_speed = current.get('windspeedKmph', '未知')
+        
+        today_forecast = data.get('weather', [{}])[0]
+        max_temp = today_forecast.get('maxtempC', '未知')
+        min_temp = today_forecast.get('mintempC', '未知')
+        
+        weather_info = (
+            f"{weather_desc} {temp_c}°C（体感{feels_like}°C），"
+            f"{min_temp}°C ~ {max_temp}°C，"
+            f"{wind_dir}风{wind_speed}km/h，湿度{humidity}%"
+        )
+        return weather_info
     except Exception as e:
-        return f"获取异常: {str(e)}"
+        print(f"  wttr.in失败: {e}")
+    
+    # 方式2：使用简化格式（更稳定）
+    try:
+        print("  尝试wttr.in简化格式...")
+        url = "https://wttr.in/Xian?format=%C+%t+%h+%w&lang=zh"
+        headers = {'User-Agent': 'curl/7.68.0'}
+        response = requests.get(url, headers=headers, timeout=15)
+        if response.status_code == 200 and response.text.strip():
+            return f"{response.text.strip()}（数据来源：wttr.in）"
+    except Exception as e:
+        print(f"  简化格式失败: {e}")
+    
+    return "暂无数据（天气API暂时不可用）"
 
 # ============================================================
 # 获取学习内容（RSS源）
 # ============================================================
-def get_learning_content(rss_urls):
-    """从RSS源获取学习内容"""
-    if not rss_urls:
-        return []
+def get_learning_content():
+    """从多个RSS源获取学习内容（学习效率、思维模式、沟通技巧等）"""
+    # 预设的高质量学习类RSS源（精选稳定源）
+    rss_sources = [
+        {
+            'name': '少数派',
+            'url': 'https://sspai.com/feed',
+            'category': '效率工具'
+        },
+        {
+            'name': '知乎日报',
+            'url': 'https://daily.zhihu.com/feed',
+            'category': '知识精选'
+        }
+    ]
+    
+    # 从环境变量读取自定义RSS源（如果有）
+    custom_rss = os.environ.get('RSS_URLS', '')
+    if custom_rss:
+        for i, url in enumerate(custom_rss.split(',')):
+            url = url.strip()
+            if url:
+                rss_sources.append({
+                    'name': f'自定义源{i+1}',
+                    'url': url,
+                    'category': '自定义'
+                })
     
     contents = []
     try:
         import feedparser
-        for url in rss_urls:
+        for source in rss_sources:
             try:
-                feed = feedparser.parse(url)
-                for entry in feed.entries[:3]:  # 每个源取前3条
+                print(f"  正在抓取 {source['name']}...")
+                feed = feedparser.parse(source['url'])
+                for entry in feed.entries[:2]:  # 每个源取前2条
+                    title = entry.get('title', '无标题').strip()
+                    link = entry.get('link', '')
+                    # 过滤广告和无关内容
+                    if any(kw in title for kw in ['广告', '推广', '优惠', '折扣', '抽奖']):
+                        continue
                     contents.append({
-                        'title': entry.get('title', '无标题'),
-                        'link': entry.get('link', ''),
-                        'summary': entry.get('summary', '')[:100]
+                        'title': title,
+                        'link': link,
+                        'source': source['name'],
+                        'category': source['category']
                     })
             except Exception as e:
-                print(f"⚠️ RSS源 {url} 获取失败: {e}")
+                print(f"  ⚠️ {source['name']} 抓取失败: {e}")
     except ImportError:
         print("⚠️ 未安装feedparser，跳过学习内容获取")
     
-    return contents[:5]  # 最多取5条
+    # 去重（按标题）
+    seen_titles = set()
+    unique_contents = []
+    for item in contents:
+        if item['title'] not in seen_titles:
+            seen_titles.add(item['title'])
+            unique_contents.append(item)
+    
+    return unique_contents[:5]  # 最多取5条
 
 # ============================================================
-# 生成富文本消息（post类型）
+# 构建富文本消息（post类型）
 # ============================================================
 def build_rich_text_message(today, weekday, weather, learning_contents):
     """构建飞书富文本消息"""
     content = {
         "post": {
             "zh_cn": {
-                "title": f"📅 紫麒麟智能助理·每日早报",
+                "title": "📅 紫麒麟智能助理·每日早报",
                 "content": [
                     [
                         {"tag": "text", "text": f"📆 {today} {weekday}\n\n"}
@@ -134,16 +195,17 @@ def build_rich_text_message(today, weekday, weather, learning_contents):
     # 添加学习内容
     if learning_contents:
         for i, item in enumerate(learning_contents, 1):
+            source_tag = f"[{item['source']}]" if item.get('source') else ""
             content["post"]["zh_cn"]["content"].append([
-                {"tag": "text", "text": f"{i}. {item['title']}\n"}
+                {"tag": "text", "text": f"{i}. {source_tag} {item['title']}\n"}
             ])
             if item.get('link'):
                 content["post"]["zh_cn"]["content"].append([
-                    {"tag": "a", "text": "  查看原文", "href": item['link']}
+                    {"tag": "a", "text": "  🔗 查看原文", "href": item['link']}
                 ])
     else:
         content["post"]["zh_cn"]["content"].append([
-            {"tag": "text", "text": "  暂无相关内容\n"}
+            {"tag": "text", "text": "  暂无相关内容（RSS源暂时不可用）\n"}
         ])
     
     # 添加分隔线和页脚
@@ -160,22 +222,45 @@ def build_rich_text_message(today, weekday, weather, learning_contents):
     return content
 
 # ============================================================
+# 构建纯文本消息（备用）
+# ============================================================
+def build_text_message(today, weekday, weather, learning_contents):
+    """构建纯文本消息（备用）"""
+    message = f"📅 紫麒麟智能助理·每日早报\n{today} {weekday}\n\n"
+    message += f"🌤️ 西安今日天气：{weather}\n\n"
+    message += "📚 今日学习精选：\n"
+    if learning_contents:
+        for i, item in enumerate(learning_contents, 1):
+            source_tag = f"[{item['source']}]" if item.get('source') else ""
+            message += f"{i}. {source_tag} {item['title']}\n"
+            if item.get('link'):
+                message += f"   🔗 {item['link']}\n"
+    else:
+        message += "  暂无相关内容（RSS源暂时不可用）\n"
+    message += "\n━━━━━━━━━━━━━\n"
+    message += "🤖 由紫麒麟智能助理自动推送\n"
+    message += "⏰ 每天早上8:00准时送达"
+    return message
+
+# ============================================================
 # 主函数
 # ============================================================
 def main():
-    print("=" * 50)
-    print("=== 开始生成每日早报 ===")
-    print("=" * 50)
+    print("=" * 60)
+    print("=== 开始生成每日早报 V2.0 ===")
+    print("=" * 60)
     
     # 从环境变量读取配置
     webhook = os.environ.get('FEISHU_WEBHOOK', '')
     secret = os.environ.get('FEISHU_SECRET', '')
-    weather_api_key = os.environ.get('QWEATHER_API_KEY', '')
-    rss_urls_str = os.environ.get('RSS_URLS', '')
     
-    print(f"Webhook: {'已配置' if webhook else '未配置'}")
-    print(f"Secret: {'已配置' if secret else '未配置'}")
-    print(f"天气API: {'已配置' if weather_api_key else '未配置'}")
+    print(f"\n⚙️ 配置检查:")
+    print(f"  Webhook: {'已配置' if webhook else '❌ 未配置'}")
+    print(f"  Secret: {'已配置' if secret else '❌ 未配置'}")
+    
+    if not webhook or not secret:
+        print("❌ 缺少必要配置，请检查FEISHU_WEBHOOK和FEISHU_SECRET")
+        sys.exit(1)
     
     # 格式化日期
     today = datetime.now().strftime('%Y年%m月%d日')
@@ -185,33 +270,24 @@ def main():
     
     print(f"\n📆 日期: {today} {weekday}")
     
-    # 获取天气
-    print("\n🌤️ 正在获取天气...")
-    weather = get_weather(weather_api_key)
-    print(f"天气: {weather}")
+    # 获取西安天气
+    print("\n🌤️ 正在获取西安天气...")
+    weather = get_weather_xian()
+    print(f"  天气: {weather}")
     
     # 获取学习内容
     print("\n📚 正在获取学习内容...")
-    rss_urls = [url.strip() for url in rss_urls_str.split(',') if url.strip()] if rss_urls_str else []
-    learning_contents = get_learning_content(rss_urls)
-    print(f"学习内容: 获取到 {len(learning_contents)} 条")
+    learning_contents = get_learning_content()
+    print(f"  获取到 {len(learning_contents)} 条学习内容")
+    for i, item in enumerate(learning_contents, 1):
+        print(f"    {i}. [{item['source']}] {item['title'][:50]}")
     
-    # 生成纯文本消息（备用）
-    text_message = f"📅 紫麒麟智能助理·每日早报\n{today} {weekday}\n\n"
-    text_message += f"🌤️ 西安今日天气：{weather}\n\n"
-    text_message += "📚 今日学习精选：\n"
-    if learning_contents:
-        for i, item in enumerate(learning_contents, 1):
-            text_message += f"{i}. {item['title']}\n"
-    else:
-        text_message += "  暂无相关内容\n"
-    text_message += "\n━━━━━━━━━━━━━\n"
-    text_message += "🤖 由紫麒麟智能助理自动推送\n"
-    text_message += "⏰ 每天早上8:00准时送达"
+    # 构建消息
+    print("\n" + "=" * 60)
+    print("=== 构建早报消息 ===")
+    print("=" * 60)
     
-    print("\n" + "=" * 50)
-    print("=== 早报内容 ===")
-    print("=" * 50)
+    text_message = build_text_message(today, weekday, weather, learning_contents)
     print(text_message)
     
     # 保存到文件
@@ -219,37 +295,30 @@ def main():
         f.write(text_message)
     
     # 推送到飞书群
-    if webhook and secret:
-        print("\n" + "=" * 50)
-        print("=== 推送到飞书群 ===")
-        print("=" * 50)
-        
-        # 优先发送富文本消息
-        print("\n尝试发送富文本消息...")
-        rich_content = build_rich_text_message(today, weekday, weather, learning_contents)
-        success = send_feishu_message(webhook, secret, "post", rich_content)
-        
-        # 如果富文本失败，尝试纯文本
-        if not success:
-            print("\n富文本发送失败，尝试纯文本消息...")
-            text_content = {"text": text_message}
-            success = send_feishu_message(webhook, secret, "text", text_content)
-        
-        if success:
-            print("\n✅ 早报推送完成！")
-        else:
-            print("\n❌ 早报推送失败，请检查webhook和secret配置")
-            sys.exit(1)
-    else:
-        print("\n⚠️ 未配置FEISHU_WEBHOOK或FEISHU_SECRET，跳过推送")
-        if not webhook:
-            print("  - 请配置FEISHU_WEBHOOK环境变量")
-        if not secret:
-            print("  - 请配置FEISHU_SECRET环境变量")
+    print("\n" + "=" * 60)
+    print("=== 推送到飞书群 ===")
+    print("=" * 60)
     
-    print("\n" + "=" * 50)
-    print("=== 每日早报生成完成 ===")
-    print("=" * 50)
+    # 优先发送富文本消息
+    print("\n📤 尝试发送富文本消息...")
+    rich_content = build_rich_text_message(today, weekday, weather, learning_contents)
+    success = send_feishu_message(webhook, secret, "post", rich_content)
+    
+    # 如果富文本失败，尝试纯文本
+    if not success:
+        print("\n📤 富文本发送失败，尝试纯文本消息...")
+        text_content = {"text": text_message}
+        success = send_feishu_message(webhook, secret, "text", text_content)
+    
+    if success:
+        print("\n✅ 早报推送完成！")
+    else:
+        print("\n❌ 早报推送失败，请检查webhook和secret配置")
+        sys.exit(1)
+    
+    print("\n" + "=" * 60)
+    print("=== 每日早报生成完成 V2.0 ===")
+    print("=" * 60)
 
 if __name__ == '__main__':
     main()
