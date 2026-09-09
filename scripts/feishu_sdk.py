@@ -12,7 +12,7 @@ feishu_sdk.py — 个人运维系统唯一飞书公共库（V13 波次0 公共�
 零三方依赖，仅标准库；Python 3.8+。
 """
 import os, json, time, hmac, hashlib, base64, random, threading, urllib.request, urllib.error
-from urllib.parse import quote_plus
+from urllib.parse import quote_plus, unquote_plus
 
 OPEN = 'https://open.feishu.cn/open-apis'
 DEFAULT_BASE = 'X8N1bvN3na99dFsyu0gcU8zTnHf'
@@ -372,8 +372,9 @@ class FeishuClient:
 
     # ---------- 群机器人消息 ----------
     def send_text(self, webhook, secret, text):
-        """自定义机器人发文本；sign 强制 quote_plus；返回含 message_id 用于送达对账。"""
-        ts, sign = gen_sign(secret)
+        """自定义机器人发文本；gen_sign返回quote_plus编码的sign，JSON body中需unquote_plus还原原始Base64。"""
+        ts, sign_quoted = gen_sign(secret)
+        sign = unquote_plus(sign_quoted)  # JSON body使用原始Base64，不使用URL编码
         body = {'timestamp': ts, 'sign': sign, 'msg_type': 'text', 'content': {'text': text}}
         d = self._raw_request(webhook, body, auth=False)
         if d.get('code', 0) != 0 and d.get('StatusCode', 0) != 0:
