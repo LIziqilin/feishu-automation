@@ -1,4 +1,4 @@
-name: Atomic Backup (原子备份)
+﻿name: Atomic Backup (原子备份)
 on:
   schedule:
     - cron: "43 15 * * *"   # 23:43 北京 = 15:43 UTC（错峰，避开巡检）
@@ -27,7 +27,9 @@ jobs:
         env:
           FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
           FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
-        run: python backup.py 
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_WEBHOOK_SECRET: ${{ secrets.FEISHU_WEBHOOK_SECRET }}
+        run: python scripts/backup.py 
       - name: Retry with jitter (1/5/15min)
         if: failure()
         run: |

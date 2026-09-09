@@ -1,4 +1,4 @@
-name: B-Window (B级告警窗口)
+﻿name: B-Window (B级告警窗口)
 on:
   schedule:
     - cron: "7 14 * * *"   # 22:07 北京 = 14:07 UTC（错峰）
@@ -27,7 +27,9 @@ jobs:
         env:
           FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
           FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
-        run: python b_window.py 
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_WEBHOOK_SECRET: ${{ secrets.FEISHU_WEBHOOK_SECRET }}
+        run: python scripts/b_window.py 
       - name: Retry with jitter (1/5/15min)
         if: failure()
         run: |

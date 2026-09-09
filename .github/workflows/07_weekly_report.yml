@@ -1,4 +1,4 @@
-name: Weekly Report (周报)
+﻿name: Weekly Report (周报)
 on:
   schedule:
     - cron: "11 12 * * 0"   # 周日 20:11 北京 = 12:11 UTC（错峰）
@@ -27,7 +27,9 @@ jobs:
         env:
           FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
           FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
-        run: python weekly_report.py 
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_WEBHOOK_SECRET: ${{ secrets.FEISHU_WEBHOOK_SECRET }}
+        run: python scripts/weekly_report.py 
       - name: Retry with jitter (1/5/15min)
         if: failure()
         run: |

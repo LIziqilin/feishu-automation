@@ -6,7 +6,9 @@ weekly_report.py — V13 周报生成器（周日 20:11 错峰）
 """
 import sys, io, argparse
 from datetime import date, datetime, timezone, timedelta
-sys.path.insert(0, r'D:\AI-Tools\shared')
+_LOCAL_SHARED = r'D:\AI-Tools\shared'
+if os.path.isdir(_LOCAL_SHARED):
+    sys.path.insert(0, _LOCAL_SHARED)
 # 注意：learning_metrics 会包裹 stdout；本模块不再重复包裹
 import learning_metrics as lm
 import review_engine as eng
@@ -119,7 +121,8 @@ def main():
     if a.send:
         import requests, json as _json
         from feishu_sdk import gen_sign
-        cfg_path = r'D:\AI-Tools\feishu\local_cron_tasks\feishu_bot_config.json'
+        from feishu_sdk import get_bot_config as _gbc
+cfg_path = None  # cloud: use get_bot_config()
         try:
             with open(cfg_path, encoding='utf-8') as f:
                 cfg = _json.load(f)

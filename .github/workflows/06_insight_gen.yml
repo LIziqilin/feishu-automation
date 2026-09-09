@@ -1,4 +1,4 @@
-name: Insight Gen (洞察生成)
+﻿name: Insight Gen (洞察生成)
 on:
   schedule:
     - cron: "43 12 * * *"   # 20:43 北京 = 12:43 UTC（错峰）
@@ -27,7 +27,9 @@ jobs:
         env:
           FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
           FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
-        run: python insight_gen.py 
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_WEBHOOK_SECRET: ${{ secrets.FEISHU_WEBHOOK_SECRET }}
+        run: python scripts/insight_gen.py 
       - name: Retry with jitter (1/5/15min)
         if: failure()
         run: |

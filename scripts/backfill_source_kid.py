@@ -7,7 +7,9 @@ backfill_source_kid.py — V13 波次2 学习卡「来源知识ID」回填
 用法: python backfill_source_kid.py [--dry-run] [--apply]
 """
 import sys, io, argparse, re
-sys.path.insert(0, r'D:\AI-Tools\shared')
+_LOCAL_SHARED = r'D:\AI-Tools\shared'
+if os.path.isdir(_LOCAL_SHARED):
+    sys.path.insert(0, _LOCAL_SHARED)
 try:
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', write_through=True)
 except Exception:

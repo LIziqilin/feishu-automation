@@ -9,7 +9,9 @@ patrol.py — 每日巡检（23:13 错峰）
 """
 import os, sys, io, json, time
 from datetime import datetime, timedelta, timezone
-sys.path.insert(0, r'D:\AI-Tools\shared')
+_LOCAL_SHARED = r'D:\AI-Tools\shared'
+if os.path.isdir(_LOCAL_SHARED):
+    sys.path.insert(0, _LOCAL_SHARED)
 try:
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', write_through=True)
 except Exception:
@@ -56,8 +58,8 @@ def main():
         if '--send' in args:
             import requests
             from feishu_sdk import gen_sign
-            cfg = json.load(open(r'D:\AI-Tools\feishu\local_cron_tasks\feishu_bot_config.json',
-                                 encoding='utf-8'))
+            from feishu_sdk import get_bot_config
+cfg = get_bot_config()
             webhook = cfg.get('webhook') or cfg.get('url')
             if webhook:
                 ts, sign = gen_sign(cfg.get('secret', ''))

@@ -7,7 +7,9 @@ morning_brief.py — V13 波次2 早报生成器（07:53 错峰活体+学习入�
 """
 import sys, io, argparse, json
 from datetime import date
-sys.path.insert(0, r'D:\AI-Tools\shared')
+_LOCAL_SHARED = r'D:\AI-Tools\shared'
+if os.path.isdir(_LOCAL_SHARED):
+    sys.path.insert(0, _LOCAL_SHARED)
 # 注意：daily_plan 会包裹 stdout；本模块直接复用，不再重复包裹
 from feishu_sdk import FeishuClient, TABLES
 from review_io import ReviewService
@@ -89,7 +91,8 @@ def main():
         # 接飞书 webhook（自定义机器人，加签模式：timestamp+sign；避整点，单条<=20KB）
         import requests, json as _json, time as _time, urllib.parse
         from feishu_sdk import gen_sign
-        cfg_path = r'D:\AI-Tools\feishu\local_cron_tasks\feishu_bot_config.json'
+        from feishu_sdk import get_bot_config as _gbc
+cfg_path = None  # cloud: use get_bot_config()
         try:
             with open(cfg_path, encoding='utf-8') as f:
                 cfg = _json.load(f)

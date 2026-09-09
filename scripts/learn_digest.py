@@ -6,7 +6,9 @@ learn_digest.py — V13 波次2 晚间学习提醒（12:37 错峰）
 """
 import sys, argparse
 from datetime import date, timedelta
-sys.path.insert(0, r'D:\AI-Tools\shared')
+_LOCAL_SHARED = r'D:\AI-Tools\shared'
+if os.path.isdir(_LOCAL_SHARED):
+    sys.path.insert(0, _LOCAL_SHARED)
 import morning_brief as mb
 
 
@@ -30,7 +32,8 @@ def main():
     if a.send:
         import requests, json as _json, urllib.parse
         from feishu_sdk import gen_sign
-        cfg_path = r'D:\AI-Tools\feishu\local_cron_tasks\feishu_bot_config.json'
+        from feishu_sdk import get_bot_config as _gbc
+cfg_path = None  # cloud: use get_bot_config()
         try:
             with open(cfg_path, encoding='utf-8') as f:
                 cfg = _json.load(f)

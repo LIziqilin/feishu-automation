@@ -1,4 +1,4 @@
-name: Keepalive (防60天停用)
+﻿name: Keepalive (防60天停用)
 on:
   schedule:
     - cron: "11 1 1 * *"   # 每月1日 09:11 北京 = 01:11 UTC
@@ -27,7 +27,9 @@ jobs:
         env:
           FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
           FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
-        run: python keepalive.py 
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_WEBHOOK_SECRET: ${{ secrets.FEISHU_WEBHOOK_SECRET }}
+        run: python scripts/keepalive.py 
       - name: Retry with jitter (1/5/15min)
         if: failure()
         run: |

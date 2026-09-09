@@ -5,7 +5,9 @@ REVIEWING 卡场景填充率（验收>=50%）；MASTERED 毕业必须 三选一�
 用法: python scene_audit.py [--threshold 50]
 """
 import sys, io, argparse
-sys.path.insert(0, r'D:\AI-Tools\shared')
+_LOCAL_SHARED = r'D:\AI-Tools\shared'
+if os.path.isdir(_LOCAL_SHARED):
+    sys.path.insert(0, _LOCAL_SHARED)
 try:
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', write_through=True)
 except Exception:

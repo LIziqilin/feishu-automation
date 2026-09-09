@@ -1,4 +1,4 @@
-name: Learn Digest (晚间学习提醒)
+﻿name: Learn Digest (晚间学习提醒)
 on:
   schedule:
     - cron: "37 12 * * *"   # 12:37 北京 = 04:37 UTC（错峰，紧接午报12:23之后）
@@ -27,7 +27,9 @@ jobs:
         env:
           FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
           FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
-        run: python learn_digest.py
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_WEBHOOK_SECRET: ${{ secrets.FEISHU_WEBHOOK_SECRET }}
+        run: python scripts/learn_digest.py
       - name: Retry with jitter (1/5/15min)
         if: failure()
         run: |

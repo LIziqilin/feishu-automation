@@ -11,7 +11,9 @@ probe30.py — V13 本机 30 分钟探针（波次1·发现能力组，方案§4
 """
 import os, sys, io, time, json, urllib.request
 
-sys.path.insert(0, r'D:\AI-Tools\shared')
+_LOCAL_SHARED = r'D:\AI-Tools\shared'
+if os.path.isdir(_LOCAL_SHARED):
+    sys.path.insert(0, _LOCAL_SHARED)
 try:
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', write_through=True)
 except Exception:

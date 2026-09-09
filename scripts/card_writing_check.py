@@ -10,7 +10,9 @@ card_writing_check.py — V13 波次2 卡片写作五规校验器（纯函数）
 用法: python card_writing_check.py --check 正面 背面
 """
 import sys, io, argparse
-sys.path.insert(0, r'D:\AI-Tools\shared')
+_LOCAL_SHARED = r'D:\AI-Tools\shared'
+if os.path.isdir(_LOCAL_SHARED):
+    sys.path.insert(0, _LOCAL_SHARED)
 
 
 def check_card(question, answer):

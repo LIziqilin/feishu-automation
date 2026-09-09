@@ -7,7 +7,9 @@ b_window.py — B 类错误批量处理窗口（22:07 错峰）
 用法: python b_window.py [--send] [--close]
 """
 import os, sys, io, json, time
-sys.path.insert(0, r'D:\AI-Tools\shared')
+_LOCAL_SHARED = r'D:\AI-Tools\shared'
+if os.path.isdir(_LOCAL_SHARED):
+    sys.path.insert(0, _LOCAL_SHARED)
 try:
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', write_through=True)
 except Exception:
@@ -45,8 +47,8 @@ def main():
         if '--send' in args:
             import requests
             from feishu_sdk import gen_sign
-            cfg = json.load(open(r'D:\AI-Tools\feishu\local_cron_tasks\feishu_bot_config.json',
-                                 encoding='utf-8'))
+            from feishu_sdk import get_bot_config
+cfg = get_bot_config()
             webhook = cfg.get('webhook') or cfg.get('url')
             if webhook:
                 ts, sign = gen_sign(cfg.get('secret', ''))

@@ -10,7 +10,9 @@ pool_phase1.py — V13 波次1：知识池化阶段一（代理粗分，先埋�
   --apply 才会写字段；默认只读统计（安全）
 """
 import sys, io, json
-sys.path.insert(0, r'D:\AI-Tools\shared')
+_LOCAL_SHARED = r'D:\AI-Tools\shared'
+if os.path.isdir(_LOCAL_SHARED):
+    sys.path.insert(0, _LOCAL_SHARED)
 try:
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', write_through=True)
 except Exception:

@@ -1,4 +1,4 @@
-name: Daily Liveness (早报+活体)
+﻿name: Daily Liveness (早报+活体)
 on:
   schedule:
     - cron: "53 23 * * *"   # 07:53 北京 = 23:53 UTC 前一日（错峰）
@@ -27,7 +27,9 @@ jobs:
         env:
           FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
           FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
-        run: python daily_liveness.py 
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_WEBHOOK_SECRET: ${{ secrets.FEISHU_WEBHOOK_SECRET }}
+        run: python scripts/daily_liveness.py 
       - name: Retry with jitter (1/5/15min)
         if: failure()
         run: |

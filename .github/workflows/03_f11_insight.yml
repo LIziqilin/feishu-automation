@@ -1,4 +1,4 @@
-name: F11 Insight Link (洞察关联)
+﻿name: F11 Insight Link (洞察关联)
 on:
   schedule:
     - cron: "47 0 * * *"   # 08:47 北京 = 00:47 UTC（错峰）
@@ -27,7 +27,9 @@ jobs:
         env:
           FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
           FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
-        run: python f11_insight.py 
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_WEBHOOK_SECRET: ${{ secrets.FEISHU_WEBHOOK_SECRET }}
+        run: python scripts/f11_insight.py 
       - name: Retry with jitter (1/5/15min)
         if: failure()
         run: |

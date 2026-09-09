@@ -8,7 +8,9 @@ daily_liveness.py — 每日活体检测（07:53 错峰，云端/本地双兼容
 """
 import os, sys, io, json, time, urllib.request
 
-sys.path.insert(0, r'D:\AI-Tools\shared')
+_LOCAL_SHARED = r'D:\AI-Tools\shared'
+if os.path.isdir(_LOCAL_SHARED):
+    sys.path.insert(0, _LOCAL_SHARED)
 try:
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', write_through=True)
 except Exception:
@@ -56,10 +58,8 @@ def build_report():
 def send_feishu(text):
     import requests
     import random
-    cfg_path = r'D:\AI-Tools\feishu\local_cron_tasks\feishu_bot_config.json'
-    try:
-        with open(cfg_path, encoding='utf-8') as f:
-            cfg = json.load(f)
+    from feishu_sdk import get_bot_config
+cfg = get_bot_config()
         webhook = cfg.get('webhook') or cfg.get('url')
         secret = cfg.get('secret', '')
         if not webhook:

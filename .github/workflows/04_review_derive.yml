@@ -1,4 +1,4 @@
-name: Review Derive (复习派生兜底)
+﻿name: Review Derive (复习派生兜底)
 on:
   schedule:
     - cron: "7 1 * * *"   # 09:07 北京 = 01:07 UTC（错峰）
@@ -27,7 +27,9 @@ jobs:
         env:
           FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
           FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
-        run: python review_derive.py --rebuild-all
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_WEBHOOK_SECRET: ${{ secrets.FEISHU_WEBHOOK_SECRET }}
+        run: python scripts/review_derive.py --rebuild-all
       - name: Retry with jitter (1/5/15min)
         if: failure()
         run: |

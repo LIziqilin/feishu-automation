@@ -1,4 +1,4 @@
-name: Schedule Audit (调度对账)
+﻿name: Schedule Audit (调度对账)
 on:
   schedule:
     - cron: "23 1 1 * *"   # 每月1日 09:23 北京 = 01:23 UTC
@@ -27,7 +27,9 @@ jobs:
         env:
           FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
           FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
-        run: python schedule_audit.py 
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_WEBHOOK_SECRET: ${{ secrets.FEISHU_WEBHOOK_SECRET }}
+        run: python scripts/schedule_audit.py 
       - name: Retry with jitter (1/5/15min)
         if: failure()
         run: |

@@ -9,7 +9,9 @@ chat_review_poll.py — V13 波次2 群内文字指令复习闭环（P0 并行�
 """
 import sys, io, os, json, argparse, time
 from datetime import datetime, timezone, timedelta
-sys.path.insert(0, r'D:\AI-Tools\shared')
+_LOCAL_SHARED = r'D:\AI-Tools\shared'
+if os.path.isdir(_LOCAL_SHARED):
+    sys.path.insert(0, _LOCAL_SHARED)
 try:
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', write_through=True)
 except Exception:

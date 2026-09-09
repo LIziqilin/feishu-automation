@@ -1,4 +1,4 @@
-name: DLQ Consumer (死信消费)
+﻿name: DLQ Consumer (死信消费)
 on:
   schedule:
     - cron: "43 0 * * *"   # 08:43 北京 = 00:43 UTC（错峰）
@@ -27,7 +27,9 @@ jobs:
         env:
           FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
           FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
-        run: python dlq_consumer.py --no-popup
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_WEBHOOK_SECRET: ${{ secrets.FEISHU_WEBHOOK_SECRET }}
+        run: python scripts/dlq_consumer.py --no-popup
       - name: Retry with jitter (1/5/15min)
         if: failure()
         run: |

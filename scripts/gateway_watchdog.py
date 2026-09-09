@@ -8,7 +8,9 @@ gateway_watchdog.py — V13 gateway 看门狗（波次2 升级：双服务守护
 """
 import os, sys, io, time, json, subprocess, urllib.request
 
-sys.path.insert(0, r'D:\AI-Tools\shared')
+_LOCAL_SHARED = r'D:\AI-Tools\shared'
+if os.path.isdir(_LOCAL_SHARED):
+    sys.path.insert(0, _LOCAL_SHARED)
 try:
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', write_through=True)
 except Exception:

@@ -6,7 +6,9 @@ f11_quota_probe.py — 飞书自动化额度探测（08:47 错峰）
 用法: python f11_quota_probe.py [--send]
 """
 import os, sys, io, json, time
-sys.path.insert(0, r'D:\AI-Tools\shared')
+_LOCAL_SHARED = r'D:\AI-Tools\shared'
+if os.path.isdir(_LOCAL_SHARED):
+    sys.path.insert(0, _LOCAL_SHARED)
 try:
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', write_through=True)
 except Exception:
@@ -37,8 +39,8 @@ def main():
         print(text)
         if '--send' in args:
             import requests
-            cfg = json.load(open(r'D:\AI-Tools\feishu\local_cron_tasks\feishu_bot_config.json',
-                                 encoding='utf-8'))
+            from feishu_sdk import get_bot_config
+cfg = get_bot_config()
             webhook = cfg.get('webhook') or cfg.get('url')
             if webhook:
                 from feishu_sdk import gen_sign
