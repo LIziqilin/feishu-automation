@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 learn_digest.py — V13 波次2 晚间学习提醒（12:37 错峰）
 明日复习队列预览 + 覆盖矩阵缺口 → 输出文本（可接 webhook）
@@ -6,6 +6,7 @@ learn_digest.py — V13 波次2 晚间学习提醒（12:37 错峰）
 """
 import sys, argparse
 from datetime import date, timedelta
+import os
 _LOCAL_SHARED = r'D:\AI-Tools\shared'
 if os.path.isdir(_LOCAL_SHARED):
     sys.path.insert(0, _LOCAL_SHARED)
@@ -32,11 +33,10 @@ def main():
     if a.send:
         import requests, json as _json, urllib.parse
         from feishu_sdk import gen_sign
-        from feishu_sdk import get_bot_config as _gbc
-cfg_path = None  # cloud: use get_bot_config()
+        from feishu_sdk import get_bot_config
+
+        cfg = get_bot_config()
         try:
-            with open(cfg_path, encoding='utf-8') as f:
-                cfg = _json.load(f)
             webhook = cfg.get('webhook') or cfg.get('url')
             if not webhook:
                 print('\n[推送失败] feishu_bot_config.json 无 webhook 键')

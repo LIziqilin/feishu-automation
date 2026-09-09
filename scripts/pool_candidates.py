@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 pool_candidates.py — V13 波次2 活跃池人工标记候选清单（池化阶段二前置）
 阶段一规则（方案§7）：活跃池候选 = 人工高价值 ∪ 被关联(学习卡来源知识ID引用) ∪ 近90天创建
@@ -7,6 +7,7 @@ pool_candidates.py — V13 波次2 活跃池人工标记候选清单（池化阶
 """
 import sys, io, argparse, json
 from datetime import datetime, timezone, timedelta
+import os
 _LOCAL_SHARED = r'D:\AI-Tools\shared'
 if os.path.isdir(_LOCAL_SHARED):
     sys.path.insert(0, _LOCAL_SHARED)

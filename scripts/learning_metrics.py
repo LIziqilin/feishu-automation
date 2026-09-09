@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 learning_metrics.py — V13 波次2 学习侧周报数据源（同构漏斗三指标）
 1) 素材处置率：知识索引表 近7天新增 且 已处置（转卡/升活跃/淘汰）占比
@@ -8,6 +8,7 @@ learning_metrics.py — V13 波次2 学习侧周报数据源（同构漏斗三�
 """
 import sys, io, argparse, json
 from datetime import datetime, timezone, timedelta
+import os
 _LOCAL_SHARED = r'D:\AI-Tools\shared'
 if os.path.isdir(_LOCAL_SHARED):
     sys.path.insert(0, _LOCAL_SHARED)

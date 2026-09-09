@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 chat_review_poll.py — V13 波次2 群内文字指令复习闭环（P0 并行底座）
 轮询群消息 → 解析"会/不会/模糊 N" → 映射今日队列 → 写流水 → 回执消息
@@ -9,6 +9,7 @@ chat_review_poll.py — V13 波次2 群内文字指令复习闭环（P0 并行�
 """
 import sys, io, os, json, argparse, time
 from datetime import datetime, timezone, timedelta
+import os
 _LOCAL_SHARED = r'D:\AI-Tools\shared'
 if os.path.isdir(_LOCAL_SHARED):
     sys.path.insert(0, _LOCAL_SHARED)

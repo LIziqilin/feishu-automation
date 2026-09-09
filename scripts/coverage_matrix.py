@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 coverage_matrix.py — V13 波次2 目标-知识域覆盖矩阵（周报数据源）
 读学习卡真实科目/状态 → 按冲刺知识域聚合 → 输出覆盖矩阵文本
@@ -6,6 +6,7 @@ coverage_matrix.py — V13 波次2 目标-知识域覆盖矩阵（周报数据�
 """
 import sys, io, argparse, json
 from datetime import date
+import os
 _LOCAL_SHARED = r'D:\AI-Tools\shared'
 if os.path.isdir(_LOCAL_SHARED):
     sys.path.insert(0, _LOCAL_SHARED)

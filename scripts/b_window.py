@@ -48,7 +48,7 @@ def main():
             import requests
             from feishu_sdk import gen_sign
             from feishu_sdk import get_bot_config
-cfg = get_bot_config()
+            cfg = get_bot_config()
             webhook = cfg.get('webhook') or cfg.get('url')
             if webhook:
                 ts, sign = gen_sign(cfg.get('secret', ''))

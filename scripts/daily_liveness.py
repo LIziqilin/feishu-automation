@@ -9,7 +9,9 @@ daily_liveness.py — 每日活体检测（07:53 错峰，云端/本地双兼容
 import os, sys, io, json, time, urllib.request
 
 _LOCAL_SHARED = r'D:\AI-Tools\shared'
+
 if os.path.isdir(_LOCAL_SHARED):
+
     sys.path.insert(0, _LOCAL_SHARED)
 try:
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', write_through=True)
@@ -59,7 +61,9 @@ def send_feishu(text):
     import requests
     import random
     from feishu_sdk import get_bot_config
-cfg = get_bot_config()
+
+    cfg = get_bot_config()
+    try:
         webhook = cfg.get('webhook') or cfg.get('url')
         secret = cfg.get('secret', '')
         if not webhook:

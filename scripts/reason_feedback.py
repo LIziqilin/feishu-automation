@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 reason_feedback.py — V13 波次2 错因回路（写回飞书 + 周复盘聚合）
 点"不会"时非阻断选填错因：没理解 / 遗忘 / 卡面差
@@ -9,6 +9,7 @@ reason_feedback.py — V13 波次2 错因回路（写回飞书 + 周复盘聚合
 import sys, io, argparse
 from datetime import date
 from collections import Counter
+import os
 _LOCAL_SHARED = r'D:\AI-Tools\shared'
 if os.path.isdir(_LOCAL_SHARED):
     sys.path.insert(0, _LOCAL_SHARED)

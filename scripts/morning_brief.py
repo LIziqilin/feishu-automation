@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 morning_brief.py — V13 波次2 早报生成器（07:53 错峰活体+学习入口）
 聚合：①今日复习队列（每日3张） ②目标覆盖矩阵缺口提示 ③系统健康（探针四路）
@@ -7,6 +7,7 @@ morning_brief.py — V13 波次2 早报生成器（07:53 错峰活体+学习入�
 """
 import sys, io, argparse, json
 from datetime import date
+import os
 _LOCAL_SHARED = r'D:\AI-Tools\shared'
 if os.path.isdir(_LOCAL_SHARED):
     sys.path.insert(0, _LOCAL_SHARED)
@@ -91,11 +92,10 @@ def main():
         # 接飞书 webhook（自定义机器人，加签模式：timestamp+sign；避整点，单条<=20KB）
         import requests, json as _json, time as _time, urllib.parse
         from feishu_sdk import gen_sign
-        from feishu_sdk import get_bot_config as _gbc
-cfg_path = None  # cloud: use get_bot_config()
+        from feishu_sdk import get_bot_config
+
+        cfg = get_bot_config()
         try:
-            with open(cfg_path, encoding='utf-8') as f:
-                cfg = _json.load(f)
             webhook = cfg.get('webhook') or cfg.get('url')
             if not webhook:
                 print('\n[推送失败] feishu_bot_config.json 无 webhook 键')

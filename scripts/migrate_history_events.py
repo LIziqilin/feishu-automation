@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 migrate_history_events.py — V13 波次2 历史复习迁移事件（事件溯源口径统一）
 背景：波次0把8张有复习痕迹的卡标为LEARNING，但复习流水表为空（V11旧字段有
@@ -12,6 +12,7 @@ migrate_history_events.py — V13 波次2 历史复习迁移事件（事件溯�
 """
 import sys, io, argparse
 from datetime import datetime, timezone, timedelta
+import os
 _LOCAL_SHARED = r'D:\AI-Tools\shared'
 if os.path.isdir(_LOCAL_SHARED):
     sys.path.insert(0, _LOCAL_SHARED)

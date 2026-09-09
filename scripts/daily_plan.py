@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 daily_plan.py — V13 波次2 每日复习队列生成（早报/晚间复盘数据源）
 从飞书读卡 + 流水派生 → 用 study_planner 规划今日清单 → 输出文本 + 可选写回
@@ -7,6 +7,7 @@ daily_plan.py — V13 波次2 每日复习队列生成（早报/晚间复盘数�
 """
 import sys, io, json, argparse
 from datetime import date, datetime
+import os
 _LOCAL_SHARED = r'D:\AI-Tools\shared'
 if os.path.isdir(_LOCAL_SHARED):
     sys.path.insert(0, _LOCAL_SHARED)

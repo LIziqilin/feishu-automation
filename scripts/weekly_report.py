@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 weekly_report.py — V13 周报生成器（周日 20:11 错峰）
 聚合：①学习侧三指标（素材处置/来源转化/复习完成） ②目标覆盖矩阵 ③ROI 看板 ④归档候选(180天) ⑤系统健康
@@ -6,6 +6,7 @@ weekly_report.py — V13 周报生成器（周日 20:11 错峰）
 """
 import sys, io, argparse
 from datetime import date, datetime, timezone, timedelta
+import os
 _LOCAL_SHARED = r'D:\AI-Tools\shared'
 if os.path.isdir(_LOCAL_SHARED):
     sys.path.insert(0, _LOCAL_SHARED)
@@ -121,11 +122,10 @@ def main():
     if a.send:
         import requests, json as _json
         from feishu_sdk import gen_sign
-        from feishu_sdk import get_bot_config as _gbc
-cfg_path = None  # cloud: use get_bot_config()
+        from feishu_sdk import get_bot_config
+
+        cfg = get_bot_config()
         try:
-            with open(cfg_path, encoding='utf-8') as f:
-                cfg = _json.load(f)
             webhook = cfg.get('webhook') or cfg.get('url')
             if not webhook:
                 print('\n[推送失败] 无 webhook 键')

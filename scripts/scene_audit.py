@@ -1,10 +1,11 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 scene_audit.py — V13 波次2 应用场景两段式周检
 REVIEWING 卡场景填充率（验收>=50%）；MASTERED 毕业必须 三选一（场景/费曼/实战）
 用法: python scene_audit.py [--threshold 50]
 """
 import sys, io, argparse
+import os
 _LOCAL_SHARED = r'D:\AI-Tools\shared'
 if os.path.isdir(_LOCAL_SHARED):
     sys.path.insert(0, _LOCAL_SHARED)

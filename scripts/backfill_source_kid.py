@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """
 backfill_source_kid.py — V13 波次2 学习卡「来源知识ID」回填
 按标题包含匹配（学习卡标题 ↔ 知识索引标题），把匹配到的知识索引 record_id 写入学习卡来源知识ID
@@ -7,6 +7,7 @@ backfill_source_kid.py — V13 波次2 学习卡「来源知识ID」回填
 用法: python backfill_source_kid.py [--dry-run] [--apply]
 """
 import sys, io, argparse, re
+import os
 _LOCAL_SHARED = r'D:\AI-Tools\shared'
 if os.path.isdir(_LOCAL_SHARED):
     sys.path.insert(0, _LOCAL_SHARED)

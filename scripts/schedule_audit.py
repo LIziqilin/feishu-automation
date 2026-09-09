@@ -78,7 +78,7 @@ def main():
         if '--send' in args:
             import requests, hmac, hashlib, base64
             from feishu_sdk import get_bot_config
-cfg = get_bot_config()
+            cfg = get_bot_config()
             webhook = cfg.get('webhook') or cfg.get('url')
             if webhook:
                 from feishu_sdk import gen_sign
