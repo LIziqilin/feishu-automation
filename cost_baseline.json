@@ -1,0 +1,30 @@
+{
+  "probe_time": "2026-09-09 15:08:42",
+  "deepseek": {
+    "status": "OK",
+    "is_available": true,
+    "currency": null,
+    "total_balance": null,
+    "granted_balance": null,
+    "topped_up_balance": null,
+    "models": [
+      "deepseek-v4-flash",
+      "deepseek-v4-pro",
+      "deepseek-v4-flash-vision-exp"
+    ],
+    "note": "余额为当前剩余；7日消耗需在 DeepSeek 控制台-用量 查看（API不提供明细）"
+  },
+  "github_actions": {
+    "status": "MANUAL_REQUIRED",
+    "free_quota_private_repo_min_per_month": 2000,
+    "query_path": "GitHub仓库 → Actions 页 → 右侧 Usage limits / Billing&plans → Actions 本月已用分钟",
+    "note": "schedule为best-effort；私有仓库免费2000分钟/月；波次1安装gh后可用 gh api 自动取"
+  },
+  "feishu_automation": {
+    "status": "MANUAL_REQUIRED",
+    "basic_quota_per_month": 200,
+    "pro_quota_per_month": 50000,
+    "query_path": "飞书多维表格 → 右上「自动化」→ 底部查看本月运行次数/剩余额度；或 管理后台-用量",
+    "decision": "基础版每日≤2张(约120次/月)，专业版每日3张(约180次/月)；先确认版本再定题量"
+  }
+}

@@ -1,0 +1,34 @@
+name: Weekly Report (周报)
+on:
+  schedule:
+    - cron: "11 12 * * 0"   # 周日 20:11 北京 = 12:11 UTC（错峰）
+  workflow_dispatch:
+concurrency:
+  group: weekly
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  weekly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install deps
+        run: |
+          pip install --quiet --disable-pip-version-check pyyaml
+      - name: Run weekly
+        env:
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+        run: python weekly_report.py 
+      - name: Retry with jitter (1/5/15min)
+        if: failure()
+        run: |
+          echo "job weekly failed at $(date -u +%%H:%%M:%%S) UTC; will be picked by next cycle"

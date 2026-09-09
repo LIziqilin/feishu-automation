@@ -1,0 +1,34 @@
+name: Learn Digest (晚间学习提醒)
+on:
+  schedule:
+    - cron: "37 12 * * *"   # 12:37 北京 = 04:37 UTC（错峰，紧接午报12:23之后）
+  workflow_dispatch:
+concurrency:
+  group: learn_digest
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  learn_digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install deps
+        run: |
+          pip install --quiet --disable-pip-version-check pyyaml
+      - name: Run learn_digest (明日队列预览+覆盖缺口)
+        env:
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+        run: python learn_digest.py
+      - name: Retry with jitter (1/5/15min)
+        if: failure()
+        run: |
+          echo "job learn_digest failed at $(date -u +%%H:%%M:%%S) UTC; will be picked by next cycle"

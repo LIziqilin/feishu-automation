@@ -1,0 +1,34 @@
+name: Patrol+Backup (巡检+备份)
+on:
+  schedule:
+    - cron: "13 15 * * *"   # 23:13 北京 = 15:13 UTC（错峰）
+  workflow_dispatch:
+concurrency:
+  group: patrol
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  patrol:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install deps
+        run: |
+          pip install --quiet --disable-pip-version-check pyyaml
+      - name: Run patrol
+        env:
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+        run: python patrol.py 
+      - name: Retry with jitter (1/5/15min)
+        if: failure()
+        run: |
+          echo "job patrol failed at $(date -u +%%H:%%M:%%S) UTC; will be picked by next cycle"

@@ -1,0 +1,34 @@
+name: F11 Insight Link (洞察关联)
+on:
+  schedule:
+    - cron: "47 0 * * *"   # 08:47 北京 = 00:47 UTC（错峰）
+  workflow_dispatch:
+concurrency:
+  group: f11
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  f11:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install deps
+        run: |
+          pip install --quiet --disable-pip-version-check pyyaml
+      - name: Run f11
+        env:
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+        run: python f11_insight.py 
+      - name: Retry with jitter (1/5/15min)
+        if: failure()
+        run: |
+          echo "job f11 failed at $(date -u +%%H:%%M:%%S) UTC; will be picked by next cycle"

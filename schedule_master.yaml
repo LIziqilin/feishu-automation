@@ -1,0 +1,69 @@
+# =====================================================================
+# schedule_master.yaml — V13 错峰调度权威时刻表（配置即代码，单一事实源）
+# 规则：全部避开整点/半点（GitHub 整点高峰延迟15-30分钟甚至丢任务）
+#       cron 使用 UTC；括号内为北京时间(UTC+8)，修改时两处必须同步
+# 保活：默认分支 60 天无 commit 自动停用 Actions，每月1日空 commit 保活
+# =====================================================================
+timezone_note: "GitHub cron=UTC；北京时间=UTC+8，下表每条已给出换算"
+
+jobs:
+  morning_digest:           # 早报 + 活体随机码（活体检测并入，不再单独成任务）
+    beijing: "07:53"
+    utc_cron: "53 23 * * *"      # 前一日 23:53 UTC
+    script: morning_digest.py
+  dlq_consumer:             # 独立死信消费（独立于业务 workflow，08:43）
+    beijing: "08:43"
+    utc_cron: "43 0 * * *"
+    script: dlq_consumer.py
+  f11_quota_probe:          # 额度探测
+    beijing: "08:47"
+    utc_cron: "47 0 * * *"
+    script: f11_quota_probe.py
+  review_derive_fallback:   # 复习状态派生兜底（即时触发为主，此为兜底 09:07）
+    beijing: "09:07"
+    utc_cron: "7 1 * * *"
+    script: review_derive.py
+    args: "--rebuild-all"
+  noon_digest:
+    beijing: "12:23"
+    utc_cron: "23 4 * * *"
+    script: noon_digest.py
+  insight_link:            # 洞察关联回填
+    beijing: "12:37"
+    utc_cron: "37 4 * * *"
+    script: insight_link.py
+  insight_gen:
+    beijing: "20:43"
+    utc_cron: "43 12 * * *"
+    script: insight_gen.py
+  weekly_report:
+    beijing: "周日 20:11"
+    utc_cron: "11 12 * * 0"   # 周日=0
+    script: weekly_report.py
+  b_class_window:          # B 类错误批量处理窗口
+    beijing: "22:07"
+    utc_cron: "7 14 * * *"
+    script: b_window.py
+  patrol:                  # 巡检
+    beijing: "23:13"
+    utc_cron: "13 15 * * *"
+    script: patrol.py
+  backup:                  # 原子备份
+    beijing: "23:43"
+    utc_cron: "43 15 * * *"
+    script: backup.py
+
+monthly:
+  keepalive:               # 每月1日空 commit 保活，防 Actions 停用
+    beijing: "09:11"
+    utc_cron: "11 1 1 * *"
+  pool_demote:             # 知识池降池（阶段二启用，冷归档降权不删向量）
+    beijing: "09:23"
+    utc_cron: "23 1 1 * *"
+
+# 本地 Windows 任务计划（Hermes gateway / probe / 30分钟探针）使用同一错峰原则，
+# 触发器为「启动时」+ 网络等待120s，看门狗 1/5/15min 退避熔断（波次1落地）。
+  learn_digest:             # 鏅氶棿瀛︿範鎻愰啋锛堟槑鏃ラ槦鍒楅璀堝笀+瑕嗙洊缂哄彛锛?12:37锛?
+    beijing: "12:37"
+    utc_cron: "37 4 * * *"
+    script: learn_digest.py

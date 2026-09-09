@@ -1,0 +1,34 @@
+name: Insight Gen (洞察生成)
+on:
+  schedule:
+    - cron: "43 12 * * *"   # 20:43 北京 = 12:43 UTC（错峰）
+  workflow_dispatch:
+concurrency:
+  group: insight_gen
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  insight_gen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install deps
+        run: |
+          pip install --quiet --disable-pip-version-check pyyaml
+      - name: Run insight_gen
+        env:
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+        run: python insight_gen.py 
+      - name: Retry with jitter (1/5/15min)
+        if: failure()
+        run: |
+          echo "job insight_gen failed at $(date -u +%%H:%%M:%%S) UTC; will be picked by next cycle"

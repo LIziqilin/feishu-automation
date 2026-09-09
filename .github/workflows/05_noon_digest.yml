@@ -1,0 +1,34 @@
+name: Noon Digest (午报)
+on:
+  schedule:
+    - cron: "23 4 * * *"   # 12:23 北京 = 04:23 UTC（错峰）
+  workflow_dispatch:
+concurrency:
+  group: noon
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  noon:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install deps
+        run: |
+          pip install --quiet --disable-pip-version-check pyyaml
+      - name: Run noon
+        env:
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+        run: python noon_digest.py 
+      - name: Retry with jitter (1/5/15min)
+        if: failure()
+        run: |
+          echo "job noon failed at $(date -u +%%H:%%M:%%S) UTC; will be picked by next cycle"
