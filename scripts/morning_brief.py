@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 """
-morning_brief.py — V13 波次2 早报生成器（07:53 错峰活体+学习入口+到期提醒）
-聚合：①今日复习队列（每日3张） ②目标覆盖矩阵缺口提示 ③系统健康（探针四路） ④今日到期任务
-输出：早报文本（可接飞书 webhook 推送）
-用法: python morning_brief.py [--send] [--date 2026-09-09]
-V13 v8.0修复: 增加到期任务提醒，正确处理毫秒时间戳(飞书API返回数字类型)
+morning_brief.py — V13 早报生成器（07:53 错峰，云端兜底+幂等防双份）
+聚合：①今日复习队列 ②今日到期任务 ③目标覆盖矩阵缺口 ④系统健康
+幂等：推送前查系统健康表"早报推送-YYYY-MM-DD"记录，已存在则跳过
+用法: python morning_brief.py [--send] [--date 2026-09-11]
+V13 v9.0修复: 增加幂等机制(日期+任务名)，防止本地+云端双份推送
 """
 import sys, io, argparse, json
 from datetime import date, datetime, timezone, timedelta
@@ -13,11 +13,10 @@ CST = timezone(timedelta(hours=8))
 _LOCAL_SHARED = r'D:\AI-Tools\shared'
 if os.path.isdir(_LOCAL_SHARED):
     sys.path.insert(0, _LOCAL_SHARED)
-# 注意：daily_plan 会包裹 stdout；本模块直接复用，不再重复包裹
 from feishu_sdk import FeishuClient, TABLES
 from review_io import ReviewService
 import study_planner as sp
-import daily_plan  # 复用队列读取
+import daily_plan
 
 
 def plain(v):
@@ -27,27 +26,20 @@ def plain(v):
 
 
 def parse_deadline(deadline):
-    """解析飞书API返回的截止日期字段，支持毫秒时间戳(数字)和字符串两种格式。
-    返回datetime对象或None。
-    V13 v8.0修复: 飞书API返回的截止日期是毫秒时间戳数字(如1789082634116)，不是字符串。
-    """
+    """解析飞书API返回的截止日期字段，支持毫秒时间戳(数字)和字符串。"""
     if deadline is None:
         return None
-    # 情况1: 毫秒时间戳数字(飞书API标准格式)
     if isinstance(deadline, (int, float)):
-        if deadline > 1e12:  # 毫秒时间戳
+        if deadline > 1e12:
             return datetime.fromtimestamp(deadline / 1000, tz=CST)
-        elif deadline > 1e9:  # 秒时间戳
+        elif deadline > 1e9:
             return datetime.fromtimestamp(deadline, tz=CST)
-    # 情况2: 字符串格式
     if isinstance(deadline, str):
-        # 尝试多种格式
         for fmt in ['%Y-%m-%d', '%Y-%m-%d %H:%M:%S', '%Y/%m/%d']:
             try:
                 return datetime.strptime(deadline[:19], fmt).replace(tzinfo=CST)
             except ValueError:
                 continue
-        # 尝试纯数字字符串
         try:
             ts = float(deadline)
             if ts > 1e12:
@@ -58,9 +50,7 @@ def parse_deadline(deadline):
 
 
 def get_due_tasks(c, today):
-    """查询今日到期任务（V13 v8.0新增）。
-    正确处理毫秒时间戳，返回今日到期的任务列表。
-    """
+    """查询今日到期任务。"""
     due_tasks = []
     try:
         tasks = c.read_records(TABLES['任务总表'], page_size=200)
@@ -68,7 +58,6 @@ def get_due_tasks(c, today):
         for task in tasks:
             f = task.get('fields', {})
             status = str(f.get('状态', ''))
-            # 跳过已完成/已取消的任务
             if status in ('已完成', '已取消', '完成'):
                 continue
             deadline = f.get('截止日期', f.get('计划完成时间', None))
@@ -76,15 +65,44 @@ def get_due_tasks(c, today):
             if dt and dt.strftime('%Y-%m-%d') == today_str:
                 title = str(f.get('任务名称', f.get('标题', '无标题')))[:30]
                 priority = str(f.get('优先级', f.get('重要程度', '')))
-                due_tasks.append({
-                    'title': title,
-                    'deadline': dt.strftime('%H:%M'),
-                    'priority': priority,
-                    'status': status,
-                })
+                due_tasks.append({'title': title, 'deadline': dt.strftime('%H:%M'), 'priority': priority})
     except Exception as e:
         print(f'[到期任务查询异常] {e}', file=sys.stderr)
     return due_tasks
+
+
+def check_idempotent(c, today):
+    """V13 v9.0新增: 幂等检查。查系统健康表是否已有今日早报推送记录。
+    幂等键 = "早报推送-YYYY-MM-DD"。已存在则返回True(跳过)，不存在返回False(继续推送)。
+    """
+    idem_key = f'早报推送-{today.isoformat()}'
+    try:
+        records = c.read_records(TABLES['系统健康表'], page_size=100)
+        for r in records:
+            f = r.get('fields', {})
+            check_item = str(f.get('检查项', ''))
+            if check_item == idem_key:
+                return True  # 今日已推送，跳过
+    except Exception as e:
+        print(f'[幂等检查异常] {e}', file=sys.stderr)
+    return False
+
+
+def mark_idempotent(c, today):
+    """V13 v9.0新增: 推送成功后写入幂等记录。"""
+    idem_key = f'早报推送-{today.isoformat()}'
+    now_ms = int(datetime.now(CST).timestamp() * 1000)
+    try:
+        c.create_record(TABLES['系统健康表'], {
+            '检查项': idem_key,
+            '状态': '正常',
+            '最近检查时间': now_ms,
+            '检查结果': '早报推送成功',
+        })
+        return True
+    except Exception as e:
+        print(f'[幂等记录写入异常] {e}', file=sys.stderr)
+        return False
 
 
 def build_brief(today, quota=3):
@@ -110,11 +128,9 @@ def build_brief(today, quota=3):
         cards.append(card)
         by_id[cid] = card
     plan = sp.daily_plan(cards, today, quota=quota)
-    # 覆盖矩阵（按现有科目聚合）
     domains = ['考证', '认知', '酒店工程', '财商', '沟通']
     m = sp.coverage_matrix(cards, domains)
     gaps = [d for d in domains if m[d]['gap']]
-    # 系统健康（探针单文件合并）
     health = '—'
     try:
         import subprocess
@@ -125,13 +141,11 @@ def build_brief(today, quota=3):
             line = [l for l in out.splitlines() if l.strip().startswith('{')][-1]
             d = json.loads(line)
             ok_all = all(d.get(k) for k in ('hermes_gateway', 'anyllm', 'feishu', 'deepseek'))
-            health = 'OK(四路)' if ok_all else '部分FAIL(%s)' % ','.join(
-                k for k, v in d.items() if not v)
+            health = 'OK(四路)' if ok_all else '部分FAIL(%s)' % ','.join(k for k, v in d.items() if not v)
         except Exception:
             health = 'probe解析异常'
     except Exception:
         health = 'probe超时'
-    # V13 v8.0新增: 今日到期任务
     due_tasks = get_due_tasks(c, today)
     lines = []
     lines.append('【%s 早报 · 学习入口】' % today.isoformat())
@@ -140,7 +154,6 @@ def build_brief(today, quota=3):
         lines.append('  · %s' % (by_id[cid]['标题'] or cid))
     if plan['note']:
         lines.append('提示：%s' % plan['note'])
-    # V13 v8.0新增: 到期任务部分
     if due_tasks:
         lines.append('今日到期 %d 个任务：' % len(due_tasks))
         for t in due_tasks[:5]:
@@ -161,14 +174,20 @@ def main():
     ap.add_argument('--send', action='store_true')
     a = ap.parse_args()
     today = date.fromisoformat(a.date) if a.date else date.today()
+    
+    # V13 v9.0新增: 幂等检查（仅在--send模式下）
+    if a.send:
+        c = FeishuClient()
+        if check_idempotent(c, today):
+            print(f'[幂等跳过] 今日({today.isoformat()})早报已推送，跳过')
+            print('MORNING_BRIEF_DONE')
+            return
+    
     text = build_brief(today)
     print(text)
     if a.send:
-        # 接飞书 webhook（自定义机器人，加签模式：timestamp+sign；避整点，单条<=20KB）
-        import requests, json as _json, time as _time, urllib.parse
-        from feishu_sdk import gen_sign
-        from feishu_sdk import get_bot_config
-
+        import requests
+        from feishu_sdk import gen_sign, get_bot_config
         cfg = get_bot_config()
         try:
             webhook = cfg.get('webhook') or cfg.get('url')
@@ -176,12 +195,14 @@ def main():
                 print('\n[推送失败] feishu_bot_config.json 无 webhook 键')
             else:
                 ts, sign = gen_sign(cfg.get('secret', ''))
-                # gen_sign 已做 quote_plus；sign 参数直接拼（勿二次编码）
                 url = '%s?timestamp=%s&sign=%s' % (webhook, ts, sign)
-                r = requests.post(url, json={'msg_type': 'text',
-                                             'content': {'text': text}},
-                                  timeout=10)
+                r = requests.post(url, json={'msg_type': 'text', 'content': {'text': text}}, timeout=10)
                 print('\n[已推送] HTTP %s %s' % (r.status_code, r.text[:120]))
+                # V13 v9.0新增: 推送成功后写入幂等记录
+                if r.status_code == 200:
+                    c = FeishuClient()
+                    mark_idempotent(c, today)
+                    print(f'[幂等记录] 已写入 早报推送-{today.isoformat()}')
         except Exception as e:
             print('\n[推送失败] %s' % e)
     print('MORNING_BRIEF_DONE')
