@@ -1,0 +1,36 @@
+name: Morning Brief (早报云端兜底)
+on:
+  schedule:
+    - cron: "53 23 * * *"   # 07:53 北京 = 23:53 UTC 前一日（错峰非整点）
+  workflow_dispatch:
+concurrency:
+  group: morning_brief
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  morning_brief:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install deps
+        run: |
+          pip install --quiet --disable-pip-version-check pyyaml
+      - name: Run morning_brief (幂等：今日已推送则跳过)
+        env:
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+          FEISHU_WEBHOOK: ${{ secrets.FEISHU_WEBHOOK }}
+          FEISHU_WEBHOOK_SECRET: ${{ secrets.FEISHU_WEBHOOK_SECRET }}
+        run: python scripts/morning_brief.py
+      - name: Retry with jitter (1/5/15min)
+        if: failure()
+        run: |
+          echo "job morning_brief failed at $(date -u +%%H:%%M:%%S) UTC; will be picked by next cycle"

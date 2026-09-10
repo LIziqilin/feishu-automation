@@ -1,7 +1,7 @@
 ﻿name: Noon Digest (午报)
 on:
   schedule:
-    - cron: "23 4 * * *"   # 12:23 北京 = 04:23 UTC（错峰）
+    - cron: "26 4 * * *"   # 12:26 北京 = 04:26 UTC（与本地12:23错开3分钟，防双跑）
   workflow_dispatch:
 concurrency:
   group: noon
