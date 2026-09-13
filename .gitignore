@@ -116,3 +116,7 @@ verify_*.py
 scripts/v2_*.py
 scripts/v3_*.py
 scripts/v4_*.py
+
+# 测试基线工具
+scripts/read_baseline.py
+scripts/regression_baseline.py
