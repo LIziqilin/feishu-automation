@@ -46,15 +46,25 @@ alerts.log
 backups/
 *.backup
 
-# 临时测试脚本（V30/V33验证专项临时文件，不提交）
+# 临时测试脚本（V30/V33/V35验证专项临时文件，不提交）
 scripts/v30_*.py
 scripts/v33_*.py
+scripts/v35_*.py
 scripts/fix_hardcoded_tokens.py
 scripts/fix_*.py
 scripts/check_*.py
 scripts/verify_*.py
+scripts/s*_check.py
+scripts/s*_test.py
+scripts/test_*.py
+scripts/v5_*.py
+scripts/v6_*.py
+scripts/cleanup_*.py
 scripts/h*_*.py
 scripts/tmp_*.py
+scripts/e2e_*.py
+scripts/evidence*.py
+scripts/restore_*.py
 
 # 结果和数据文件
 *_result.json
@@ -101,3 +111,8 @@ docs/*密钥*.md
 # 验证临时目录
 verify_v*/
 verify_*.py
+
+# V2-V5验证测试脚本
+scripts/v2_*.py
+scripts/v3_*.py
+scripts/v4_*.py
