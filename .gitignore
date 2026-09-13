@@ -33,7 +33,6 @@ wheels/
 config.json
 credentials.json
 config_local.py
-config_local.*.py
 
 # 系统文件
 .system_state.json
@@ -62,7 +61,6 @@ scripts/tmp_*.py
 *_report.json
 *_audit.json
 scripts/*.json
-!scripts/config_local.example.py
 data_audit_report.json
 scenario_test_report.json
 test_report.json
