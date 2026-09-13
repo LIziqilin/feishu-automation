@@ -1,0 +1,105 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 配置和凭据
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+*.secret
+config.json
+credentials.json
+config_local.py
+config_local.*.py
+
+# 系统文件
+.system_state.json
+.consume_index.json
+.dlq_queue.json
+.fatigue_state.json
+alerts.log
+*.log
+
+# 备份
+backups/
+*.backup
+
+# 临时测试脚本（V30/V33验证专项临时文件，不提交）
+scripts/v30_*.py
+scripts/v33_*.py
+scripts/fix_hardcoded_tokens.py
+scripts/fix_*.py
+scripts/check_*.py
+scripts/verify_*.py
+scripts/h*_*.py
+scripts/tmp_*.py
+
+# 结果和数据文件
+*_result.json
+*_report.json
+*_audit.json
+scripts/*.json
+!scripts/config_local.example.py
+data_audit_report.json
+scenario_test_report.json
+test_report.json
+unit_test_report.json
+audit_log.jsonl
+task_inventory.json
+formula_fields_backup.json
+phase_gate_report.md
+completion_matrix.md
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 临时文件
+*.tmp
+*.temp
+*.bak
+*.bak_*
+deploy_to_github.bat
+deploy_to_github.ps1
+github_fix/
+
+# 包含敏感信息的文档
+docs/备份恢复运维手册.md
+docs/*敏感*.md
+docs/*凭据*.md
+docs/*密钥*.md
+
+# 验证临时目录
+verify_v*/
+verify_*.py

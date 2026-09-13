@@ -1,0 +1,61 @@
+name: V16 日常维护
+
+on:
+  schedule:
+    - cron: '0 19 * * *'  # UTC 19:00 = 北京时间 03:00
+  workflow_dispatch:  # 支持手动触发
+
+env:
+  BASE_TOKEN: ${{ secrets.BASE_TOKEN }}
+  LARK_APP_ID: ${{ secrets.LARK_APP_ID }}
+  LARK_APP_SECRET: ${{ secrets.LARK_APP_SECRET }}
+
+jobs:
+  daily-maintenance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 安装lark-cli
+        run: |
+          npm install -g @larksuite/lark-cli
+          lark-cli --version
+
+      - name: 配置lark-cli
+        run: |
+          mkdir -p ~/.lark-cli
+          cat > ~/.lark-cli/config.json << EOF
+          {
+            "app_id": "${{ secrets.LARK_APP_ID }}",
+            "app_secret": "${{ secrets.LARK_APP_SECRET }}"
+          }
+          EOF
+
+      - name: 运行日常维护（derive重算+备份）
+        run: |
+          cd scripts
+          python run_maintenance_wrapper.py
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: 上传备份文件
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-backup
+          path: backups/
+          retention-days: 30
+
+      - name: 上传日志
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maintenance-log
+          path: scripts/task_maintenance_debug.log
+          retention-days: 7

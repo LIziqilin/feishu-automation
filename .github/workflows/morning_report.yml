@@ -1,0 +1,54 @@
+name: V16 早报推送
+
+on:
+  schedule:
+    - cron: '30 23 * * *'  # UTC 23:30 = 北京时间 07:30
+  workflow_dispatch:  # 支持手动触发
+
+env:
+  BASE_TOKEN: ${{ secrets.BASE_TOKEN }}
+  CHAT_ID: ${{ secrets.CHAT_ID }}
+  LARK_APP_ID: ${{ secrets.LARK_APP_ID }}
+  LARK_APP_SECRET: ${{ secrets.LARK_APP_SECRET }}
+
+jobs:
+  morning-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 安装lark-cli
+        run: |
+          npm install -g @larksuite/lark-cli
+          lark-cli --version
+
+      - name: 配置lark-cli
+        run: |
+          mkdir -p ~/.lark-cli
+          cat > ~/.lark-cli/config.json << EOF
+          {
+            "app_id": "${{ secrets.LARK_APP_ID }}",
+            "app_secret": "${{ secrets.LARK_APP_SECRET }}"
+          }
+          EOF
+
+      - name: 运行早报推送
+        run: |
+          cd scripts
+          python run_morning_wrapper.py
+        env:
+          PYTHONIOENCODING: utf-8
+
+      - name: 上传日志
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: morning-report-log
+          path: scripts/task_morning_debug.log
+          retention-days: 7
