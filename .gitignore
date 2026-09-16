@@ -120,3 +120,14 @@ scripts/v4_*.py
 # 测试基线工具
 scripts/read_baseline.py
 scripts/regression_baseline.py
+
+# P0-4 密钥外部化（2026-09-15）
+llm_secrets.env
+*.secrets.env
+scripts/llm_secrets.env
+wecom_secrets.env
+
+# P0-4 密钥外部化补充（2026-09-16）：覆盖 *_credentials.env（含企微自建应用 Secret/AESKey）
+*_credentials.env
+credentials.env
+scripts/wecom_app_credentials.env
