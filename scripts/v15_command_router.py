@@ -130,6 +130,30 @@ def handle_v15_command(text):
         ok, out = _run_sub("insight_to_card.py")
         return True, ("🧩 洞察沉淀完成，高价值洞察已转为知识卡片进入复习循环\n" + "\n".join(out.splitlines()[-6:])) if ok else f"⚠️ 沉淀失败：{out[-200:]}"
 
+    # ---------- V45 问系统（轻量 RAG 知识问答） ----------
+    m = re.match(r"^问系统[：: ]\s*(.+)$", t) or re.match(r"^问系统\s+(.+)$", t)
+    if m:
+        try:
+            import system_rag
+            return True, system_rag.answer(m.group(1).strip()[:200])
+        except Exception as e:
+            return True, f"⚠️ 系统问答失败：{e}"
+
+    # ---------- V45 智能（Coze 复杂 agentic 任务） ----------
+    m = re.match(r"^智能[：: ]\s*(.+)$", t) or re.match(r"^智能\s+(.+)$", t)
+    if m:
+        try:
+            import coze_gateway
+            ok, resp = coze_gateway.run(m.group(1).strip()[:300])
+            return True, resp
+        except Exception as e:
+            return True, f"⚠️ 智能任务失败：{e}"
+
+    # ---------- V45 记忆分层 ----------
+    if t in ("记忆分层", "系统记忆", "记忆"):
+        ok, out = _run_sub("memory_hierarchy.py --push")
+        return True, ("🧠 记忆分层已生成（Obsidian「系统记忆分层」+ 摘要推送）\n" + "\n".join(out.splitlines()[-4:])) if ok else f"⚠️ 记忆分层失败：{out[-200]}"
+
     return False, ""
 
 # 自测

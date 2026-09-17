@@ -297,5 +297,17 @@ run_script("independent_sample.py --n 10 --seed 20260916", timeout=300, descript
 log("--- 步骤28.5: 计划任务自愈 ---")
 run_script("task_selfheal.py --apply --wait 20", timeout=600, description="计划任务自愈(M4)")
 
+# 29. V45 Obsidian 每日笔记同步（三察+任务摘要写入 Obsidian，双向同步深化）
+log("--- 步骤29: Obsidian每日笔记同步 ---")
+run_script("obsidian_sync.py --daily --apply", timeout=180, description="Obsidian每日笔记(V45)")
+
+# 30. V45 记忆分层（Hermes 架构借鉴：短期/长期/程序性三层，写入 Obsidian+推群）
+log("--- 步骤30: 记忆分层 ---")
+run_script("memory_hierarchy.py --push", timeout=180, description="记忆分层(V45)")
+
+# 31. V45 系统知识索引重建（轻量 RAG「问系统」数据源每日刷新）
+log("--- 步骤31: 系统知识索引重建 ---")
+run_script("system_rag.py --rebuild", timeout=120, description="系统RAG索引(V45)")
+
 log(f"=== 维护任务结束，退出码: {exit_code} ===")
 sys.exit(exit_code)
