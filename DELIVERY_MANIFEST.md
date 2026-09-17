@@ -796,3 +796,6 @@
 | V44 | 群指令：新增「三察/今日洞察」「沉淀洞察/洞察转卡片」 | ✅ 路由实测通过 |
 | V44 | 维护链：步骤12.6三察+12.7洞察沉淀+12.8外部数据 | ✅ 语法通过 |
 | V44 | 修复：record-list列式投影解析/batch-update update_records结构/重复卡片清理 | ✅ 全链路验证 |
+
+| V44 | 云端验证：GitHub Actions 手动触发三察推送（push触发→API直连→bot推送） | ✅ run 35238787409 success，23:13 群消息 sender=紫麒麟的智能助手(app)，rules 模式三察到达总控群 |
+| V44 | 云端修复链：npm装lark-cli失败→飞书API直连；config_local缺失→隔离v19依赖；api_send_message分支覆盖丢失→恢复+失败exit1 | ✅ 4轮迭代至全通 |
