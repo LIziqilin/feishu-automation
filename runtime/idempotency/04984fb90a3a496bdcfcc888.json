@@ -1,0 +1,18 @@
+{
+  "key": "04984fb90a3a496bdcfcc888",
+  "action": "prod_task",
+  "target": "真实生产任务样例",
+  "result": {
+    "record_id": "recvvmr4fKAUeP"
+  },
+  "undo": {
+    "op": "update",
+    "table_id": "tblz3H4lV7PCrBrX",
+    "record_id": "recvvmr4fKAUeP",
+    "fields": {
+      "状态": "已取消"
+    }
+  },
+  "ts": "2026-09-16T14:09:42",
+  "expire_at": 1792130982.8830278
+}

@@ -1,0 +1,18 @@
+{
+  "ts": "2026-09-15T20:42:53",
+  "backup_file": "backup_20260915_030018.json",
+  "backup_time": "2026-09-15T03:00:02.178738",
+  "rpo_minutes": 1062.8,
+  "rto_seconds": 0.7,
+  "tables": 8,
+  "records_src": 2784,
+  "records_restored": 2784,
+  "mismatch": {},
+  "checksum": "8abbd87470657ed7",
+  "isolated_db": "runtime\\restore_test\\restore_20260915-204252.db",
+  "pass": true,
+  "rpo_target_min": 15,
+  "rto_target_min": 60,
+  "rpo_meet": false,
+  "rto_meet": true
+}

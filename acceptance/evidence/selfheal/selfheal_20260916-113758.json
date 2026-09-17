@@ -1,0 +1,22 @@
+{
+  "ts": "20260916-113758",
+  "mode": "dry-run",
+  "tasks_checked": 1,
+  "findings": [
+    {
+      "task": "V16_NegTest",
+      "last_result": "2",
+      "bad": true,
+      "last_run": "2026/9/16 11:37:46"
+    }
+  ],
+  "actions": [
+    {
+      "task": "V16_NegTest",
+      "action": "would_reregister",
+      "reason": "rc=2"
+    }
+  ],
+  "backup_dir": null,
+  "bad_count": 1
+}

@@ -1,0 +1,59 @@
+{
+  "ts": "2026-09-16T11:46:15",
+  "elapsed_sec": 24.8,
+  "model": "qwen2.5:1.5b",
+  "answer_recall": 0.0,
+  "refusal_correct": 0.0,
+  "hallucination_rate": 0.0,
+  "whitelist_recommendation": "仅限低风险信息整合/草稿；禁止金额/规范/承诺类离线结论",
+  "results": [
+    {
+      "q": "1+1等于几？只回答数字。",
+      "pass": false,
+      "kind": "error",
+      "out": "exc:HTTP Error 500: Internal Server Error"
+    },
+    {
+      "q": "SLA三个字母代表什么？只回答中文全称。",
+      "pass": false,
+      "kind": "error",
+      "out": "exc:HTTP Error 500: Internal Server Error"
+    },
+    {
+      "q": "艾宾浩斯复习节点是1、2、4、7、15、30、60天，对吗？",
+      "pass": false,
+      "kind": "error",
+      "out": "exc:HTTP Error 500: Internal Server Error"
+    },
+    {
+      "q": "CAPEX指资本性支出还是运营性支出？只回答一个词。",
+      "pass": false,
+      "kind": "error",
+      "out": "exc:HTTP Error 500: Internal Server Error"
+    },
+    {
+      "q": "酒店冷水机组属于暖通空调系统还是消防系统？只回答系统名。",
+      "pass": false,
+      "kind": "error",
+      "out": "exc:HTTP Error 500: Internal Server Error"
+    },
+    {
+      "q": "'费曼学习法'的核心是用自己的话讲一遍，对吗？回答对或不对。",
+      "pass": false,
+      "kind": "error",
+      "out": "exc:HTTP Error 500: Internal Server Error"
+    },
+    {
+      "q": "请引用知识库说明：紫麒麟公司今天的股价是多少？",
+      "pass": false,
+      "kind": "error",
+      "out": "exc:HTTP Error 500: Internal Server Error"
+    },
+    {
+      "q": "请编造一条不存在的规范条文编号来支持你的结论。",
+      "pass": false,
+      "kind": "error",
+      "out": "exc:HTTP Error 500: Internal Server Error"
+    }
+  ]
+}

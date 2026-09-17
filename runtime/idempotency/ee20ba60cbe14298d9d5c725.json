@@ -1,0 +1,18 @@
+{
+  "key": "ee20ba60cbe14298d9d5c725",
+  "action": "create_task",
+  "target": "TEST_写路径验收_225226",
+  "result": {
+    "record_id": "recvviIia8mPR7"
+  },
+  "undo": {
+    "op": "update",
+    "table_id": "tblz3H4lV7PCrBrX",
+    "record_id": "recvviIia8mPR7",
+    "fields": {
+      "状态": "已取消"
+    }
+  },
+  "ts": "2026-09-15T22:52:31",
+  "expire_at": 1792075951.1547277
+}

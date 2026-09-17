@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="UTF-16"?>
+<Task version="1.2" xmlns="http://schemas.microsoft.com/windows/2004/02/mit/task">
+  <RegistrationInfo>
+    <Date>2026-09-17T00:34:37</Date>
+    <Author>DESKTOP-944N6FH\Administrator</Author>
+    <URI>\V16_ObsidianArchive</URI>
+  </RegistrationInfo>
+  <Principals>
+    <Principal id="Author">
+      <UserId>S-1-5-21-676991609-1169746892-1184995901-500</UserId>
+      <LogonType>InteractiveToken</LogonType>
+    </Principal>
+  </Principals>
+  <Settings>
+    <DisallowStartIfOnBatteries>true</DisallowStartIfOnBatteries>
+    <StopIfGoingOnBatteries>true</StopIfGoingOnBatteries>
+    <MultipleInstancesPolicy>IgnoreNew</MultipleInstancesPolicy>
+    <IdleSettings>
+      <Duration>PT10M</Duration>
+      <WaitTimeout>PT1H</WaitTimeout>
+      <StopOnIdleEnd>true</StopOnIdleEnd>
+      <RestartOnIdle>false</RestartOnIdle>
+    </IdleSettings>
+  </Settings>
+  <Triggers>
+    <TimeTrigger>
+      <StartBoundary>2026-09-17T02:00:00</StartBoundary>
+      <Repetition>
+        <Interval>PT1H</Interval>
+      </Repetition>
+    </TimeTrigger>
+  </Triggers>
+  <Actions Context="Author">
+    <Exec>
+      <Command>"C:\Users\Administrator\AppData\Local\Programs\Python\Python310\python.exe"</Command>
+      <Arguments>"D:\AI-Tools\feishu\V13方案增强\scripts\obsidian_reverse_archive.py" --apply</Arguments>
+    </Exec>
+  </Actions>
+</Task>

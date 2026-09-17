@@ -1,0 +1,42 @@
+{
+  "ts": "20260916-095602",
+  "date": "2026-09-16",
+  "since": "2026-09-16T08:53:06",
+  "continuous_days": 0.04,
+  "target_days": 30,
+  "tasks": [
+    {
+      "task": "V16_DailyMaintenance",
+      "last_run": "2026/9/16 3:00:02",
+      "last_result": "0",
+      "next_run": "2026/9/17 3:00:00",
+      "status": "就绪"
+    },
+    {
+      "task": "V16_HourlyBackup",
+      "last_run": "2026/9/16 9:15:00",
+      "last_result": "0",
+      "next_run": "2026/9/16 10:15:00",
+      "status": "就绪"
+    },
+    {
+      "task": "V16_ServiceWatchdog",
+      "last_run": "2026/9/16 9:45:00",
+      "last_result": "0",
+      "next_run": "2026/9/16 10:00:00",
+      "status": "就绪"
+    },
+    {
+      "task": "V16_BootRecover",
+      "last_run": "1999/11/30 0:00:00",
+      "last_result": "267011",
+      "next_run": "N/A",
+      "status": "就绪"
+    }
+  ],
+  "alive_tasks": 4,
+  "met": false,
+  "logged_days": [
+    "2026-09-16"
+  ]
+}

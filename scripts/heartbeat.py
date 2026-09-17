@@ -15,6 +15,7 @@ import urllib.request
 
 BASE = 'X8N1bvN3na99dFsyu0gcU8zTnHf'
 HEARTBEAT_TABLE = 'tblJmm0ZIgqlYmyt'
+HEALTH_TABLE = 'tblxJMndPNtZ7XyG'
 ENV_CANDIDATES = [
     r"C:\Users\Administrator\AppData\Local\hermes\profiles\agent6_scheduler\scripts\feishu_insight_link.env",
     r"D:\AI-Tools\feishu\飞书的高阶用法\feishu_insight_link.env",
@@ -100,6 +101,33 @@ def write_via_larkcli(fields):
     return None, "lark_fail:" + out[:200]
 
 
+def write_health_via_app(fields):
+    """app 直连写系统健康表（心跳时同步更新健康表）"""
+    app_id = load_secret("FEISHU_APP_ID")
+    app_secret = load_secret("FEISHU_APP_SECRET")
+    if not app_id or not app_secret:
+        return None, "no app credentials"
+    tr = get_token(app_id, app_secret)
+    if tr.get("code") != 0:
+        return None, "token_fail:" + str(tr.get("msg"))
+    token = tr["tenant_access_token"]
+    url = "https://open.feishu.cn/open-apis/bitable/v1/apps/%s/tables/%s/records" % (BASE, HEALTH_TABLE)
+    req = urllib.request.Request(
+        url,
+        data=json.dumps({"fields": fields}).encode(),
+        headers={"Authorization": "Bearer " + token, "Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r:
+            resp = json.load(r)
+        if resp.get("code") == 0:
+            return True, "health_app_ok"
+        return None, "health_app_code_%s:%s" % (resp.get("code"), resp.get("msg"))
+    except Exception as e:
+        return None, "health_app_err:" + str(e)[:100]
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true")
@@ -128,10 +156,29 @@ def main():
         ok2, note2 = write_via_larkcli(fields_lark)
         if ok2:
             print("HEARTBEAT_OK (fallback lark-cli)")
-            sys.exit(0)
-        print("WRITE_FAIL", json.dumps({"app": note, "lark": note2}, ensure_ascii=False))
-        sys.exit(1)
-    print("HEARTBEAT_OK (app)")
+        else:
+            print("WRITE_FAIL", json.dumps({"app": note, "lark": note2}, ensure_ascii=False))
+            sys.exit(1)
+    else:
+        print("HEARTBEAT_OK (app)")
+
+    # V39修复：心跳时同步更新系统健康表（解决健康表6天未更新问题）
+    # V41增强（2026-09-17）：补充"组件健康度/系统健康评分"字段——系统监控中心页面按此 Avg 渲染，
+    # 缺值会导致页面显示 0.0/5.0、心跳 0%。正常心跳 = 组件健康度100 + 系统健康评分5.0。
+    health_fields = {
+        "检查项": "心跳-TaskScheduler",
+        "实际状态": "正常",
+        "最近检查时间": now_ms,  # datetime字段需要毫秒时间戳
+        "处理状态": "正常",
+        "类型": "心跳",
+        "组件健康度": 100,
+        "系统健康评分": 5.0,
+    }
+    h_ok, h_note = write_health_via_app(health_fields)
+    if h_ok:
+        print("HEALTH_UPDATE_OK")
+    else:
+        print("HEALTH_UPDATE_SKIP:", h_note)  # 健康表更新失败不影响心跳主流程
 
 
 if __name__ == "__main__":

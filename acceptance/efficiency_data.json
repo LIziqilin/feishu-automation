@@ -1,0 +1,16 @@
+{
+  "_meta": {
+    "method": "estimated",
+    "manual_source": "用户 2026-09-16 09:40 自报（经验值）",
+    "assisted_source": "未测（留空）",
+    "auto_source": "系统侧保守估算（含人工残值：发指令/确认/校对/阅读）",
+    "note": "人工为自报经验值，属弱证据；auto 为保守估算。已在报告中如实标注置信度。",
+    "unit": "minute"
+  },
+  "建任务": {"manual_min": 10.0, "assisted_min": null, "auto_min": 1.0, "error_rate": 0.0, "n": 1},
+  "销项": {"manual_min": 10.0, "assisted_min": null, "auto_min": 1.0, "error_rate": 0.0, "n": 1},
+  "纪要整理": {"manual_min": 15.0, "assisted_min": null, "auto_min": 3.0, "error_rate": 0.0, "n": 1},
+  "三报生成": {"manual_min": 15.0, "assisted_min": null, "auto_min": 1.0, "error_rate": 0.0, "n": 1},
+  "知识问答": {"manual_min": 30.0, "assisted_min": null, "auto_min": 2.0, "error_rate": 0.0, "n": 1},
+  "卡片复习": {"manual_min": 30.0, "assisted_min": null, "auto_min": 2.0, "error_rate": 0.0, "n": 1}
+}

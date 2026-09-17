@@ -1,0 +1,18 @@
+{
+  "key": "01c6c1eea70b3f48ddea3198",
+  "action": "create_task",
+  "target": "TEST_写路径验收_090114",
+  "result": {
+    "record_id": "recvvlbycD2lcM"
+  },
+  "undo": {
+    "op": "update",
+    "table_id": "tblz3H4lV7PCrBrX",
+    "record_id": "recvvlbycD2lcM",
+    "fields": {
+      "状态": "已取消"
+    }
+  },
+  "ts": "2026-09-16T09:01:21",
+  "expire_at": 1792112481.8187566
+}

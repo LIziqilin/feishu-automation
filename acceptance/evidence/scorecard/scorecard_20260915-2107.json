@@ -1,0 +1,52 @@
+{
+  "ts": "2026-09-15T21:07:58",
+  "veto": [
+    {
+      "item": "#1 无硬编码密钥",
+      "pass": true
+    },
+    {
+      "item": "#2 越权/外发受控",
+      "pass": true
+    },
+    {
+      "item": "#3 备份可恢复",
+      "pass": true
+    },
+    {
+      "item": "#4 高风险可回滚",
+      "pass": true
+    },
+    {
+      "item": "#5 RAG有来源/拒答",
+      "pass": true
+    },
+    {
+      "item": "#6 黄金/边界测试集",
+      "pass": true
+    },
+    {
+      "item": "#7 告警/责任人",
+      "pass": true
+    }
+  ],
+  "veto_pass": true,
+  "dimensions": {
+    "工作场景(25)": 10.0,
+    "系统稳定性(22)": 10.0,
+    "落地可能性(18)": 8.5,
+    "效率提升性(15)": null,
+    "使用场景(12)": 10.0,
+    "使用便捷性(8)": 10.0
+  },
+  "min_dimension": 8.5,
+  "pending_dimensions": [
+    "效率提升性(15)"
+  ],
+  "weights_covered": 0.85,
+  "full_house_6dims_ge8": false,
+  "strict_score": 9.68,
+  "uptime_days": 0.03,
+  "stage": "M2",
+  "release": "有条件放行（需连续30天+独立复现方可10.0）"
+}

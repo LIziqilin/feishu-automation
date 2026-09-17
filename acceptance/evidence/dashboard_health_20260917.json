@@ -1,0 +1,1062 @@
+{
+  "checked_at": "2026-09-17 08:09:47",
+  "dashboards": [
+    {
+      "id": "blkYtXPlVlKu25x5",
+      "name": "总仪表盘",
+      "blocks": [
+        {
+          "block_id": "chtcn5rjnbbHHIDpqD3N66mozVh",
+          "name": "?",
+          "cli_type": null,
+          "status": "DATA_FAIL",
+          "type": "statistics",
+          "data_config": {
+            "number_format": {
+              "formatName": "digital"
+            },
+            "series": [
+              {
+                "field_name": "使用次数",
+                "rollup": "MAX"
+              }
+            ],
+            "table_name": "知识索引表"
+          },
+          "error": {
+            "type": "api",
+            "subtype": "unknown",
+            "code": 1,
+            "message": "remote or network error[remote]: error_code=1204 cds_key=THRIFT_EGRESS|bitable.facade.adapter:default:hl:|sheet.support.block:default:::|GetChartDataV3|prod| reason=request timeout connect_timeout=50ms(from cp) request_timeout=1000ms(from cp) real_time=1001006us fault_delay=0ms",
+            "hint": "服务内部错误，请稍后重试",
+            "log_id": "2026091708094903C8839174F3A6245816"
+          }
+        },
+        {
+          "block_id": "chtcnHy3l4SSjNgWOBNp1Sm9pSf",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "statistics",
+          "data_config": {
+            "count_all": true,
+            "filter": {
+              "conditions": [
+                {
+                  "field_name": "状态",
+                  "operator": "is",
+                  "value": [
+                    "有效"
+                  ]
+                }
+              ],
+              "conjunction": "and"
+            },
+            "number_format": {
+              "formatName": "digital"
+            },
+            "table_name": "知识索引表"
+          },
+          "data_rows": 1,
+          "data_sample": [
+            {
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 0
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcne2N19eBaiwlWa0g2IZBXPj",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "statistics",
+          "data_config": {
+            "count_all": true,
+            "filter": {
+              "conditions": [
+                {
+                  "field_name": "最后更新日期",
+                  "operator": "isGreater",
+                  "value": [
+                    "ExactDate",
+                    1785600000000
+                  ]
+                },
+                {
+                  "field_name": "状态",
+                  "operator": "is",
+                  "value": [
+                    "待更新"
+                  ]
+                }
+              ],
+              "conjunction": "and"
+            },
+            "number_format": {
+              "formatName": "digital"
+            },
+            "table_name": "知识索引表"
+          },
+          "data_rows": 1,
+          "data_sample": [
+            {
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 0
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcnG9dBSDixlOE4u3sVzMNHOf",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "statistics",
+          "data_config": {
+            "count_all": true,
+            "filter": {
+              "conditions": [
+                {
+                  "field_name": "状态",
+                  "operator": "is",
+                  "value": [
+                    "待办"
+                  ]
+                }
+              ],
+              "conjunction": "and"
+            },
+            "number_format": {
+              "formatName": "digital"
+            },
+            "table_name": "任务总表"
+          },
+          "data_rows": 1,
+          "data_sample": [
+            {
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 5
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcniKX6EctE9vcnODtJ7pU1le",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "statistics",
+          "data_config": {
+            "count_all": true,
+            "filter": {
+              "conditions": [
+                {
+                  "field_name": "今日待复习",
+                  "operator": "is",
+                  "value": [
+                    "true"
+                  ]
+                }
+              ],
+              "conjunction": "and"
+            },
+            "number_format": {
+              "formatName": "digital"
+            },
+            "table_name": "学习卡片表"
+          },
+          "data_rows": 1,
+          "data_sample": [
+            {
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 7
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcnJq7wBvOcEkciEdcY14vuFP",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "statistics",
+          "data_config": {
+            "count_all": true,
+            "filter": {
+              "conditions": [
+                {
+                  "field_name": "处理状态",
+                  "operator": "is",
+                  "value": [
+                    "待人工"
+                  ]
+                }
+              ],
+              "conjunction": "and"
+            },
+            "number_format": {
+              "formatName": "digital"
+            },
+            "table_name": "系统健康表"
+          },
+          "data_rows": 1,
+          "data_sample": [
+            {
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 1
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcnTHx8uM2TWLX1lzvYb7wpOL",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "pie",
+          "data_config": {
+            "count_all": true,
+            "group_by": [
+              {
+                "field_name": "状态",
+                "mode": "integrated"
+              }
+            ],
+            "table_name": "任务总表"
+          },
+          "data_rows": 6,
+          "data_sample": [
+            {
+              "dim_54q25oCB": {
+                "value": "已归档"
+              },
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 1
+              }
+            },
+            {
+              "dim_54q25oCB": {
+                "value": "完成"
+              },
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 1
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcnObKxWArxY3812KA7ZDyTpd",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "column",
+          "data_config": {
+            "count_all": true,
+            "group_by": [
+              {
+                "field_name": "掌握度档位",
+                "mode": "integrated",
+                "sort": {
+                  "order": "asc",
+                  "type": "group"
+                }
+              }
+            ],
+            "table_name": "学习卡片表"
+          },
+          "data_rows": 19,
+          "data_sample": [
+            {
+              "dim_5o6M5o+h5bqm5qGj5L2N": {
+                "value": "巩固中"
+              },
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 1
+              }
+            },
+            {
+              "dim_5o6M5o+h5bqm5qGj5L2N": {
+                "value": "巩固中"
+              },
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 1
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcnb645mOGBeAmt7MZT86M6kh",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "line",
+          "data_config": {
+            "count_all": true,
+            "filter": {
+              "conditions": [
+                {
+                  "field_name": "近30天已复习",
+                  "operator": "is",
+                  "value": [
+                    "true"
+                  ]
+                }
+              ],
+              "conjunction": "and"
+            },
+            "group_by": [
+              {
+                "field_name": "上次复习日期",
+                "mode": "integrated",
+                "sort": {
+                  "order": "asc",
+                  "type": "group"
+                }
+              }
+            ],
+            "table_name": "学习卡片表"
+          },
+          "data_rows": 7,
+          "data_sample": [
+            {
+              "dim_5LiK5qyh5aSN5Lmg5pel5pyf": {
+                "value": "2026/09/10"
+              },
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 1
+              }
+            },
+            {
+              "dim_5LiK5qyh5aSN5Lmg5pel5pyf": {
+                "value": "2026/09/10"
+              },
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 1
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcnW3NOhaEUE24OCtCaLL5fYb",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "statistics",
+          "data_config": {
+            "count_all": true,
+            "number_format": {
+              "formatName": "digital_without_separator",
+              "precision": 0
+            },
+            "table_name": "系统健康表"
+          },
+          "data_rows": 1,
+          "data_sample": [
+            {
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 812
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcnHYjVHwA6BxEo1pNeVS88zc",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "statistics",
+          "data_config": {
+            "filter": {
+              "conditions": [
+                {
+                  "field_name": "处理状态",
+                  "operator": "is",
+                  "value": [
+                    "待人工"
+                  ]
+                }
+              ],
+              "conjunction": "and"
+            },
+            "number_format": {
+              "formatName": "digital_without_separator"
+            },
+            "series": [
+              {
+                "field_name": "AI点数",
+                "rollup": "SUM"
+              }
+            ],
+            "table_name": "系统健康表"
+          },
+          "data_rows": 1,
+          "data_sample": [
+            {
+              "me_c3VtX0FJ54K55pWw": {
+                "value": 0
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcnQinDjE2VY9Pu0poWtPM3xh",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "statistics",
+          "data_config": {
+            "count_all": true,
+            "filter": {
+              "conditions": [
+                {
+                  "field_name": "检查项",
+                  "operator": "is",
+                  "value": [
+                    "熔断状态"
+                  ]
+                }
+              ],
+              "conjunction": "and"
+            },
+            "number_format": {
+              "formatName": "digital_without_separator"
+            },
+            "table_name": "系统健康表"
+          },
+          "data_rows": 1,
+          "data_sample": [
+            {
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 1
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcnqPNW9cYSPRmLG9Q9lBVt1d",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "column",
+          "data_config": {
+            "count_all": true,
+            "group_by": [
+              {
+                "field_name": "优先级",
+                "mode": "integrated",
+                "sort": {
+                  "type": "group"
+                }
+              }
+            ],
+            "table_name": "任务总表"
+          },
+          "data_rows": 5,
+          "data_sample": [
+            {
+              "dim_5LyY5YWI57qn": {
+                "value": "高"
+              },
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 17
+              }
+            },
+            {
+              "dim_5LyY5YWI57qn": {
+                "value": "中"
+              },
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 33
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcnbmhNuD556OIEurApxPkwXe",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "line",
+          "data_config": {
+            "count_all": true,
+            "group_by": [
+              {
+                "field_name": "开始日期",
+                "mode": "integrated",
+                "sort": {
+                  "type": "group"
+                }
+              }
+            ],
+            "table_name": "任务总表"
+          },
+          "data_rows": 8,
+          "data_sample": [
+            {
+              "dim_5byA5aeL5pel5pyf": {
+                "value": "2026/08/28"
+              },
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 1
+              }
+            },
+            {
+              "dim_5byA5aeL5pel5pyf": {
+                "value": "2026/08/31"
+              },
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 1
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcnb5S9ZBbzxMJGPzkZzRTslh",
+          "name": "?",
+          "cli_type": null,
+          "status": "UNKNOWN_TYPE",
+          "type": "unknown",
+          "data_config": {
+            "series": [
+              {
+                "field_name": "任务耗时",
+                "rollup": "SUM"
+              }
+            ],
+            "table_name": "任务总表"
+          },
+          "data_rows": 1,
+          "data_sample": [
+            {
+              "me_c3VtX+S7u+WKoeiAl+aXtg==": {
+                "value": 0
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcn8ekRGVYZDGlUsrZz4ZcD5d",
+          "name": "?",
+          "cli_type": null,
+          "status": "UNKNOWN_TYPE",
+          "type": "unknown",
+          "data_config": {
+            "series": [
+              {
+                "field_name": "任务耗时",
+                "rollup": "SUM"
+              }
+            ],
+            "table_name": "任务总表"
+          },
+          "data_rows": 1,
+          "data_sample": [
+            {
+              "me_c3VtX+S7u+WKoeiAl+aXtg==": {
+                "value": 0
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcnlfviLRYb0OVAn6jeTW4wrh",
+          "name": "?",
+          "cli_type": null,
+          "status": "UNKNOWN_TYPE",
+          "type": "unknown",
+          "data_config": {
+            "group_by": [
+              {
+                "field_name": "科目",
+                "mode": "integrated",
+                "sort": {
+                  "type": "group"
+                }
+              }
+            ],
+            "series": [
+              {
+                "field_name": "完成质量评分",
+                "rollup": "AVERAGE"
+              }
+            ],
+            "table_name": "任务总表"
+          },
+          "data_rows": 7,
+          "data_sample": [
+            {
+              "dim_56eR55uu": {
+                "value": "酒店工程"
+              }
+            },
+            {
+              "dim_56eR55uu": {
+                "value": "考证"
+              },
+              "me_YXZlcmFnZV/lrozmiJDotKjph4/or4TliIY=": {
+                "value": 5
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcnmZtmHxqKsYJJiz9O0bUEYg",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "column",
+          "data_config": {
+            "count_all": true,
+            "group_by": [
+              {
+                "field_name": "当前艾宾浩斯节点",
+                "mode": "integrated",
+                "sort": {
+                  "order": "asc",
+                  "type": "group"
+                }
+              }
+            ],
+            "table_name": "学习卡片表"
+          },
+          "data_rows": 5,
+          "data_sample": [
+            {
+              "dim_5b2T5YmN6Im+5a6+5rWp5pav6IqC54K5": {
+                "value": "1天"
+              },
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 15
+              }
+            },
+            {
+              "dim_5b2T5YmN6Im+5a6+5rWp5pav6IqC54K5": {
+                "value": "2天"
+              },
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 1
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcn5AEiejNIWlXMIWCmC9vKhg",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "pie",
+          "data_config": {
+            "count_all": true,
+            "group_by": [
+              {
+                "field_name": "状态",
+                "mode": "integrated",
+                "sort": {
+                  "order": "asc",
+                  "type": "group"
+                }
+              }
+            ],
+            "table_name": "任务总表"
+          },
+          "data_rows": 6,
+          "data_sample": [
+            {
+              "dim_54q25oCB": {
+                "value": "待办"
+              },
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 5
+              }
+            },
+            {
+              "dim_54q25oCB": {
+                "value": "进行中"
+              },
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "blkwkb3SHQVyVli9",
+      "name": "学习卡片仪表盘",
+      "blocks": [
+        {
+          "block_id": "chtcnld6S71ltCtTakpAu053GDe",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "statistics",
+          "data_config": {
+            "count_all": true,
+            "number_format": {
+              "formatName": "digital"
+            },
+            "table_name": "学习卡片表"
+          },
+          "data_rows": 1,
+          "data_sample": [
+            {
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 19
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcnVLHvY3SIuCU4GA4pOkXZRI",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "pie",
+          "data_config": {
+            "count_all": true,
+            "group_by": [
+              {
+                "field_name": "当前艾宾浩斯节点",
+                "mode": "integrated",
+                "sort": {
+                  "type": "group"
+                }
+              }
+            ],
+            "table_name": "学习卡片表"
+          },
+          "data_rows": 5,
+          "data_sample": [
+            {
+              "dim_5b2T5YmN6Im+5a6+5rWp5pav6IqC54K5": {
+                "value": "1天"
+              },
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 15
+              }
+            },
+            {
+              "dim_5b2T5YmN6Im+5a6+5rWp5pav6IqC54K5": {
+                "value": "2天"
+              },
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 1
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcn9KVlWddP98d3n3DnulF9we",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "column",
+          "data_config": {
+            "count_all": true,
+            "group_by": [
+              {
+                "field_name": "科目",
+                "mode": "integrated",
+                "sort": {
+                  "type": "group"
+                }
+              }
+            ],
+            "table_name": "学习卡片表"
+          },
+          "data_rows": 5,
+          "data_sample": [
+            {
+              "dim_56eR55uu": {
+                "value": "酒店工程"
+              },
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 3
+              }
+            },
+            {
+              "dim_56eR55uu": {
+                "value": "考证"
+              },
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 10
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "blkxDBmVwBsgM1U3",
+      "name": "知识健康度",
+      "blocks": [
+        {
+          "block_id": "chtcnFjm7siRP0zEqK9ST036Yqf",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "statistics",
+          "data_config": {
+            "number_format": {
+              "formatName": "digital"
+            },
+            "series": [
+              {
+                "field_name": "使用次数",
+                "rollup": "MAX"
+              }
+            ],
+            "table_name": "知识索引表"
+          },
+          "data_rows": 1,
+          "data_sample": [
+            {
+              "me_bWF4X+S9v+eUqOasoeaVsA==": {
+                "value": 12
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcnZnZnU1OmYfffmcIGepyY2g",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "statistics",
+          "data_config": {
+            "count_all": true,
+            "filter": {
+              "conditions": [
+                {
+                  "field_name": "状态",
+                  "operator": "is",
+                  "value": [
+                    "有效"
+                  ]
+                }
+              ],
+              "conjunction": "and"
+            },
+            "number_format": {
+              "formatName": "digital"
+            },
+            "table_name": "知识索引表"
+          },
+          "data_rows": 1,
+          "data_sample": [
+            {
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 0
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcnSUt3eYHlzb18gcLQazXpec",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "statistics",
+          "data_config": {
+            "count_all": true,
+            "filter": {
+              "conditions": [
+                {
+                  "field_name": "最后更新日期",
+                  "operator": "isGreater",
+                  "value": [
+                    "ExactDate",
+                    1785600000000
+                  ]
+                }
+              ],
+              "conjunction": "and"
+            },
+            "number_format": {
+              "formatName": "digital"
+            },
+            "table_name": "知识索引表"
+          },
+          "data_rows": 1,
+          "data_sample": [
+            {
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 742
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcnBl8IQdaZS4AI51ObD1jcBe",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "statistics",
+          "data_config": {
+            "filter": {
+              "conditions": [
+                {
+                  "field_name": "截止日期",
+                  "operator": "is",
+                  "value": [
+                    "Today"
+                  ]
+                },
+                {
+                  "field_name": "状态",
+                  "operator": "is",
+                  "value": [
+                    "待办"
+                  ]
+                }
+              ],
+              "conjunction": "and"
+            },
+            "number_format": {
+              "formatName": "digital"
+            },
+            "series": [
+              {
+                "field_name": "完成质量评分",
+                "rollup": "SUM"
+              }
+            ],
+            "table_name": "任务总表"
+          },
+          "data_rows": 1,
+          "data_sample": [
+            {
+              "me_c3VtX+WujOaIkOi0qOmHj+ivhOWIhg==": {
+                "value": 0
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcn1eHkZZbvtmbPTpsBA7lBGr",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "statistics",
+          "data_config": {
+            "count_all": true,
+            "filter": {
+              "conditions": [
+                {
+                  "field_name": "今日待复习",
+                  "operator": "is",
+                  "value": [
+                    "true"
+                  ]
+                }
+              ],
+              "conjunction": "and"
+            },
+            "number_format": {
+              "formatName": "digital"
+            },
+            "table_name": "学习卡片表"
+          },
+          "data_rows": 1,
+          "data_sample": [
+            {
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 7
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcnQ1tSHc9WmjOTuNrQIEdnCd",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "statistics",
+          "data_config": {
+            "count_all": true,
+            "filter": {
+              "conditions": [
+                {
+                  "field_name": "处理状态",
+                  "operator": "is",
+                  "value": [
+                    "待人工"
+                  ]
+                }
+              ],
+              "conjunction": "and"
+            },
+            "number_format": {
+              "formatName": "digital"
+            },
+            "table_name": "系统健康表"
+          },
+          "data_rows": 1,
+          "data_sample": [
+            {
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 1
+              }
+            }
+          ]
+        },
+        {
+          "block_id": "chtcncyQVwBrU9CnoP2vQYBpUkd",
+          "name": "?",
+          "cli_type": null,
+          "status": "OK",
+          "type": "pie",
+          "data_config": {
+            "count_all": true,
+            "group_by": [
+              {
+                "field_name": "类型",
+                "mode": "integrated",
+                "sort": {
+                  "type": "group"
+                }
+              }
+            ],
+            "table_name": "知识索引表"
+          },
+          "data_rows": 1,
+          "data_sample": [
+            {
+              "dim_57G75Z6L": {
+                "value": "笔记"
+              },
+              "me_Y291bnRfYWxsX0JpdGFibGVfRGFzaGJvYXJkX0NvdW50": {
+                "value": 753
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "issues": [
+    {
+      "dashboard": "总仪表盘",
+      "block": "?",
+      "issue": "get-data失败: {'type': 'api', 'subtype': 'unknown', 'code': 1, 'message': 'remote or network error[remote]: error_code=1204 cds_key=THRIFT_EGRESS|bitable.facade.adapter:default:hl:|sheet.support.block:default:::|GetChartDataV3|prod| reason=request timeout connect_timeout=50ms(from cp) request_timeout=1000ms(from cp) real_time=1001006us fault_delay=0ms', 'hint': '服务内部错误，请稍后重试', 'log_id': '2026091708094903C8839174F3A6245816'}"
+    },
+    {
+      "dashboard": "总仪表盘",
+      "block": "?",
+      "issue": "type=unknown（可计算但CLI不识别类型，语义待确认）"
+    },
+    {
+      "dashboard": "总仪表盘",
+      "block": "?",
+      "issue": "type=unknown（可计算但CLI不识别类型，语义待确认）"
+    },
+    {
+      "dashboard": "总仪表盘",
+      "block": "?",
+      "issue": "type=unknown（可计算但CLI不识别类型，语义待确认）"
+    }
+  ]
+}

@@ -2282,6 +2282,48 @@ class DailyPusher:
         "noon": "12:00",
         "evening": "21:00"
     }
+
+    # V39修复：推送幂等保护（今天已推送过则跳过）
+    PUSH_RECORD_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".push_records.json")
+
+    @classmethod
+    def _get_today_records(cls):
+        try:
+            if os.path.exists(cls.PUSH_RECORD_FILE):
+                # utf-8-sig：防止外部写入 BOM 导致 json.load 报 Unexpected UTF-8 BOM
+                with open(cls.PUSH_RECORD_FILE, "r", encoding="utf-8-sig") as f:
+                    data = json.load(f)
+                today = datetime.now().strftime("%Y-%m-%d")
+                return data.get(today, {})
+        except Exception as e:
+            print(f"  [WARN] 幂等记录读取失败(已忽略): {e}")
+        return {}
+
+    @classmethod
+    def _mark_pushed(cls, report_type):
+        try:
+            data = {}
+            if os.path.exists(cls.PUSH_RECORD_FILE):
+                # utf-8-sig：兼容带 BOM 的历史文件（2026-09-16 修复静默失效）
+                with open(cls.PUSH_RECORD_FILE, "r", encoding="utf-8-sig") as f:
+                    data = json.load(f)
+            today = datetime.now().strftime("%Y-%m-%d")
+            if today not in data:
+                data[today] = {}
+            data[today][report_type] = datetime.now().isoformat()
+            cutoff = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
+            data = {k: v for k, v in data.items() if k >= cutoff}
+            # 写回无 BOM 的 utf-8
+            with open(cls.PUSH_RECORD_FILE, "w", encoding="utf-8") as f:
+                json.dump(data, f, ensure_ascii=False, indent=2)
+        except Exception as e:
+            # 不再静默：幂等失效会导致报告重复推送，必须可见
+            print(f"  [WARN] 幂等标记写入失败(将导致重复推送): {e}")
+
+    @classmethod
+    def _already_pushed(cls, report_type):
+        records = cls._get_today_records()
+        return report_type in records
     
     @classmethod
     def generate_morning_report(cls, today_cards=None, yesterday_stats=None):
@@ -2316,6 +2358,18 @@ class DailyPusher:
         else:
             report += "📚 今日待复习: 暂无待复习卡片\n"
         
+        # V44增强：注入每日三察（西安天气+社会/自然/人性洞察）
+        try:
+            sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+            from insight_daily import build_report
+            ins_report, _ = build_report("llm")
+            if ins_report:
+                # 去掉三察标题行（避免与早报标题重复），保留天气+三条洞察
+                body = ins_report.split("\n", 1)[1] if "\n" in ins_report else ins_report
+                report += "\n\n" + body
+        except Exception as e:
+            print(f"  [WARN] 三察段生成失败(已忽略): {e}")
+
         report += "\n💪 新的一天，继续加油！"
         return report
     
@@ -2350,6 +2404,33 @@ class DailyPusher:
             report += "  - 重点关注错题和模糊题\n"
             report += "  - 适当休息，避免疲劳\n"
         
+        # V39增强：合并今日待办+已完成事项
+        try:
+            import sys, os
+            sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+            from task_insight_extension import get_tasks_summary
+            tasks = get_tasks_summary(days_ahead=3)
+            # V15增强：任务进度提醒
+            total_today = len(tasks["today_pending"]) + len(tasks["today_completed"])
+            if total_today > 0:
+                progress = int(len(tasks["today_completed"]) / total_today * 100)
+                report += f"\n📊 今日任务进度: {progress}% ({len(tasks['today_completed'])}/{total_today})\n"
+            if tasks["today_pending"]:
+                report += "\n📋 今日待办:\n"
+                for t in tasks["today_pending"][:5]:
+                    report += f"  ⏰ {t['name']}\n"
+            if tasks["today_completed"]:
+                report += f"\n✅ 今日已完成 ({len(tasks['today_completed'])}项):\n"
+                for t in tasks["today_completed"][:5]:
+                    report += f"  ✓ {t['name']}\n"
+            if tasks["upcoming"]:
+                report += f"\n📅 即将到期 ({len(tasks['upcoming'])}项):\n"
+                for t in tasks["upcoming"][:3]:
+                    days = (t["due_date"] - datetime.now().date()).days if t["due_date"] else "?"
+                    report += f"  • {t['name']} ({days}天后)\n"
+        except Exception as e:
+            report += f"\n📋 待办加载异常: {str(e)[:30]}\n"
+
         report += "\n⏰ 记得按时答题哦！"
         return report
     
@@ -2386,6 +2467,62 @@ class DailyPusher:
         else:
             report += "  - 系统将自动生成明日学习计划\n"
         
+        # V39增强：合并今日已完成+明日待办
+        try:
+            import sys, os
+            sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+            from task_insight_extension import get_tasks_summary
+            tasks = get_tasks_summary(days_ahead=7)
+            # V15增强：今日完成总结
+            total_today = len(tasks["today_pending"]) + len(tasks["today_completed"])
+            if total_today > 0:
+                completion_rate = int(len(tasks["today_completed"]) / total_today * 100)
+                report += f"\n📈 今日完成率: {completion_rate}% ({len(tasks['today_completed'])}/{total_today})\n"
+            if tasks["today_completed"]:
+                report += f"\n✅ 今日完成总结 ({len(tasks['today_completed'])}项):\n"
+                for t in tasks["today_completed"][:8]:
+                    report += f"  ✓ {t['name']}\n"
+            else:
+                report += "\n✅ 今日完成总结: 暂无记录\n"
+            if tasks["today_pending"]:
+                report += f"\n⚠️ 未完成事项 ({len(tasks['today_pending'])}项):\n"
+                for t in tasks["today_pending"][:5]:
+                    report += f"  ⏰ {t['name']}\n"
+            if tasks["upcoming"]:
+                report += f"\n📅 明日待办 ({len(tasks['upcoming'])}项):\n"
+                for t in tasks["upcoming"][:5]:
+                    days = (t["due_date"] - datetime.now().date()).days if t["due_date"] else "?"
+                    report += f"  • {t['name']} ({days}天后)\n"
+            # V41增强：任务优先级矩阵（艾森豪威尔矩阵可视化面板，与早报对齐）
+            try:
+                _all_todo = tasks.get("all_active") or []
+                _ui = [t for t in _all_todo if t.get("priority", "低") == "高"]
+                _nui = [t for t in _all_todo if t.get("priority", "低") == "中"]
+                _nun = [t for t in _all_todo if t.get("priority", "低") not in ("高", "中")]
+                report += "\n📊 任务优先级矩阵:\n"
+                report += f"  🔴 重要紧急: {len(_ui)}个\n"
+                report += f"  🟡 重要不紧急: {len(_nui)}个\n"
+                report += f"  🟢 紧急不重要: 0个\n"
+                report += f"  ⚪ 不重要不紧急: {len(_nun)}个\n"
+                if _ui:
+                    report += "  🔴 详情: " + "、".join(t['name'][:14] for t in _ui[:3]) + "\n"
+            except Exception as _mat_e:
+                report += f"\n📋 矩阵生成异常: {str(_mat_e)[:30]}\n"
+        except Exception as e:
+            report += f"\n📋 待办加载异常: {str(e)[:30]}\n"
+
+        # V44增强：注入每日三察（西安天气+社会/自然/人性洞察）
+        try:
+            sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+            from insight_daily import build_report
+            ins_report, _ = build_report("llm")
+            if ins_report:
+                # 去掉三察标题行（避免与报告标题重复），保留天气+三条洞察
+                body = ins_report.split("\n", 1)[1] if "\n" in ins_report else ins_report
+                report += "\n\n" + body
+        except Exception as e:
+            print(f"  [WARN] 三察段生成失败(已忽略): {e}")
+
         report += "\n😴 早点休息，明天继续！"
         return report
     
@@ -2402,7 +2539,15 @@ class DailyPusher:
             dict: 推送结果
         """
         result = {"success": False, "report_type": report_type, "error": None}
-        
+
+        # V39修复：幂等检查——今天已推送过则跳过
+        if cls._already_pushed(report_type):
+            result["success"] = True
+            result["idempotent"] = True
+            result["message"] = f"今日{report_type}报已推送过，跳过"
+            print(f"  [每日推送] 今日{report_type}报已推送过，跳过（幂等保护）")
+            return result
+
         try:
             # 生成报告内容
             if report_type == "morning":
@@ -2423,15 +2568,20 @@ class DailyPusher:
                 # json.dumps自动将换行符转义为\n，飞书API解析为真正的换行
                 # V33修复：直接调用node.exe绕过.cmd批处理文件，避免|等特殊字符被解析为管道符
                 content_json = json.dumps({"text": content}, ensure_ascii=False)
+                # P1-2修复：主动推送改用 bot 身份（应用已在群），消除 user_access_token 缺失导致的 230002；
+                # 同日同类型推送加幂等键防重复。
+                idem_key = f"rpt-{report_type}-{datetime.now().strftime('%Y%m%d')}"[:50]
                 cmd = [LARK_NODE_EXE, LARK_CLI_SCRIPT, "im", "+messages-send",
                        "--chat-id", chat_id,
                        "--content", content_json,
                        "--msg-type", "text",
-                       "--as", "user"]
+                       "--as", "bot",
+                       "--idempotency-key", idem_key]
                 ok, stdout, stderr = run_cmd(cmd, timeout=30)
                 if ok:
                     result["success"] = True
                     result["message_id"] = stdout.strip() if stdout else None
+                    cls._mark_pushed(report_type)
                     print(f"  [每日推送] {report_type}报推送成功")
                 else:
                     result["error"] = stderr or "推送失败"
@@ -3886,6 +4036,61 @@ class Watchdog:
     WATCHDOG_STATE_FILE = os.path.join(SCRIPT_DIR, ".watchdog_state.json")
     
     @staticmethod
+    def _get_last_answer_time(current_time):
+        """V42新增：查询复习流水表最近一条答题时间（客户端时间戳）
+        联合判据数据源：消费索引只在答题推进时更新，
+        若用户长时间未答题，索引不更新属正常；本方法返回真实的最近答题时间。
+        Returns:
+            tuple (last_time_iso, age_minutes) 查询失败或表为空时返回 (None, None)
+        """
+        try:
+            cmd = [LARK_CLI, "base", "+record-list",
+                   "--base-token", BASE_TOKEN, "--table-id", FLOW_TABLE,
+                   "--field-id", "客户端时间戳",
+                   "--sort-json", '[{"field":"客户端时间戳","desc":true}]',
+                   "--limit", "1", "--as", "user", "--format", "json"]
+            ok, stdout, stderr = run_cmd(cmd, timeout=30)
+            if not ok:
+                return None, None
+            data = json.loads(stdout)
+            rows = data.get("data", {}).get("data", [])
+            fields = data.get("data", {}).get("fields", [])
+            if not rows or "客户端时间戳" not in fields:
+                return None, None
+            idx = fields.index("客户端时间戳")
+            v = rows[0][idx] if idx < len(rows[0]) else None
+            if not v:
+                return None, None
+            if isinstance(v, str):
+                # lark-cli 返回 ISO 8601 字符串（如 2026-09-10T20:19:37.277+08:00）
+                try:
+                    last_time = datetime.fromisoformat(v)
+                    # 统一为 naive 本地时间（系统其他部分均用 naive datetime.now()）
+                    if last_time.tzinfo is not None:
+                        last_time = last_time.replace(tzinfo=None)
+                    age = (current_time - last_time).total_seconds() / 60.0
+                    return last_time.isoformat(), max(age, 0.0)
+                except ValueError:
+                    # 兼容纯数字字符串
+                    try:
+                        ts = float(v)
+                    except:
+                        return None, None
+            elif isinstance(v, (int, float)):
+                ts = v
+            else:
+                return None, None
+            # datetime 数字字段值为 epoch 毫秒（13位）或秒（10位）
+            if ts > 1e11:
+                last_time = datetime.fromtimestamp(ts / 1000.0)
+            else:
+                last_time = datetime.fromtimestamp(ts)
+            age = (current_time - last_time).total_seconds() / 60.0
+            return last_time.isoformat(), max(age, 0.0)
+        except Exception:
+            return None, None
+    
+    @staticmethod
     def check_health():
         """检查系统健康状态，检测"进程活着但功能死了"
         Returns:
@@ -3917,14 +4122,31 @@ class Watchdog:
             else:
                 issues.append("系统状态文件不存在")
             
-            # 2. 检查消费索引文件
+            # 2. 检查消费索引文件（V42修复：增加"最近答题时间"联合判据，消除无答题活动时的误报）
             consume_index_age = None
+            last_answer_time = None
+            last_answer_age_minutes = None
             if os.path.exists(CONSUME_INDEX_FILE):
                 try:
                     file_mtime = datetime.fromtimestamp(os.path.getmtime(CONSUME_INDEX_FILE))
                     consume_index_age = (current_time - file_mtime).total_seconds() / 60
                     if consume_index_age > 120:  # 超过2小时未更新
-                        issues.append(f"消费索引文件超过{consume_index_age:.0f}分钟未更新")
+                        # V42联合判据：查询复习流水表"最近答题时间"
+                        # - 最近有答题（≤120分钟）但索引未更新 → 真异常（答题了但索引推进失败）
+                        # - 最近无答题（答题时间同样陈旧）→ 索引不更新属正常现象，不误报
+                        try:
+                            last_answer_time, last_answer_age_minutes = Watchdog._get_last_answer_time(current_time)
+                            if last_answer_age_minutes is not None and last_answer_age_minutes <= 120:
+                                issues.append(
+                                    f"消费索引文件超过{consume_index_age:.0f}分钟未更新，"
+                                    f"但最近答题在{last_answer_age_minutes:.0f}分钟前（索引推进疑似失败）"
+                                )
+                            else:
+                                # 最近无答题活动：消费索引不更新属正常，不列为问题
+                                pass
+                        except Exception as last_e:
+                            # 最近答题时间查询失败：无法证明异常，不误报
+                            pass
                 except Exception as e:
                     issues.append(f"消费索引文件检查失败: {e}")
             else:
@@ -3978,7 +4200,9 @@ class Watchdog:
                 "last_success_time": last_success_time.isoformat() if last_success_time else "UNKNOWN",
                 "current_time": current_time.isoformat(),
                 "should_alert": should_alert,
-                "consume_index_age_minutes": consume_index_age
+                "consume_index_age_minutes": consume_index_age,
+                "last_answer_time": last_answer_time,
+                "last_answer_age_minutes": last_answer_age_minutes
             }
             
         except Exception as e:

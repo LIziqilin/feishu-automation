@@ -202,8 +202,16 @@ run_script("personalized_recommender.py", timeout=240, description="个性化推
 log("--- 步骤12.5: 画像自动演化 ---")
 run_script("profile_evolve.py", timeout=240, description="画像自动演化(V43)")
 
-# 12.6 V43外部数据抓取（行情/RSS/天气，本地每日一次，云端 Actions 为备援）
-log("--- 步骤12.6: 外部数据抓取 ---")
+# 12.6 V44每日三察洞察生成（西安天气+社会/自然/人性洞察，沉淀洞察表）
+log("--- 步骤12.6: 每日三察洞察 ---")
+run_script("insight_daily.py --mode rules --push", timeout=180, description="三察洞察日报(V44)")
+
+# 12.7 V44洞察沉淀→知识卡片（越用越聪明：洞察自动进入学习循环）
+log("--- 步骤12.7: 洞察沉淀转卡片 ---")
+run_script("insight_to_card.py", timeout=180, description="洞察沉淀(V44)")
+
+# 12.8 V43外部数据抓取（行情/RSS/天气，本地每日一次，云端 Actions 为备援）
+log("--- 步骤12.8: 外部数据抓取 ---")
 run_script("fetch_external_data.py --push", timeout=120, description="外部数据抓取(V43)")
 
 # 13. V15今日时间块重排（按最新任务）

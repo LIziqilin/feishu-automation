@@ -1,0 +1,66 @@
+{
+  "ts": "20260917-124240",
+  "mode": "apply",
+  "tasks_checked": 8,
+  "findings": [
+    {
+      "task": "V16_DailyMaintenance",
+      "last_result": "267009",
+      "bad": false,
+      "note": "运行中，跳过（不对运行中任务重注册）"
+    },
+    {
+      "task": "V16_HourlyBackup",
+      "last_result": "0",
+      "bad": false,
+      "last_run": "2026/9/17 12:15:01"
+    },
+    {
+      "task": "V16_ServiceWatchdog",
+      "last_result": "2",
+      "bad": true,
+      "last_run": "2026/9/17 12:42:17"
+    },
+    {
+      "task": "V16_LearningPoll",
+      "last_result": "0",
+      "bad": false,
+      "last_run": "2026/9/17 12:39:00"
+    },
+    {
+      "task": "V16_MorningReport",
+      "last_result": "0",
+      "bad": false,
+      "last_run": "2026/9/17 7:30:01"
+    },
+    {
+      "task": "V16_NoonReport",
+      "last_result": "0",
+      "bad": false,
+      "last_run": "2026/9/17 12:00:01"
+    },
+    {
+      "task": "V16_EveningReport",
+      "last_result": "0",
+      "bad": false,
+      "last_run": "2026/9/17 12:42:28"
+    },
+    {
+      "task": "V16_BootRecover",
+      "last_result": "267009",
+      "bad": false,
+      "note": "运行中，跳过（不对运行中任务重注册）"
+    }
+  ],
+  "actions": [
+    {
+      "task": "V16_ServiceWatchdog",
+      "action": "reregistered",
+      "rc_before": "2",
+      "rc_after": "2",
+      "verified": false
+    }
+  ],
+  "backup_dir": "C:\\Users\\Administrator\\.openclaw\\workspace\\schtask_xml_backup\\20260917-124240",
+  "bad_count": 1
+}

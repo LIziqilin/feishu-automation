@@ -1,0 +1,196 @@
+{
+  "ts": "20260916-140837",
+  "quick": false,
+  "total": 17,
+  "failed": [],
+  "all_pass": true,
+  "steps": [
+    {
+      "name": "服务守护(自愈)",
+      "script": "service_watchdog.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 4.3,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\watchdog\\watchdog_20260916-140841.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\watchdog\\watchdog_20260916-140841.json"
+    },
+    {
+      "name": "安全审计",
+      "script": "security_audit.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 13.9,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\security\\security_20260916-1408.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\security\\security_20260916-1408.json"
+    },
+    {
+      "name": "红队(真实护栏)",
+      "script": "redteam_suite.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 0.6,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\redteam\\redteam_20260916-1408.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\redteam\\redteam_20260916-1408.json"
+    },
+    {
+      "name": "混沌演练",
+      "script": "chaos_drill.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 12.0,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\chaos\\chaos_20260916-1409.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\chaos\\chaos_20260916-1409.json"
+    },
+    {
+      "name": "恢复演练(隔离)",
+      "script": "restore_drill.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 1.4,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\restore\\restore_20260916-1409.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\restore\\restore_20260916-1409.json"
+    },
+    {
+      "name": "写路径端到端(TEST_)",
+      "script": "golden_write_e2e.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 38.5,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\golden_write\\golden_write_20260916-140909.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\golden_write\\golden_write_20260916-140909.json"
+    },
+    {
+      "name": "离线模型评测",
+      "script": "offline_model_eval.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 26.7,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\offline_model\\offline_20260916-1410.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\offline_model\\offline_20260916-1410.json"
+    },
+    {
+      "name": "异地副本复制",
+      "script": "offsite_replicate.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 0.2,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\offsite\\offsite_20260916-141014.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\offsite\\offsite_20260916-141014.json"
+    },
+    {
+      "name": "连续运行监视",
+      "script": "uptime_monitor.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 0.5,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\uptime\\uptime_20260916-141015.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\uptime\\uptime_20260916-141015.json"
+    },
+    {
+      "name": "效率客观度量",
+      "script": "efficiency_objective.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 0.2,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\efficiency\\objective_20260916-141015.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\efficiency\\objective_20260916-141015.json"
+    },
+    {
+      "name": "观测埋点聚合",
+      "script": "observability.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 0.1,
+      "tail": [
+        "}"
+      ],
+      "evidence_hint": null
+    },
+    {
+      "name": "慢速项:评测100条",
+      "script": "eval_run.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 233.3,
+      "tail": [
+        "评测证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\eval\\20260916-1414"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\eval\\20260916-1414"
+    },
+    {
+      "name": "慢速项:黄金任务12",
+      "script": "golden_e2e.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 101.9,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\golden\\20260916-1415"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\golden\\20260916-1415"
+    },
+    {
+      "name": "M0验收脚手架",
+      "script": "acceptance_run.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 122.1,
+      "tail": [
+        "证据包: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\runs\\20260916-1415"
+      ],
+      "evidence_hint": "包: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\runs\\20260916-1415"
+    },
+    {
+      "name": "评分卡",
+      "script": "slo_monitor.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 0.7,
+      "tail": [
+        "评分卡: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\scorecard\\scorecard_20260916-1417.json"
+      ],
+      "evidence_hint": "@2026-09-16T14:14:09\""
+    },
+    {
+      "name": "独立复核",
+      "script": "independent_verify.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 116.4,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\independent\\independent_20260916-1419.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\independent\\independent_20260916-1419.json"
+    },
+    {
+      "name": "独立抽样复现(10条)",
+      "script": "independent_sample.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 11.0,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\independent\\sample_20260916-142001.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\independent\\sample_20260916-142001.json"
+    }
+  ]
+}

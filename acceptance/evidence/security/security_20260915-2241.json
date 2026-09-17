@@ -1,0 +1,46 @@
+{
+  "ts": "2026-09-15T22:41:45",
+  "critical": 0,
+  "high": 0,
+  "total_hits": 0,
+  "gate_pass": true,
+  "hits": [],
+  "git_tracking": {
+    "scripts/llm_secrets.env": {
+      "error": "[WinError 2] 系统找不到指定的文件。"
+    },
+    "scripts/wecom_config.json": {
+      "error": "[WinError 2] 系统找不到指定的文件。"
+    },
+    "scripts/llm_config.json": {
+      "error": "[WinError 2] 系统找不到指定的文件。"
+    }
+  },
+  "least_privilege": [
+    {
+      "item": "默认不自动外发",
+      "pass": true,
+      "note": "外发需显式动作（邮件/群发）"
+    },
+    {
+      "item": "写操作幂等",
+      "pass": true,
+      "note": "idempotency.py"
+    },
+    {
+      "item": "RAG权限过滤",
+      "pass": true,
+      "note": "rag_guard.py"
+    },
+    {
+      "item": "密钥外部化",
+      "pass": true,
+      "note": "llm_secrets.env"
+    },
+    {
+      "item": "可回滚undo",
+      "pass": true,
+      "note": "undo log"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "key": "34a7669147f3e1e769e5e683",
+  "action": "create_task",
+  "target": "TEST_写路径验收_135905",
+  "result": {
+    "record_id": "recvvmox3QXeUk"
+  },
+  "undo": {
+    "op": "update",
+    "table_id": "tblz3H4lV7PCrBrX",
+    "record_id": "recvvmox3QXeUk",
+    "fields": {
+      "状态": "已取消"
+    }
+  },
+  "ts": "2026-09-16T13:59:14",
+  "expire_at": 1792130354.8710456
+}

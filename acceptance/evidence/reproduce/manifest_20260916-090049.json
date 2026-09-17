@@ -1,0 +1,185 @@
+{
+  "ts": "20260916-090049",
+  "quick": false,
+  "total": 16,
+  "failed": [],
+  "all_pass": true,
+  "steps": [
+    {
+      "name": "服务守护(自愈)",
+      "script": "service_watchdog.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 4.3,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\watchdog\\watchdog_20260916-090053.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\watchdog\\watchdog_20260916-090053.json"
+    },
+    {
+      "name": "安全审计",
+      "script": "security_audit.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 5.7,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\security\\security_20260916-0900.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\security\\security_20260916-0900.json"
+    },
+    {
+      "name": "红队(真实护栏)",
+      "script": "redteam_suite.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 0.5,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\redteam\\redteam_20260916-0900.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\redteam\\redteam_20260916-0900.json"
+    },
+    {
+      "name": "混沌演练",
+      "script": "chaos_drill.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 13.8,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\chaos\\chaos_20260916-0901.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\chaos\\chaos_20260916-0901.json"
+    },
+    {
+      "name": "恢复演练(隔离)",
+      "script": "restore_drill.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 1.0,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\restore\\restore_20260916-0901.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\restore\\restore_20260916-0901.json"
+    },
+    {
+      "name": "写路径端到端(TEST_)",
+      "script": "golden_write_e2e.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 26.8,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\golden_write\\golden_write_20260916-090114.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\golden_write\\golden_write_20260916-090114.json"
+    },
+    {
+      "name": "离线模型评测",
+      "script": "offline_model_eval.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 27.3,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\offline_model\\offline_20260916-0902.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\offline_model\\offline_20260916-0902.json"
+    },
+    {
+      "name": "异地副本复制",
+      "script": "offsite_replicate.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 0.2,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\offsite\\offsite_20260916-090208.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\offsite\\offsite_20260916-090208.json"
+    },
+    {
+      "name": "连续运行监视",
+      "script": "uptime_monitor.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 0.4,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\uptime\\uptime_20260916-090208.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\uptime\\uptime_20260916-090208.json"
+    },
+    {
+      "name": "效率客观度量",
+      "script": "efficiency_objective.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 0.2,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\efficiency\\objective_20260916-090209.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\efficiency\\objective_20260916-090209.json"
+    },
+    {
+      "name": "观测埋点聚合",
+      "script": "observability.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 0.1,
+      "tail": [
+        "}"
+      ],
+      "evidence_hint": null
+    },
+    {
+      "name": "慢速项:评测100条",
+      "script": "eval_run.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 154.8,
+      "tail": [
+        "评测证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\eval\\20260916-0904"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\eval\\20260916-0904"
+    },
+    {
+      "name": "慢速项:黄金任务12",
+      "script": "golden_e2e.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 102.4,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\golden\\20260916-0906"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\golden\\20260916-0906"
+    },
+    {
+      "name": "M0验收脚手架",
+      "script": "acceptance_run.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 109.3,
+      "tail": [
+        "证据包: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\runs\\20260916-0906"
+      ],
+      "evidence_hint": "包: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\runs\\20260916-0906"
+    },
+    {
+      "name": "评分卡",
+      "script": "slo_monitor.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 0.1,
+      "tail": [
+        "评分卡: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\scorecard\\scorecard_20260916-0908.json"
+      ],
+      "evidence_hint": "@2026-09-16T09:04:44\""
+    },
+    {
+      "name": "独立复核",
+      "script": "independent_verify.py",
+      "rc": 0,
+      "traceback": false,
+      "elapsed_s": 108.5,
+      "tail": [
+        "证据: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\independent\\independent_20260916-0910.json"
+      ],
+      "evidence_hint": "D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\independent\\independent_20260916-0910.json"
+    }
+  ]
+}

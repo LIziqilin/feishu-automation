@@ -1,0 +1,7 @@
+{
+  "ts": "20260916-195546",
+  "script": "learning_retention_eval",
+  "dry_run": true,
+  "status": "dry_run",
+  "note": "演示口径：实跑时拉学习卡片表算毕业率/掌握度/正确率"
+}

@@ -1,0 +1,67 @@
+{
+  "ts": "2026-09-16T15:49:55",
+  "critical": 1,
+  "high": 0,
+  "total_hits": 1,
+  "git_binary": "C:\\Program Files\\QClaw\\v0.2.36.629\\resources\\git\\cmd\\git.exe",
+  "git_unknown": false,
+  "gate_pass": false,
+  "hits": [
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\negtest_secrets.env",
+      "line": 1,
+      "kind": "凭证文件未加入.gitignore（git add 即泄露）",
+      "sample": "***"
+    }
+  ],
+  "git_tracking": {
+    "scripts/llm_secrets.env": {
+      "ignored": true,
+      "tracked": false
+    },
+    "scripts/wecom_secrets.env": {
+      "ignored": true,
+      "tracked": false
+    },
+    "scripts/wecom_app_credentials.env": {
+      "ignored": true,
+      "tracked": false
+    },
+    "scripts/wecom_config.json": {
+      "ignored": true,
+      "tracked": false
+    },
+    "scripts/llm_config.json": {
+      "ignored": true,
+      "tracked": false
+    }
+  },
+  "least_privilege": [
+    {
+      "item": "默认不自动外发",
+      "pass": true,
+      "note": "外发需显式动作（邮件/群发）"
+    },
+    {
+      "item": "写操作幂等",
+      "pass": true,
+      "note": "golden_write 幂等用例通过=True @20260916-140909"
+    },
+    {
+      "item": "RAG权限过滤",
+      "pass": true,
+      "note": "redteam gate=True AUTH=True"
+    },
+    {
+      "item": "密钥外部化",
+      "pass": false,
+      "note": "扫描命中=1 被跟踪泄露=False"
+    },
+    {
+      "item": "可回滚undo",
+      "pass": true,
+      "note": "ADMIN_OVERRIDE 实测记录=8 条"
+    }
+  ]
+}

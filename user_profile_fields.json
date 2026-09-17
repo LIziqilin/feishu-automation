@@ -1,0 +1,7 @@
+[
+  {"type": "text", "name": "画像维度"},
+  {"type": "text", "name": "画像值"},
+  {"type": "datetime", "name": "更新时间"},
+  {"type": "select", "name": "数据来源", "options": [{"name": "答题数据"}, {"name": "任务数据"}, {"name": "洞察数据"}, {"name": "手动录入"}]},
+  {"type": "number", "name": "置信度"}
+]

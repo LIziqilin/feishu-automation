@@ -1,0 +1,15 @@
+{
+  "key": "88d92b5da46e3bc7bd5ca2fb",
+  "action": "create_task",
+  "target": "tblz3H4lV7PCrBrX",
+  "result": {
+    "record_id": "rec_TEST",
+    "ok": true
+  },
+  "undo": {
+    "op": "delete_record",
+    "record_id": "rec_TEST"
+  },
+  "ts": "2026-09-15T20:18:55",
+  "expire_at": 1792066735.8608277
+}

@@ -1,0 +1,7 @@
+{
+  "ts": "20260916-204547",
+  "script": "learning_retention_eval",
+  "dry_run": false,
+  "status": "FAIL",
+  "error": "record-list 失败: {\n  \"ok\": false,\n  \"identity\": \"bot\",\n  \"error\": {\n    \"type\": \"validation\",\n    \"subtype\": \"invalid_argument\",\n    \"message\": \"invalid --limit 500: must be between 1 and 200\",\n    \"hi"
+}

@@ -1,0 +1,50 @@
+{
+  "ts": "2026-09-15T22:00:45",
+  "total": 6,
+  "passed": 6,
+  "pass_rate": 1.0,
+  "results": [
+    {
+      "name": "C1 主LLM不可用→降级",
+      "pass": true,
+      "expect": "回退成功，不抛异常",
+      "detail": "降级输出=保障",
+      "sec": 3.9
+    },
+    {
+      "name": "C2 云端不可达→本地兜底",
+      "pass": true,
+      "expect": "回退成功",
+      "detail": "回退输出=ok",
+      "sec": 6.37
+    },
+    {
+      "name": "C3 RAG高危无引用→拒答",
+      "pass": true,
+      "expect": "blocked=True",
+      "detail": "high_risk_without_citation",
+      "sec": 0.0
+    },
+    {
+      "name": "C4 幂等重复写→去重",
+      "pass": true,
+      "expect": "第二次duplicate",
+      "detail": "executed/duplicate",
+      "sec": 0.01
+    },
+    {
+      "name": "C5 双通道冗余",
+      "pass": true,
+      "expect": "至少一通道成功",
+      "detail": "{\"feishu\": true, \"wecom\": \"ok\"}",
+      "sec": 1.85
+    },
+    {
+      "name": "C6 埋点可观测",
+      "pass": true,
+      "expect": "traces>0",
+      "detail": "traces=6",
+      "sec": 0.04
+    }
+  ]
+}

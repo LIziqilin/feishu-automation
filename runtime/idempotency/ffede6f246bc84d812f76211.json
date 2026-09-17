@@ -1,0 +1,15 @@
+{
+  "key": "ffede6f246bc84d812f76211",
+  "action": "delete_task",
+  "target": "TEST_写路径验收_085459_del",
+  "result": {
+    "record_id": "recvvl9YnEZRFV"
+  },
+  "undo": {
+    "op": "delete_record",
+    "table_id": "tblz3H4lV7PCrBrX",
+    "record_id": "recvvl9YnEZRFV"
+  },
+  "ts": "2026-09-16T08:55:22",
+  "expire_at": 1792112122.9734237
+}

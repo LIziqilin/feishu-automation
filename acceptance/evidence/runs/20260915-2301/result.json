@@ -1,0 +1,60 @@
+{
+  "run_id": "20260915-2301",
+  "fingerprint": {
+    "ts": "2026-09-15T23:01:20",
+    "host": "DESKTOP-944N6FH",
+    "os": "Windows-10-10.0.19045-SP0",
+    "python": "3.10.3",
+    "git_head": "",
+    "git_dirty": false,
+    "code_hash": {
+      "v15_features.py": "7c8cfb433c5d0ea4",
+      "learning_system.py": "cd935b1273c9987a",
+      "run_maintenance_wrapper.py": "344388de6f9476c9"
+    },
+    "model": {
+      "cloud": "Qwen/Qwen2.5-7B-Instruct",
+      "local": "qwen2.5:1.5b"
+    }
+  },
+  "total": 5,
+  "passed": 5,
+  "pass_rate": 1.0,
+  "results": [
+    {
+      "id": "GT-03",
+      "name": "查询任务(只读口径)",
+      "pass": true,
+      "sec": 1.83,
+      "detail": "module_import_code=0"
+    },
+    {
+      "id": "GT-11",
+      "name": "健康巡检",
+      "pass": true,
+      "sec": 13.85,
+      "detail": "[正常] Ollama本地模型: HTTP 200 [正常] AnythingLLM知识库: HTTP 404 (服务运行中) [正常] 飞书API连通性: HTTP 404 (服务运行中) ✅ 健康记录已写入: 服务健康-Ollama本地模型 ✅ 健康记录已写入: 服务健康-AnythingLLM知识库 ✅ 健康记录已写入: 服务健康-飞书API连通性  ✅ 所有服务正常 "
+    },
+    {
+      "id": "GT-12",
+      "name": "恢复演练(只读)",
+      "pass": true,
+      "sec": 0.08,
+      "detail": "=== 每月恢复演练 2026-09-15 23:01 ===   非每月1号，跳过恢复演练（不发送报告） "
+    },
+    {
+      "id": "SUP-01",
+      "name": "备份存在性",
+      "pass": true,
+      "sec": 0.13,
+      "detail": "backup_files=7 latest_parsed=True"
+    },
+    {
+      "id": "GOLDEN",
+      "name": "12条黄金任务端到端(只读)",
+      "pass": true,
+      "sec": 83.39,
+      "detail": "golden=12/12"
+    }
+  ]
+}

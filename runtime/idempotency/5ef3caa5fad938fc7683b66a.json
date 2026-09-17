@@ -1,0 +1,52 @@
+{
+  "key": "5ef3caa5fad938fc7683b66a",
+  "action": "create_task",
+  "target": "TEST_写路径验收_224739",
+  "result": {
+    "record_id": {
+      "code": 0,
+      "data": {
+        "record": {
+          "fields": {
+            "任务名称": "TEST_写路径验收_224739",
+            "优先级": "低",
+            "是否卡他人": "否",
+            "状态": "进行中",
+            "科目": "认知",
+            "类别": "学习"
+          },
+          "id": "recvviH5imknnw",
+          "record_id": "recvviH5imknnw"
+        }
+      },
+      "msg": "success"
+    }
+  },
+  "undo": {
+    "op": "update",
+    "table_id": "tblz3H4lV7PCrBrX",
+    "record_id": {
+      "code": 0,
+      "data": {
+        "record": {
+          "fields": {
+            "任务名称": "TEST_写路径验收_224739",
+            "优先级": "低",
+            "是否卡他人": "否",
+            "状态": "进行中",
+            "科目": "认知",
+            "类别": "学习"
+          },
+          "id": "recvviH5imknnw",
+          "record_id": "recvviH5imknnw"
+        }
+      },
+      "msg": "success"
+    },
+    "fields": {
+      "状态": "已取消"
+    }
+  },
+  "ts": "2026-09-15T22:47:44",
+  "expire_at": 1792075664.3718877
+}

@@ -15,7 +15,7 @@
   send_text / send_markdown：推企业微信
   dual_push：飞书总控群 + 企业微信群 双通道同时推（三报/告警用）
 """
-import sys, io, json, os, urllib.request, argparse
+import sys, io, json, os, time, urllib.request, argparse
 sys.path.insert(0, '.')
 from v15_features import send_chat, now_str
 
@@ -53,7 +53,7 @@ def _save_cfg(cfg):
     with open(CFG, "w", encoding="utf-8") as f:
         json.dump(cfg, f, ensure_ascii=False, indent=2)
 
-def _post(payload):
+def _post(payload, _retry=0):
     cfg = _load_cfg()
     url = cfg.get("webhook_url", "")
     if not cfg.get("enabled") or not url:
@@ -65,7 +65,18 @@ def _post(payload):
             resp = json.load(r)
         if resp.get("errcode") == 0:
             return True, "ok"
-        return False, f"errcode={resp.get('errcode')} {resp.get('errmsg')}"
+        err = resp.get("errcode")
+        # R-09：限流退避重试（企微 45009=频控；HTTP 429），指数退避，最多2次
+        if err in (45009, 429) and _retry < 2:
+            wait = 2 ** _retry
+            time.sleep(wait)
+            return _post(payload, _retry + 1)
+        return False, f"errcode={err} {resp.get('errmsg')}"
+    except urllib.error.HTTPError as he:
+        if he.code in (429,) and _retry < 2:
+            time.sleep(2 ** _retry)
+            return _post(payload, _retry + 1)
+        return False, f"HTTP {he.code}"
     except Exception as e:
         return False, f"请求异常:{e}"
 

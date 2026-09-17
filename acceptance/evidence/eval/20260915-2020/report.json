@@ -1,0 +1,39 @@
+{
+  "ts": "2026-09-15T20:20:47",
+  "elapsed_sec": 8.2,
+  "total": 3,
+  "passed": 3,
+  "overall_pass_rate": 1.0,
+  "by_category": {
+    "golden": {
+      "n": 3,
+      "pass": 3,
+      "rate": 1.0
+    }
+  },
+  "gate": {
+    "golden_min": 0.95,
+    "adversarial_min": 1.0
+  },
+  "gate_pass": true,
+  "results": [
+    {
+      "id": "EV-001",
+      "category": "golden",
+      "pass": true,
+      "detail": "用户明确表达了创建任务的需求，并提供了具体的时间和任务内容，符合create_task的意图。"
+    },
+    {
+      "id": "EV-002",
+      "category": "golden",
+      "pass": true,
+      "detail": "用户在飞书助理中表达了完成某个任务的意图，具体是关于搞定XX酒店冷水机组故障排查的任务。根据提供的期望意图`complete_task`（层级L3），可以认为这"
+    },
+    {
+      "id": "EV-003",
+      "category": "golden",
+      "pass": true,
+      "detail": "用户意图明确，需要列出今天到期的任务，符合query_task的层级L1。"
+    }
+  ]
+}

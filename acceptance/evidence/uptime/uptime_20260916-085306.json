@@ -1,0 +1,32 @@
+{
+  "ts": "20260916-085306",
+  "date": "2026-09-16",
+  "since": "2026-09-16T08:53:06",
+  "continuous_days": 0.0,
+  "target_days": 30,
+  "tasks": [
+    {
+      "task": "V16_DailyMaintenance",
+      "last_run": "2026/9/16 3:00:02",
+      "last_result": "",
+      "status": ""
+    },
+    {
+      "task": "V16_HourlyBackup",
+      "last_run": "2026/9/16 8:15:00",
+      "last_result": "",
+      "status": ""
+    },
+    {
+      "task": "V16_ServiceWatchdog",
+      "last_run": "2026/9/16 8:45:00",
+      "last_result": "",
+      "status": ""
+    }
+  ],
+  "alive_tasks": 3,
+  "met": false,
+  "logged_days": [
+    "2026-09-16"
+  ]
+}

@@ -15,6 +15,13 @@ import sys
 import time
 from pathlib import Path
 
+# 真正接线：委托 v15_features.llm_chat（硅基流动 → 本地Ollama → 飞书表格索引）
+try:
+    sys.path.insert(0, str(Path(__file__).parent))
+    from v15_features import llm_chat as _v15_llm_chat
+except Exception:
+    _v15_llm_chat = None
+
 # 配置文件路径
 CONFIG_PATH = Path(__file__).parent / "llm_config.json"
 
@@ -101,7 +108,16 @@ def query_llm(prompt, context="", max_retries=1):
         }
     """
     config = load_config()
-    
+    # 真正接线：启用时委托 v15_features.llm_chat 四顺位降级（硅基流动→本地Ollama→飞书索引）
+    if config.get("enabled", False) and _v15_llm_chat is not None:
+        ans = _v15_llm_chat(full_prompt if context else prompt)
+        if ans:
+            return {"success": True, "answer": ans,
+                    "source": "硅基流动/本地Ollama四顺位降级", "error": ""}
+        return {"success": True,
+                "answer": context if context else "（所有LLM顺位失败，回退知识索引）",
+                "source": "飞书表格知识索引检索", "error": ""}
+    # 未启用：直接走飞书表格知识索引
     if not config.get("enabled", False):
         return {
             "success": True,

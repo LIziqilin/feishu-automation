@@ -131,3 +131,16 @@ wecom_secrets.env
 *_credentials.env
 credentials.env
 scripts/wecom_app_credentials.env
+
+# AI大系统本地归档（不推送GitHub）
+scripts/_ai_big_system_archive_20260917/
+
+
+# 本地备份目录（含敏感信息，不推送GitHub）
+backup/
+
+
+# 密钥文件一律不入库
+scripts/*_secrets.env
+*.env
+

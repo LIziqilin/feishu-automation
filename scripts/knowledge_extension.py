@@ -234,8 +234,8 @@ def is_knowledge_command(text):
     if not text or len(text) < 3:
         return False
 
-    # 原有格式：知识：xxx / 搜索：xxx / 查：xxx
-    if re.match(r'^(知识|搜索|查)[：:\s]', text):
+    # 原有格式：知识：xxx / 搜索：xxx / 查：xxx / 学知识：xxx（V42修复：增加"学知识"前缀）
+    if re.match(r'^(知识|搜索|查|学知识)[：:\s]', text):
         return True
 
     # V38新增：自然语言提问格式

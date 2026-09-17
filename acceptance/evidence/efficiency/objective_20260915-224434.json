@@ -1,0 +1,30 @@
+{
+  "ts": "2026-09-15T22:44:34",
+  "method": "客观自动化计数（来自真实埋点与生产数据，非人工估计）",
+  "traces_total": 7,
+  "maintenance_steps": 24,
+  "production_counts": {
+    "学习卡片表": 19,
+    "复习流水表": 1592,
+    "任务总表": 59,
+    "知识索引表": 717,
+    "决策日志表": 3,
+    "洞察笔记表": 19,
+    "模板与SOP表": 22,
+    "系统健康表": 317,
+    "自动化队列表": 5,
+    "系统心跳": 215,
+    "检索日志表": 22
+  },
+  "scheduled_tasks": [
+    "V16_DailyMaintenance",
+    "V16_HourlyBackup",
+    "V16_MorningReport",
+    "V16_NoonReport",
+    "V16_EveningReport",
+    "V16_LearningPoll"
+  ],
+  "auto_task_types": 6,
+  "manual_baseline_required": true,
+  "note": "A/B人工基线（3组对照耗时）仍需用户录入 acceptance/efficiency_data.json；本文件仅提供客观自动化计数，不计入 speedup 计算，禁止伪造。"
+}

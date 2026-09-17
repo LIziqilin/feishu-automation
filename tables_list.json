@@ -1,0 +1,93 @@
+﻿{
+  "ok": true,
+  "identity": "user",
+  "data": {
+    "tables": [
+      {
+        "id": "tblz3H4lV7PCrBrX",
+        "name": "任务总表",
+        "records_count": 54,
+        "rev": 113
+      },
+      {
+        "id": "tblpLvxyYpDJgF92",
+        "name": "学习卡片表",
+        "records_count": 19,
+        "rev": 568
+      },
+      {
+        "id": "tbl0NiUFeQzH2r3n",
+        "name": "知识索引表",
+        "records_count": 630,
+        "rev": 1273
+      },
+      {
+        "id": "tblEA13tWW56lu3K",
+        "name": "决策日志表",
+        "records_count": 3,
+        "rev": 9
+      },
+      {
+        "id": "tblaqKBl87V9C0q1",
+        "name": "洞察笔记表",
+        "records_count": 19,
+        "rev": 60
+      },
+      {
+        "id": "tblRGEeU9M3pPnjT",
+        "name": "模板与SOP表",
+        "records_count": 22,
+        "rev": 6
+      },
+      {
+        "id": "tblxJMndPNtZ7XyG",
+        "name": "系统健康表",
+        "records_count": 99,
+        "rev": 247
+      },
+      {
+        "id": "tblOMd9Pfiju2tz0",
+        "name": "自动化队列表",
+        "records_count": 5,
+        "rev": 5
+      },
+      {
+        "id": "tblJmm0ZIgqlYmyt",
+        "name": "系统心跳",
+        "records_count": 87,
+        "rev": 87
+      },
+      {
+        "id": "tblbznzCSpPhSz93",
+        "name": "复习流水表",
+        "records_count": 1204,
+        "rev": 1444
+      },
+      {
+        "id": "tblCwZyAhZbmJra2",
+        "name": "检索日志表",
+        "records_count": 22,
+        "rev": 32
+      },
+      {
+        "id": "tblPreh1ipB9LQpf",
+        "name": "系统事件日志表",
+        "records_count": 944,
+        "rev": 973
+      },
+      {
+        "id": "tblMiPpkPsEzjTh1",
+        "name": "TEST_结构探测",
+        "records_count": 0,
+        "rev": 0
+      },
+      {
+        "id": "tbldjGffbuPKCe21",
+        "name": "用户画像表",
+        "records_count": 0,
+        "rev": 0
+      }
+    ],
+    "total": 14
+  }
+}

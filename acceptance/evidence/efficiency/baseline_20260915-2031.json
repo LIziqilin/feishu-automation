@@ -1,0 +1,65 @@
+{
+  "ts": "2026-09-15T20:31:08",
+  "method": "同任务三组对照（纯人工/助理辅助/全自动），记录耗时与错误率",
+  "sample_size_target": "每任务类型≥10次",
+  "avg_speedup_x": null,
+  "measured_count": 0,
+  "pending_count": 6,
+  "rows": [
+    {
+      "task": "建任务",
+      "manual_min": null,
+      "assisted_min": null,
+      "auto_min": null,
+      "speedup_x": null,
+      "error_rate": null,
+      "status": "pending"
+    },
+    {
+      "task": "销项",
+      "manual_min": null,
+      "assisted_min": null,
+      "auto_min": null,
+      "speedup_x": null,
+      "error_rate": null,
+      "status": "pending"
+    },
+    {
+      "task": "纪要整理",
+      "manual_min": null,
+      "assisted_min": null,
+      "auto_min": null,
+      "speedup_x": null,
+      "error_rate": null,
+      "status": "pending"
+    },
+    {
+      "task": "三报生成",
+      "manual_min": null,
+      "assisted_min": null,
+      "auto_min": null,
+      "speedup_x": null,
+      "error_rate": null,
+      "status": "pending"
+    },
+    {
+      "task": "知识问答",
+      "manual_min": null,
+      "assisted_min": null,
+      "auto_min": null,
+      "speedup_x": null,
+      "error_rate": null,
+      "status": "pending"
+    },
+    {
+      "task": "卡片复习",
+      "manual_min": null,
+      "assisted_min": null,
+      "auto_min": null,
+      "speedup_x": null,
+      "error_rate": null,
+      "status": "pending"
+    }
+  ],
+  "note": "尚无实测数据：请按 acceptance/efficiency_data.json 模板录入后复跑。未实测不参与提分（禁止伪造）。"
+}

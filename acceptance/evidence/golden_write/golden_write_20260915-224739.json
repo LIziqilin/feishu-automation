@@ -1,0 +1,107 @@
+{
+  "ts": "20260915-224739",
+  "total": 8,
+  "passed": 5,
+  "pass_rate": 0.625,
+  "created_record_ids": [
+    {
+      "code": 0,
+      "data": {
+        "record": {
+          "fields": {
+            "任务名称": "TEST_写路径验收_224739",
+            "优先级": "低",
+            "是否卡他人": "否",
+            "状态": "进行中",
+            "科目": "认知",
+            "类别": "学习"
+          },
+          "id": "recvviH5imknnw",
+          "record_id": "recvviH5imknnw"
+        }
+      },
+      "msg": "success"
+    },
+    {
+      "code": 1254045,
+      "msg": "FieldNameNotFound",
+      "error": {
+        "message": "Invalid request parameter: 'fields.不存在的字段XYZ'. Correct format : field_name not found. Please check and modify accordingly.",
+        "log_id": "2026091522474767941699318574D15285",
+        "troubleshooter": "排查建议查看(Troubleshooting suggestions): https://open.feishu.cn/search?from=openapi&log_id=2026091522474767941699318574D15285&code=1254045&method_id=6965347212289490946"
+      }
+    },
+    {
+      "code": 0,
+      "data": {
+        "record": {
+          "fields": {
+            "任务名称": "",
+            "状态": "进行中"
+          },
+          "id": "recvviH6KxQbhk",
+          "record_id": "recvviH6KxQbhk"
+        }
+      },
+      "msg": "success"
+    }
+  ],
+  "results": [
+    {
+      "gt": "GT-01",
+      "path": "golden",
+      "check": "幂等检查(首次)",
+      "pass": false,
+      "detail": "pre=(False, None)"
+    },
+    {
+      "gt": "GT-01",
+      "path": "golden",
+      "check": "创建记录",
+      "pass": true,
+      "detail": "record_id={'code': 0, 'data': {'record': {'fields': {'任务名称': 'TEST_写路径验收_224739', '优先级': '低', '是否卡他人': '否', '状态': '进行中', '科目': '认知', '类别': '学习'}, 'id': 'recvviH5imknnw', 'record_id': 'recvviH5imknnw'}}, 'msg': 'success'}"
+    },
+    {
+      "gt": "GT-01",
+      "path": "golden",
+      "check": "断言:记录数+1",
+      "pass": true,
+      "detail": "matches=1"
+    },
+    {
+      "gt": "GT-01",
+      "path": "golden",
+      "check": "断言:状态=进行中",
+      "pass": true,
+      "detail": "status=进行中"
+    },
+    {
+      "gt": "GT-01",
+      "path": "golden",
+      "check": "幂等:重复键拦截",
+      "pass": true,
+      "detail": "dup=(True, {'key': '5ef3caa5fad938fc7683b66a', 'action': 'create_task', 'target': 'TEST_写路径验收_224739', 'result': {'record_id': {'code': 0, 'data': {'record': {'fields': {'任务名称': 'TEST_写路径验收_224739', '优先级': '低', '是否卡他人': "
+    },
+    {
+      "gt": "GT-01",
+      "path": "negative",
+      "check": "非法字段应被拒",
+      "pass": false,
+      "detail": "竟然创建成功 id={'code': 1254045, 'msg': 'FieldNameNotFound', 'error': {'message': \"Invalid request parameter: 'fields.不存在的字段XYZ'. Correct format : field_name not found. Please check and modify accordingly.\", 'log_id': '202609"
+    },
+    {
+      "gt": "GT-01",
+      "path": "negative",
+      "check": "空名称应被拒",
+      "pass": false,
+      "detail": "result={'code': 0, 'data': {'record': {'fields': {'任务名称': '', '状态': '进行中'}, 'id': 'recvviH6KxQbhk', 'record_id': 'recvviH6KxQbhk'}}, 'msg': 'success'}"
+    },
+    {
+      "gt": "GT-01",
+      "path": "negative",
+      "check": "越权访问应被拒",
+      "pass": true,
+      "detail": "已拒绝: HTTP Error 400: Bad Request"
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+{
+  "ts": "20260916-135905",
+  "total": 18,
+  "passed": 18,
+  "pass_rate": 1.0,
+  "created_record_ids": [
+    "recvvmox3QXeUk"
+  ],
+  "results": [
+    {
+      "gt": "GT-01",
+      "path": "golden",
+      "check": "幂等:首次非重复",
+      "pass": true,
+      "detail": "check=(False, None)"
+    },
+    {
+      "gt": "GT-01",
+      "path": "golden",
+      "check": "创建成功且业务码=0",
+      "pass": true,
+      "detail": "rid=recvvmox3QXeUk"
+    },
+    {
+      "gt": "GT-01",
+      "path": "golden",
+      "check": "断言:记录数=1",
+      "pass": true,
+      "detail": "matches=1"
+    },
+    {
+      "gt": "GT-01",
+      "path": "golden",
+      "check": "断言:状态=进行中",
+      "pass": true,
+      "detail": "status=进行中"
+    },
+    {
+      "gt": "GT-01",
+      "path": "golden",
+      "check": "幂等:重复键被识别",
+      "pass": true,
+      "detail": "dup_key=34a7669147f3e1e769e5e683"
+    },
+    {
+      "gt": "GT-01",
+      "path": "negative",
+      "check": "非法字段必须报错",
+      "pass": true,
+      "detail": "BitableError code=1254045 FieldNameNotFound"
+    },
+    {
+      "gt": "GT-01",
+      "path": "negative",
+      "check": "空名称校验",
+      "pass": true,
+      "detail": "已拒绝: [输入校验] 任务名称不能为空或纯空白"
+    },
+    {
+      "gt": "GT-01",
+      "path": "negative",
+      "check": "越权token必须被拒",
+      "pass": true,
+      "detail": "已拒绝: HTTP Error 400: Bad Request"
+    },
+    {
+      "gt": "GT-02",
+      "path": "golden",
+      "check": "更新业务码=0",
+      "pass": true,
+      "detail": "code=0"
+    },
+    {
+      "gt": "GT-02",
+      "path": "golden",
+      "check": "断言:状态=已完成",
+      "pass": true,
+      "detail": "status=已完成"
+    },
+    {
+      "gt": "GT-02",
+      "path": "golden",
+      "check": "断言:完成日期非空",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "gt": "GT-02",
+      "path": "golden",
+      "check": "回滚预演(只读)",
+      "pass": true,
+      "detail": "ready"
+    },
+    {
+      "gt": "GT-02",
+      "path": "golden",
+      "check": "回滚真实执行",
+      "pass": true,
+      "detail": "status=applied "
+    },
+    {
+      "gt": "GT-02",
+      "path": "golden",
+      "check": "断言:回滚后=已取消",
+      "pass": true,
+      "detail": "status=已取消"
+    },
+    {
+      "gt": "GT-02",
+      "path": "golden",
+      "check": "R2:ADMIN_OVERRIDE已追加",
+      "pass": true,
+      "detail": "ts=2026-09-16T13:59:26"
+    },
+    {
+      "gt": "GT-02",
+      "path": "negative",
+      "check": "R3:删除型回滚被拦截",
+      "pass": true,
+      "detail": "status=blocked R3 禁止删除记录；请改用软归档(状态→已取消)"
+    },
+    {
+      "gt": "GT-02",
+      "path": "negative",
+      "check": "非TEST_目标默认拒绝",
+      "pass": true,
+      "detail": "status=blocked_non_test"
+    },
+    {
+      "gt": "GT-02",
+      "path": "negative",
+      "check": "不存在record必须报错",
+      "pass": true,
+      "detail": "BitableError bitable code=1254043 msg=RecordIdNotFound"
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "ts": "20260915-224843",
+  "total": 16,
+  "passed": 14,
+  "pass_rate": 0.875,
+  "created_record_ids": [
+    "recvviHlXbNWkI",
+    "recvviHnFW7jsJ"
+  ],
+  "results": [
+    {
+      "gt": "GT-01",
+      "path": "golden",
+      "check": "幂等:首次非重复",
+      "pass": true,
+      "detail": "check=(False, None)"
+    },
+    {
+      "gt": "GT-01",
+      "path": "golden",
+      "check": "API业务码=0",
+      "pass": true,
+      "detail": "code=0"
+    },
+    {
+      "gt": "GT-01",
+      "path": "golden",
+      "check": "取得record_id",
+      "pass": true,
+      "detail": "rid=recvviHlXbNWkI"
+    },
+    {
+      "gt": "GT-01",
+      "path": "golden",
+      "check": "断言:记录数=1",
+      "pass": true,
+      "detail": "matches=1"
+    },
+    {
+      "gt": "GT-01",
+      "path": "golden",
+      "check": "断言:状态=进行中",
+      "pass": true,
+      "detail": "status=进行中"
+    },
+    {
+      "gt": "GT-01",
+      "path": "golden",
+      "check": "幂等:重复键被识别",
+      "pass": true,
+      "detail": "check=(True, {'key': '0f9095b4b835de4ae6ba12a4', 'action': 'create_task', 'target': 'TEST_写路径验收_224843', 'result': {'record_id': 'recvviHlXbNWkI'}, 'undo': {'op': 'update', 'table_id': 'tblz3H4lV7PCrB"
+    },
+    {
+      "gt": "GT-01",
+      "path": "negative",
+      "check": "非法字段→业务码非0",
+      "pass": true,
+      "detail": "code=1254045 msg=FieldNameNotFound"
+    },
+    {
+      "gt": "GT-01",
+      "path": "negative",
+      "check": "空名称校验",
+      "pass": false,
+      "detail": "业务码=0（若非0则说明服务端有校验，否则为缺陷）"
+    },
+    {
+      "gt": "GT-01",
+      "path": "negative",
+      "check": "越权token应被拒",
+      "pass": true,
+      "detail": "已拒绝: HTTP Error 400: Bad Request"
+    },
+    {
+      "gt": "GT-02",
+      "path": "golden",
+      "check": "更新API业务码=0",
+      "pass": true,
+      "detail": "code=0"
+    },
+    {
+      "gt": "GT-02",
+      "path": "golden",
+      "check": "断言:状态=已完成",
+      "pass": true,
+      "detail": "status=已完成"
+    },
+    {
+      "gt": "GT-02",
+      "path": "golden",
+      "check": "断言:完成日期非空",
+      "pass": true,
+      "detail": "date=1789483733150"
+    },
+    {
+      "gt": "GT-02",
+      "path": "golden",
+      "check": "回滚执行",
+      "pass": true,
+      "detail": "rollback={'status': 'ready', 'undo_of': 'create_task', 'undo_spec': {'op': 'update', 'table_id': 'tblz3H4lV7PCrBrX', 'r"
+    },
+    {
+      "gt": "GT-02",
+      "path": "golden",
+      "check": "断言:回滚后=已取消",
+      "pass": false,
+      "detail": "status=已完成"
+    },
+    {
+      "gt": "GT-02",
+      "path": "negative",
+      "check": "重复完成幂等容错",
+      "pass": true,
+      "detail": "status=已完成"
+    },
+    {
+      "gt": "GT-02",
+      "path": "negative",
+      "check": "不存在record应报错",
+      "pass": true,
+      "detail": "code=1254043"
+    }
+  ]
+}

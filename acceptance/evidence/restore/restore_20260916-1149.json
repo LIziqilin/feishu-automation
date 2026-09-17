@@ -1,0 +1,19 @@
+{
+  "ts": "2026-09-16T11:49:48",
+  "backup_file": "hourly_20260916_114156.json",
+  "backup_time": "2026-09-16T11:41:26.097500",
+  "rpo_minutes": 8.4,
+  "rto_seconds": 0.8,
+  "tables": 11,
+  "records_src": 3389,
+  "records_restored": 3389,
+  "mismatch": {},
+  "checksum": "6bea9a8d89e13de2",
+  "isolated_db": "runtime\\restore_test\\restore_20260916-114947.db",
+  "pass": true,
+  "rpo_target_min": 60,
+  "rto_target_min": 60,
+  "rpo_target_note": "日备7轮 + 每小时增量24轮（分层），目标≤60min",
+  "rpo_meet": true,
+  "rto_meet": true
+}

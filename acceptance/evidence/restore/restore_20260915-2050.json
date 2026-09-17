@@ -1,0 +1,19 @@
+{
+  "ts": "2026-09-15T20:50:56",
+  "backup_file": "backup_20260915_030018.json",
+  "backup_time": "2026-09-15T03:00:02.178738",
+  "rpo_minutes": 1070.9,
+  "rto_seconds": 0.7,
+  "tables": 8,
+  "records_src": 2784,
+  "records_restored": 2784,
+  "mismatch": {},
+  "checksum": "8abbd87470657ed7",
+  "isolated_db": "runtime\\restore_test\\restore_20260915-205055.db",
+  "pass": true,
+  "rpo_target_min": 1440,
+  "rto_target_min": 60,
+  "rpo_target_note": "现状=每日3:00一次；候选目标≤15min未达（见slo_config.md第二节）",
+  "rpo_meet": true,
+  "rto_meet": true
+}

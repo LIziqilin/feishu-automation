@@ -1,0 +1,33 @@
+{
+  "check": "system_monitor_center_repair_20260917_v41",
+  "base": "X8N1bvN3na99dFsyu0gcU8zTnHf",
+  "table": "tblxJMndPNtZ7XyG",
+  "table_name": "系统健康表",
+  "total_records": 900,
+  "component_health_nonnull": 900,
+  "health_score_nonnull": 900,
+  "latest_record": {
+    "check_item": "心跳-TaskScheduler",
+    "component_health": 100,
+    "health_score": 5,
+    "type": [
+      "心跳"
+    ]
+  },
+  "browser_verify_20260917": {
+    "health_score": "5.0 / 5.0",
+    "heartbeat": "91 items 100% 正常",
+    "component_health": "98.7 平均健康度",
+    "type_distribution": "心跳585·100% / 服务监控245·98% / 工作流10·100% 等",
+    "residual": [
+      "自动化次数/AI点数 仅1条历史值无持续写入",
+      "LAST CHECK 组件时间显示00:00:00"
+    ]
+  },
+  "scripts": [
+    "scripts/heartbeat.py (V41)",
+    "scripts/health_monitor.py (V41)",
+    "scripts/patch_health_fields.py"
+  ],
+  "verified_at": "2026-09-17 15:18:25"
+}

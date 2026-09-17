@@ -1,0 +1,96 @@
+{
+  "ts": "2026-09-16T03:03:57",
+  "level": "readonly",
+  "total": 12,
+  "passed": 12,
+  "pass_rate": 1.0,
+  "write_pending": [],
+  "note": "写型任务需 --level=write（TEST_前缀+软归档）；当前为只读/离线验收",
+  "elapsed_sec": 75.7,
+  "results": [
+    {
+      "id": "GT-01",
+      "name": "创建任务",
+      "write": true,
+      "pass": true,
+      "detail": "dry_run:接口存在，未落库"
+    },
+    {
+      "id": "GT-02",
+      "name": "完成任务(销项)",
+      "write": true,
+      "pass": true,
+      "detail": "dry_run:销项接口就绪，未改状态"
+    },
+    {
+      "id": "GT-03",
+      "name": "查询任务",
+      "write": false,
+      "pass": true,
+      "detail": "module_import=0"
+    },
+    {
+      "id": "GT-04",
+      "name": "会议纪要+行动项",
+      "write": false,
+      "pass": true,
+      "detail": "草稿长度=156"
+    },
+    {
+      "id": "GT-05",
+      "name": "三报生成分发",
+      "write": false,
+      "pass": true,
+      "detail": "晨报草稿长度=28"
+    },
+    {
+      "id": "GT-06",
+      "name": "知识问答(RAG)",
+      "write": false,
+      "pass": true,
+      "detail": "hits=3 action=accept"
+    },
+    {
+      "id": "GT-07",
+      "name": "文件摘要/表格抽取",
+      "write": false,
+      "pass": true,
+      "detail": "摘要长度=21"
+    },
+    {
+      "id": "GT-08",
+      "name": "学习卡片创建复习",
+      "write": true,
+      "pass": true,
+      "detail": "dry_run:卡片接口就绪，未落库"
+    },
+    {
+      "id": "GT-09",
+      "name": "番茄钟/时间块/推荐",
+      "write": false,
+      "pass": true,
+      "detail": "{\"time_block_plan.py\": 0, \"personalized_recommender.py\": 0}"
+    },
+    {
+      "id": "GT-10",
+      "name": "错题解释+费曼复述",
+      "write": false,
+      "pass": true,
+      "detail": "dry-run OK"
+    },
+    {
+      "id": "GT-11",
+      "name": "管理员健康巡检",
+      "write": false,
+      "pass": true,
+      "detail": "code=0"
+    },
+    {
+      "id": "GT-12",
+      "name": "备份恢复演练",
+      "write": false,
+      "pass": true,
+      "detail": "code=0 result=PASS"
+    }
+  ]
+}

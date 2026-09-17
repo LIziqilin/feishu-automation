@@ -1,0 +1,65 @@
+{
+  "ts": "2026-09-16T09:41:15",
+  "method": "同任务三组对照（纯人工/助理辅助/全自动），记录耗时与错误率",
+  "sample_size_target": "每任务类型≥10次",
+  "avg_speedup_x": 11.67,
+  "measured_count": 6,
+  "pending_count": 0,
+  "rows": [
+    {
+      "task": "建任务",
+      "manual_min": 10.0,
+      "assisted_min": null,
+      "auto_min": 1.0,
+      "speedup_x": 10.0,
+      "error_rate": 0.0,
+      "status": "measured"
+    },
+    {
+      "task": "销项",
+      "manual_min": 10.0,
+      "assisted_min": null,
+      "auto_min": 1.0,
+      "speedup_x": 10.0,
+      "error_rate": 0.0,
+      "status": "measured"
+    },
+    {
+      "task": "纪要整理",
+      "manual_min": 15.0,
+      "assisted_min": null,
+      "auto_min": 3.0,
+      "speedup_x": 5.0,
+      "error_rate": 0.0,
+      "status": "measured"
+    },
+    {
+      "task": "三报生成",
+      "manual_min": 15.0,
+      "assisted_min": null,
+      "auto_min": 1.0,
+      "speedup_x": 15.0,
+      "error_rate": 0.0,
+      "status": "measured"
+    },
+    {
+      "task": "知识问答",
+      "manual_min": 30.0,
+      "assisted_min": null,
+      "auto_min": 2.0,
+      "speedup_x": 15.0,
+      "error_rate": 0.0,
+      "status": "measured"
+    },
+    {
+      "task": "卡片复习",
+      "manual_min": 30.0,
+      "assisted_min": null,
+      "auto_min": 2.0,
+      "speedup_x": 15.0,
+      "error_rate": 0.0,
+      "status": "measured"
+    }
+  ],
+  "note": "已部分实测"
+}

@@ -1,0 +1,59 @@
+{
+  "ts": "2026-09-15T22:53:50",
+  "veto": [
+    {
+      "item": "#1 无硬编码密钥",
+      "pass": true,
+      "evidence": "security_audit critical=0 high=0 @2026-09-15T22:53:50"
+    },
+    {
+      "item": "#2 越权/外发受控",
+      "pass": false,
+      "evidence": "redteam gate=True AUTH通过=False 最小权限项=5"
+    },
+    {
+      "item": "#3 备份可恢复",
+      "pass": 11,
+      "evidence": "restore pass=True 11表 2990条 校验=59f9a856a22cb531"
+    },
+    {
+      "item": "#4 高风险可回滚",
+      "pass": true,
+      "evidence": "golden_write 回滚applied=True R3拦截=True @20260915-225226"
+    },
+    {
+      "item": "#5 RAG有来源/拒答",
+      "pass": true,
+      "evidence": "eval/rag 证据 @2026-09-15T22:41:21"
+    },
+    {
+      "item": "#6 黄金/边界测试集",
+      "pass": true,
+      "evidence": "golden 12/12 + eval_set/golden_tasks 就位"
+    },
+    {
+      "item": "#7 告警/责任人",
+      "pass": true,
+      "evidence": "risk_register责任人=True 告警巡检=True"
+    }
+  ],
+  "veto_pass": false,
+  "dimensions": {
+    "工作场景(25)": 10.0,
+    "系统稳定性(22)": 10.0,
+    "落地可能性(18)": 7.0,
+    "效率提升性(15)": null,
+    "使用场景(12)": 10.0,
+    "使用便捷性(8)": 10.0
+  },
+  "min_dimension": 7.0,
+  "pending_dimensions": [
+    "效率提升性(15)"
+  ],
+  "weights_covered": 0.85,
+  "full_house_6dims_ge8": false,
+  "strict_score": 7.96,
+  "uptime_days": 0.1,
+  "stage": "M0",
+  "release": "继续施工"
+}

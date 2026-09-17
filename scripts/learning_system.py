@@ -33,6 +33,14 @@ try:
 except ImportError:
     KNOWLEDGE_EXTENSION_AVAILABLE = False
 
+# V15 Phase3/4 新功能群指令路由（错题本/费曼/番茄/时间块/个性化推荐/知识演进）
+try:
+    from v15_command_router import handle_v15_command
+    V15_ROUTER_AVAILABLE = True
+except ImportError as _e:
+    print(f"[V15] 指令路由导入失败: {_e}")
+    V15_ROUTER_AVAILABLE = False
+
 # V21集成：导入v19_integration模块（告警/倦怠/DLQ/撤回复验）
 try:
     from v19_integration import AlertManager, FatigueManager, DLQManager, RevokeVerifier, ConsumeIndexHealthChecker, RevokeSimplifier, ErrorTypeParser, ErrorTypeHandler, EfficiencyOptimizer, Watchdog, HashManager, CircuitBreaker, EditMessageHandler, AdminOverrideManager, CredentialDriftDetector
@@ -45,7 +53,11 @@ except ImportError as e:
 CARD_TABLE = "tblpLvxyYpDJgF92"
 FLOW_TABLE = "tblbznzCSpPhSz93"
 LOG_TABLE = "tblPreh1ipB9LQpf"
+TASK_TABLE = "tblz3H4lV7PCrBrX"
 CHAT_ID = "oc_1fe154e172ab04622b7ffa810ac172bc"
+LARK_NODE_EXE = r"C:\Users\Administrator\AppData\Local\hermes\node\node.exe"
+LARK_CLI_SCRIPT = r"C:\Users\Administrator\AppData\Local\hermes\node\node_modules\@larksuite\cli\scripts\run.js"
+
 
 # 消费索引文件
 CONSUME_INDEX_FILE = "D:/AI-Tools/feishu/V13方案增强/scripts/.consume_index.json"
@@ -220,15 +232,35 @@ class InstructionParser:
         if not self._looks_like_instruction(text):
             return "ignore", None
 
-        # 重新获取今日卡片
-        if text in ("今日卡片", "卡片", "今日复习", "复习"):
+        # 重新获取今日卡片（V42修复：支持"开始闪卡复习/闪卡复习/闪卡"）
+        if text in ("今日卡片", "卡片", "今日复习", "复习", "开始闪卡复习", "闪卡复习", "闪卡"):
             return "requery", None
+
+        # V42修复：系统体检指令
+        if text.startswith("系统体检") or text.startswith("体检"):
+            return "health_check", {"raw": text}
 
         # 暂停
         pause_match = re.match(r'^暂停\s*(\d+)?\s*(天|日)?$', text)
         if pause_match:
             days = int(pause_match.group(1)) if pause_match.group(1) else 2
             return "pause", {"days": days}
+
+        # 查看待办任务（2026-09-16 新增：@机器人"显示所有待办任务"等）
+        # 不依赖@前缀剥离：直接全文匹配"动词+待办/任务"意图
+        # 显示已完成任务（2026-09-16 新增，优先于 list_todo）
+        if re.search(r'(查看|显示|列出).{0,12}(已完成|完成)', text) or re.search(r'已完成.{0,10}(任务|待办)', text):
+            return "list_done", None
+        # 显示待办任务（排除"已完成"干扰）
+        if re.search(r'(查看|显示|列出|读取|列举|有哪些|有什么|全部|所有).{0,12}(待办|任务)|(待办|任务).{0,10}(有哪些|有什么|列表|清单)', text):
+            return "list_todo", None
+
+        # 新建任务指令（支持多种说法）
+        for prefix in ["新建任务：", "新建任务:", "创建任务：", "创建任务:", "记录任务：", "记录任务:", "新增任务：", "新增任务:"]:
+            if text.startswith(prefix):
+                task_name = text[len(prefix):].strip()
+                if task_name:
+                    return "create_task", {"task_name": task_name}
 
         # 恢复
         if text in ("恢复", "继续", "resume"):
@@ -314,6 +346,19 @@ class InstructionParser:
             return True
         if re.match(r'^暂停\s*\d*\s*(天|日)?$', text):
             return True
+        # 查看待办任务（2026-09-16 新增）
+        if re.search(r'(查看|显示|列出|读取|列举|有哪些|有什么|全部|所有).{0,12}(?!已完成)(待办|任务)|(?!已完成)(待办|任务).{0,10}(有哪些|有什么|列表|清单)', text):
+            return True
+        # 显示已完成任务
+        if re.search(r'(查看|显示|列出).{0,12}(已完成|完成)', text) or re.search(r'已完成.{0,10}(任务|待办)', text):
+            return True
+        # V42修复：新建任务/创建任务/记录任务/新增任务 前缀
+        for _p in ["新建任务：", "新建任务:", "创建任务：", "创建任务:", "记录任务：", "记录任务:", "新增任务：", "新增任务:"]:
+            if text.startswith(_p):
+                return True
+        # V42修复：闪卡复习 / 系统体检 / 学知识
+        if any(_k in text for _k in ("闪卡", "体检", "学知识")):
+            return True
         return False
 
     def reset_index(self):
@@ -329,16 +374,11 @@ class ReceiptSender:
     """两段式回执发送器"""
 
     def send_immediate(self, result, card_title=None, explicit=False):
-        """第一段：即时确认（<3s）"""
-        if explicit:
-            msg = f"✓ 已记录：{result}"
-        else:
-            msg = f"✓ 已记录：{result}"
-        if card_title:
-            msg += f"\n📇 {card_title[:30]}"
-        self._send_message(msg)
-        return msg
-
+        """第一段：即时确认（V15优化：不发送到群里，只打印）"""
+        # V15优化：不发送即时回执，避免大量消息打扰
+        # 只在控制台打印，减少群消息量
+        print(f"  [答题记录] {result} - {card_title[:20] if card_title else ''}...")
+        return "已记录"
     def send_delayed(self, answer, next_date, interval):
         """第二段：延迟答案+下次日期（+300ms）"""
         time.sleep(0.3)  # 模拟derive计算延迟
@@ -353,7 +393,7 @@ class ReceiptSender:
         return msg
 
     def send_batch_result(self, results):
-        """批量回执"""
+        """批量回执（V15优化：不发送到群里，只打印，避免大量消息打扰）"""
         lines = []
         for r in results:
             if r["success"]:
@@ -361,7 +401,8 @@ class ReceiptSender:
             else:
                 lines.append(f"❓ 会{r['num']} 没看懂")
         msg = " / ".join(lines)
-        self._send_message(msg)
+        # V15优化：不发送即时回执，避免大量消息打扰
+        print(f"  [批量回执] {msg}")
         return msg
 
     def send_revoke(self):
@@ -370,13 +411,52 @@ class ReceiptSender:
         self._send_message(msg)
         return msg
 
-    def _send_message(self, text):
-        """发送消息到群"""
-        cmd = ["lark-cli", "im", "+messages-send",
-               "--chat-id", CHAT_ID, "--as", "user",
+    def _send_message(self, text, retries=2):
+        """发送消息到群（V40加固：重试 + 失败判定 + 告警落盘 + 返回状态）
+
+        修复背景（2026-09-16）：此前仅打印错误即返回，早报在 user 授权缺失时
+        “静默失败”——消息没发出，但脚本仍标记幂等已推送、schtasks 判退出码 0，
+        造成“早报正常”假象。现改为：失败即重试，仍失败则写告警并返回 False，
+        调用方（cmd_select）据此不置幂等标记 + 返回非 0 退出码。
+        """
+        if not hasattr(self, "failed"):
+            self.failed = []
+        cmd = [LARK_NODE_EXE, LARK_CLI_SCRIPT, "im", "+messages-send",
+               "--chat-id", CHAT_ID, "--as", "bot",
                "--msg-type", "text", "--content", json.dumps({"text": text}, ensure_ascii=False)]
-        ok, stdout, stderr = run_cmd(cmd)
-        return ok
+        last_err = ""
+        for attempt in range(max(1, retries)):
+            try:
+                ok, stdout, stderr = run_cmd(cmd)
+            except Exception as e:
+                ok, stdout, stderr = False, "", str(e)
+            if ok:
+                if attempt > 0:
+                    print(f"  [发送重试] 第{attempt+1}次成功")
+                return True
+            last_err = (stderr or stdout or "").strip()
+            low = last_err.lower()
+            if any(k in low for k in ("need_user_authorization", "unauthorized",
+                                      "invalid_access_token", "99991663")):
+                print("  [AUTH] user 授权缺失/失效，需重新执行 lark-cli auth login")
+                break
+            if attempt < retries - 1:
+                time.sleep(1.5)
+        # 失败：告警落盘 + 控制台告警
+        self.failed.append(text[:40])
+        self._alert(f"消息发送失败（累计{len(self.failed)}条）: {last_err[:200]}")
+        print(f"  [ERROR] 消息发送失败: {last_err[:200]}")
+        return False
+
+    def _alert(self, msg):
+        """失败告警落盘，便于 schtasks/健康自检抓取"""
+        try:
+            logf = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                "learning_alerts.log")
+            with open(logf, "a", encoding="utf-8") as f:
+                f.write(f"[{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}] {msg}\n")
+        except Exception as e:
+            print(f"  [WARN] 告警落盘失败: {e}")
 
 # ============================================================
 # T10: 选题算法
@@ -553,6 +633,20 @@ def cmd_poll():
     start_time = time.time()
     MAX_EXECUTION_TIME = 480  # 8分钟最大执行时间，避免任务计划10分钟超时
 
+    # V42修复：poll 互斥锁（防止定时任务与手动运行并发，避免同一消息被重复处理）
+    import msvcrt
+    POLL_LOCK_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".poll.lock")
+    _lock_fh = None
+    try:
+        _lock_fh = open(POLL_LOCK_FILE, "a+", encoding="utf-8")
+        try:
+            msvcrt.locking(_lock_fh.fileno(), msvcrt.LK_NBLCK, 1)
+        except OSError:
+            print("[轮询模式] 另一 poll 进程正在运行，本次跳过（互斥锁保护）")
+            return 0
+    except Exception as _lock_e:
+        print(f"[轮询模式] 互斥锁获取异常（继续执行）: {_lock_e}")
+
     print("[轮询模式] 读取群消息...")
     update_system_status(status="poll_running", extra={"poll_start": datetime.now().isoformat()})
     # V37优化：SYSTEM类型日志 - 系统启动
@@ -573,7 +667,7 @@ def cmd_poll():
     
     cmd = ["lark-cli", "im", "+chat-messages-list",
            "--chat-id", CHAT_ID, "--as", "user",
-           "--page-size", "10", "--order", "desc"]
+           "--page-size", "50", "--order", "desc"]
     ok, stdout, stderr = run_cmd(cmd, timeout=60)
     
     # R8 S5-09: 熔断器记录 - 读取消息结果
@@ -645,6 +739,9 @@ def cmd_poll():
             text = msg.get("body", {}).get("content", "")
         # 去掉"（由XXX发送）"后缀
         text = re.sub(r'（由[^）]+发送）\s*$', '', text).strip()
+        # 去掉开头的"@机器人名"前缀（飞书@消息以"@名字 内容"形式出现，
+        # 统一剥掉@前缀后，re.match类指令（洞察/完成/待办等）才能识别）
+        text = re.sub(r'^@\S+\s*', '', text).strip()
         # 提取纯文本（飞书text消息content可能为JSON格式 {"text":"..."}）
         if isinstance(text, str) and text.startswith("{"):
             try:
@@ -664,6 +761,10 @@ def cmd_poll():
             "✅ 洞察已记录", "✅ 任务已完成", "↩️ 已撤销",
             "⚠ 已记录但标记", "🔴 权限失效", "📭 今日无待复习",
             "请发：会/不会/模糊", "未找到相关知识",
+            # V15根因修复：批量回执也是系统消息，不要当成用户指令
+            "✓ 会", "❓ 会",
+            # V15根因修复：创建/完成/归档任务的系统回执，防止被当成新指令重复处理
+            "✅ 已创建任务", "❌ 创建失败", "✅ 待办已创建", "❌ 待办创建失败",
         ]
         is_system_receipt = any(p in text for p in system_receipt_patterns)
         if is_system_receipt:
@@ -671,7 +772,58 @@ def cmd_poll():
             mark_message_processed(msg_id, processed_messages, action="system_receipt")
             continue  # 跳过系统回执，避免循环解析
 
-        # 扩展指令处理（S7随手记/S8快速销项/S9到期提醒）
+        # 显示类指令（查看待办/已完成）优先于自然语态销项：
+        # 防止"显示所有已完成任务"被 D2 逻辑改写成"完成：显示所有任务"导致误判
+        _is_display_cmd = bool(
+            re.search(r'(查看|显示|列出|读取|列举|有哪些|有什么|全部|所有).{0,12}(待办|任务)', text)
+            or re.search(r'(查看|显示|列出).{0,12}(已完成|完成)', text)
+            or re.search(r'已完成.{0,10}(任务|待办)', text)
+        )
+
+        # P0修复：先处理基础任务指令（创建/完成/归档），不要被扩展指令吃掉
+        task_prefixes = [
+            "新建任务：", "新建任务:", "创建任务：", "创建任务:",
+            "记录任务：", "记录任务:", "新增任务：", "新增任务:",
+            "完成：", "完成:", "归档：", "归档:"
+        ]
+        is_task_instruction = any(text.startswith(p) for p in task_prefixes)
+        # D2修复：自然语态销项/归档（无冒号前缀也识别），对齐用户手册XI
+        if not is_task_instruction and not _is_display_cmd:
+            _nl_complete = ["搞定", "已完成", "做完了", "done", "完成"]
+            _nl_archive = ["收起来", "存档", "归档"]
+            _low = text.lower()
+            if any(k in _low for k in _nl_complete) or any(k in text for k in _nl_archive):
+                # 剥离自然语态动词，仅保留任务名，避免 parse_complete 搜不到
+                _strip = ["搞定", "已完成", "做完了", "done", "收起来", "存档", "归档", "完成了", "完成"]
+                _body = text
+                for _k in _strip:
+                    _body = _body.replace(_k, "")
+                _body = re.sub(r'^了+|了+$', '', _body)
+                _body = _body.strip(" ：:，。.、")
+                # 自然语态转规范前缀式，复用既有完成/归档分支
+                if any(k in text for k in _nl_archive):
+                    text = "归档：" + _body
+                else:
+                    text = "完成：" + _body
+                is_task_instruction = True
+
+        # V15 新功能群指令（错题本/费曼/番茄/时间块/今日推荐/知识演进）
+        if not is_task_instruction and V15_ROUTER_AVAILABLE:
+            try:
+                v15_handled, v15_reply = handle_v15_command(text)
+            except Exception as _ve:
+                v15_handled, v15_reply = False, ""
+                print(f"  [V15路由异常] {_ve}")
+            if v15_handled:
+                if v15_reply:
+                    sender._send_message(v15_reply)
+                print(f"  消息: {text[:30]}... → V15功能指令已处理")
+                mark_message_processed(msg_id, processed_messages, action="v15_feature")
+                new_processed_count += 1
+                continue
+
+        # 扩展指令处理（2026-09-17 修复：去掉 not is_task_instruction，让"完成/销项/归档"能进 handle_extension_command；
+        # handle_extension_command 自带 handled 标记，非指令会自然返回 False，不会误吞普通消息）
         if EXTENSION_AVAILABLE:
             handled, result = handle_extension_command(text)
             if handled:
@@ -681,8 +833,8 @@ def cmd_poll():
                 new_processed_count += 1
                 continue
 
-        # 知识链路扩展指令（S10知识检索）
-        if KNOWLEDGE_EXTENSION_AVAILABLE:
+        # 知识链路扩展指令（S10知识检索）- 同样跳过基础任务指令
+        if not is_task_instruction and KNOWLEDGE_EXTENSION_AVAILABLE:
             handled, result = handle_knowledge_command(text)
             if handled:
                 print(f"  消息: {text[:30]}... → 知识检索已处理: {result}")
@@ -964,6 +1116,130 @@ def cmd_poll():
                 sender._send_message(r)
                 time.sleep(0.5)
 
+
+        elif action == "health_check":
+            # V42修复：系统体检（调用 system_health_check.py 并回发群）
+            print("  [系统体检] 收到指令，执行健康自检...")
+            try:
+                import subprocess as sp
+                cmd = [sys.executable, "system_health_check.py"]
+                hc = sp.run(cmd, capture_output=True, text=True, encoding="utf-8", timeout=180, cwd=os.path.dirname(os.path.abspath(__file__)))
+                out = (hc.stdout or "") + ("\n" + hc.stderr[-300:] if hc.returncode != 0 and hc.stderr else "")
+                lines = [ln for ln in out.splitlines() if ln.strip()]
+                if not lines:
+                    lines = ["健康自检执行完成（无输出）"]
+                body = "\n".join(lines[:40])
+                sender._send_message("🩺 系统体检结果：\n" + body)
+                write_system_log("INSTRUCTION", "系统体检执行完成", "INFO", "health_check", f"返回码={hc.returncode}, 输出行数={len(lines)}")
+            except Exception as _hc_e:
+                sender._send_message(f"❌ 系统体检执行异常: {str(_hc_e)[:80]}")
+                print(f"  [系统体检] 异常: {_hc_e}")
+
+
+        elif action == "list_todo":
+            # 查看待办任务（2026-09-16 新增）：读任务总表，过滤未完成，发群
+            print("  [查看待办] 收到指令，读取任务总表...")
+            try:
+                rows = get_all_tasks()
+                done_states = {"已完成", "完成", "已归档", "ARCHIVED", "DONE", "已取消", "取消"}
+                open_tasks = [r for r in rows if str(r.get("状态", "")).strip() not in done_states]
+                if not open_tasks:
+                    sender._send_message("📋 当前没有待办任务，全部完成 🎉")
+                else:
+                    open_tasks.sort(key=lambda r: (str(r.get("优先级", "")), str(r.get("截止日期", "") or "")), reverse=False)
+                    lines = [f"📋 待办任务 {len(open_tasks)} 项："]
+                    for i, t in enumerate(open_tasks, 1):
+                        name = str(t.get("任务名称", "")).strip()
+                        pri = str(t.get("优先级", "")).strip() or "-"
+                        due = str(t.get("截止日期", "") or "").split("T")[0] if t.get("截止日期") else ""
+                        cat = str(t.get("类别", "")).strip() or "-"
+                        if isinstance(t.get("类别"), list) and t.get("类别"):
+                            cat = str(t["类别"][0])
+                        lines.append(f"{i}. {name}｜{pri}｜{cat}｜截止 {due if due else '未设'}")
+                    sender._send_message("\n".join(lines))
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                print(f"  [查看待办] 异常: {e}")
+                sender._send_message("⚠️ 读取待办任务失败，请稍后再试")
+
+
+        elif action == "list_done":
+            # 显示已完成任务（2026-09-16 新增）
+            print("  [查看已完成] 收到指令，读取任务总表...")
+            try:
+                rows = get_all_tasks()
+                done_states = {"已完成", "完成", "已归档", "ARCHIVED", "DONE", "已取消", "取消"}
+                done_tasks = [r for r in rows if str(r.get("状态", "")).strip() in done_states]
+                if not done_tasks:
+                    sender._send_message("📋 暂无已完成任务记录")
+                else:
+                    done_tasks.sort(key=lambda r: str(r.get("完成日期") or r.get("实际完成日期") or r.get("创建日期") or ""), reverse=True)
+                    lines = [f"✅ 已完成任务 {len(done_tasks)} 项："]
+                    for i, t in enumerate(done_tasks[:30], 1):
+                        name = str(t.get("任务名称", "")).strip()
+                        pri = str(t.get("优先级", "")).strip() or "-"
+                        done_at = str(t.get("实际完成日期") or t.get("完成日期") or "").split("T")[0] or ""
+                        lines.append(f"{i}. {name}｜{pri}｜{done_at if done_at else '完成'}")
+                    sender._send_message("\n".join(lines))
+            except Exception as e:
+                import traceback
+                traceback.print_exc()
+                print(f"  [查看已完成] 异常: {e}")
+                sender._send_message("⚠️ 读取已完成任务失败，请稍后再试")
+
+
+        elif action == "create_task":
+            # 新建任务
+            task_name = data.get("task_name", "")
+            print(f"  [新建任务] 收到任务: {task_name}")
+            try:
+                import urllib.request as ur
+                import json as js
+                from datetime import datetime as dt
+                env_path = r"C:\Users\Administrator\AppData\Local\hermes\profiles\agent6_scheduler\scripts\feishu_insight_link.env"
+                app_id = ""
+                app_secret = ""
+                for line in open(env_path, encoding="utf-8-sig"):
+                    line = line.strip()
+                    if line.startswith("FEISHU_APP_ID="):
+                        app_id = line.split("=", 1)[1]
+                    elif line.startswith("FEISHU_APP_SECRET="):
+                        app_secret = line.split("=", 1)[1]
+                req = ur.Request(
+                    "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal",
+                    data=js.dumps({"app_id": app_id, "app_secret": app_secret}).encode(),
+                    headers={"Content-Type": "application/json"},
+                )
+                with ur.urlopen(req, timeout=30) as r:
+                    token = js.load(r)["tenant_access_token"]
+                url = "https://open.feishu.cn/open-apis/bitable/v1/apps/X8N1bvN3na99dFsyu0gcU8zTnHf/tables/tblz3H4lV7PCrBrX/records"
+                today_ms = int(dt.now().timestamp() * 1000)
+                body = {
+                    "fields": {
+                        "任务名称": task_name,
+                        "状态": "待办",
+                        "优先级": "中",
+                        "类别": "工作",
+                        "截止日期": today_ms
+                    }
+                }
+                req = ur.Request(
+                    url,
+                    data=js.dumps(body).encode(),
+                    headers={"Authorization": "Bearer " + token, "Content-Type": "application/json"},
+                    method="POST",
+                )
+                with ur.urlopen(req, timeout=30) as r:
+                    resp = js.load(r)
+                if resp.get("code") == 0:
+                    sender._send_message(f"✅ 已创建任务：{task_name}")
+                    print(f"  [新建任务] 成功: {task_name}")
+                else:
+                    sender._send_message(f"❌ 创建失败: {resp.get('msg', '未知错误')}")
+            except Exception as e:
+                sender._send_message(f"❌ 创建任务异常: {str(e)[:50]}")
+                print(f"  [新建任务] 异常: {e}")
         elif action == "revoke":
             # D6: 手动撤回 - 标记原流水superseded，写入REVOKE流水
             target_eid = data.get("target_event_id")
@@ -1044,6 +1320,15 @@ def cmd_poll():
     # V37优化：SYSTEM类型日志 - 系统完成
     write_system_log("SYSTEM", "学习系统轮询完成", "INFO", "system", f"耗时={elapsed:.1f}s, 处理消息={len(messages)}条")
 
+    # V42修复：释放互斥锁
+    if _lock_fh is not None:
+        try:
+            _lock_fh.seek(0)
+            msvcrt.locking(_lock_fh.fileno(), msvcrt.LK_UNLCK, 1)
+        except Exception:
+            pass
+        _lock_fh.close()
+
     # S2-02接线：消费索引健康检查
     if V19_INTEGRATION_AVAILABLE:
         try:
@@ -1116,6 +1401,15 @@ def cmd_select():
     """执行今日选题，推送早报"""
     print("[选题模式] 执行今日选题...")
 
+    # V39修复：早报幂等保护——今天已推送过则跳过
+    try:
+        from v19_integration import DailyPusher
+        if DailyPusher._already_pushed("morning"):
+            print("  [幂等保护] 今日早报已推送过，跳过")
+            return 0
+    except Exception as e:
+        print(f"  [WARN] 早报幂等检查异常: {e}")
+
     all_cards = get_all_cards()
     selector = CardSelector()
     today_cards = selector.select(all_cards)
@@ -1153,12 +1447,85 @@ def cmd_select():
         if not today_cards:
             sender._send_message("📭 今日无待复习卡片\n（所有卡片均未到期，且无新卡可引入）")
             print("  [D4空队列] 今日无待复习卡片，已推送提示")
+            # V40加固：空队列提示也纳入失败判定
+            if getattr(sender, "failed", None):
+                print(f"  [ALERT] 早报有 {len(sender.failed)} 条发送失败，返回非0以便重试")
+                return 1
         else:
             reports = selector.format_morning_report(today_cards)
             for r in reports:
                 sender._send_message(r)
                 time.sleep(0.5)
+            # V40加固：早报主体发送失败 → 不置幂等标记，返回非0（便于重试/告警）
+            if getattr(sender, "failed", None):
+                print(f"  [ALERT] 早报主体有 {len(sender.failed)} 条发送失败，跳过幂等标记并返回非0")
+                return 1
+            # V39修复：标记早报已推送（幂等保护）
+            try:
+                from v19_integration import DailyPusher
+                DailyPusher._mark_pushed("morning")
+            except:
+                pass
             print("  早报已推送")
+
+            # V39增强：早报合并今日待办+已完成事项
+            try:
+                from task_insight_extension import get_tasks_summary
+                tasks = get_tasks_summary(days_ahead=3)
+                task_msg_parts = []
+                if tasks["today_pending"]:
+                    part = "📋 今日待办:\n"
+                    for t in tasks["today_pending"][:5]:
+                        part += f"  ⏰ {t['name']}\n"
+                    task_msg_parts.append(part)
+                if tasks["today_completed"]:
+                    part = f"✅ 昨日已完成 ({len(tasks['today_completed'])}项):\n"
+                    for t in tasks["today_completed"][:5]:
+                        part += f"  ✓ {t['name']}\n"
+                    task_msg_parts.append(part)
+                if tasks["upcoming"]:
+                    part = f"📅 即将到期 ({len(tasks['upcoming'])}项):\n"
+                    for t in tasks["upcoming"][:3]:
+                        from datetime import datetime as _dt
+                        days = (t["due_date"] - _dt.now().date()).days if t["due_date"] else "?"
+                        part += f"  • {t['name']} ({days}天后)\n"
+                    task_msg_parts.append(part)
+                # V41增强：任务优先级矩阵（艾森豪威尔矩阵可视化面板）
+                try:
+                    _all_todo = tasks.get("all_active") or (tasks["today_pending"] + tasks["upcoming"])
+                    _ui = [t for t in _all_todo if t.get("priority", "低") == "高"]
+                    _nui = [t for t in _all_todo if t.get("priority", "低") == "中"]
+                    _nun = [t for t in _all_todo if t.get("priority", "低") not in ("高", "中")]
+                    _mat = "📊 任务优先级矩阵:\n"
+                    _mat += f"  🔴 重要紧急: {len(_ui)}个\n"
+                    _mat += f"  🟡 重要不紧急: {len(_nui)}个\n"
+                    _mat += f"  🟢 紧急不重要: 0个\n"
+                    _mat += f"  ⚪ 不重要不紧急: {len(_nun)}个\n"
+                    if _ui:
+                        _mat += "  🔴 详情: " + "、".join(t['name'][:14] for t in _ui[:3]) + "\n"
+                    sender._send_message(_mat)
+                    print("  [V41增强] 任务优先级矩阵已推送")
+                except Exception as _mat_e:
+                    print(f"  [WARN] 任务优先级矩阵异常: {_mat_e}")
+
+                # V15增强：每日三件事（从今日待办中选出最重要的3件）
+                try:
+                    if tasks["today_pending"]:
+                        top3 = tasks["today_pending"][:3]
+                        three_things = "🎯 今日三件事（最重要）:\n"
+                        for i, t in enumerate(top3):
+                            _p = t.get("priority", "低")
+                            three_things += f"  {i+1}. [{_p}] {t['name']}\n"
+                        sender._send_message(three_things)
+                        print("  [V15增强] 每日三件事已推送")
+                except Exception as three_e:
+                    print(f"  [WARN] 每日三件事异常: {three_e}")
+                    
+                if task_msg_parts:
+                    sender._send_message("\n".join(task_msg_parts))
+                    print("  [V39增强] 早报待办事项已推送")
+            except Exception as task_e:
+                print(f"  [WARN] 早报待办加载异常: {task_e}")
 
         # S5-05: DLQ死信队列次日汇总补录
         if V19_INTEGRATION_AVAILABLE:
@@ -1210,6 +1577,15 @@ def cmd_select():
                 print("  到期提醒已推送")
             except Exception as e:
                 print(f"  到期提醒推送失败: {e}")
+
+    # V40加固：任何子消息发送失败都返回非0（sender 仅在非静默期定义）
+    try:
+        _failed = getattr(sender, "failed", None)
+    except Exception:
+        _failed = None
+    if _failed:
+        print(f"  [ALERT] 本次推送共 {len(_failed)} 条发送失败，返回非0")
+        return 1
 
     return 0
 
@@ -1275,6 +1651,33 @@ def write_system_log(log_type, message, severity="INFO", source="system", detail
                 os.remove(tmp_file)
             except:
                 pass
+
+def get_all_tasks():
+    """读取任务总表全部记录（2026-09-16 新增，供"查看待办"指令）"""
+    cmd = ["lark-cli", "base", "+record-list", "--base-token", BASE_TOKEN,
+           "--table-id", TASK_TABLE, "--as", "user", "--limit", "200", "--format", "json"]
+    ok, stdout, _ = run_cmd(cmd, timeout=60)
+    if ok:
+        try:
+            data = json.loads(stdout)
+            fields = data["data"]["fields"]
+            rows = data["data"]["data"]
+            record_ids = data["data"].get("record_id_list", [])
+            records = []
+            for i, row in enumerate(rows):
+                record = {"_record_id": record_ids[i] if i < len(record_ids) else ""}
+                for j, field in enumerate(fields):
+                    val = row[j] if j < len(row) else None
+                    if isinstance(val, list) and len(val) > 0 and field not in ("关联知识卡片",):
+                        val = val[0]
+                    record[field] = val
+                records.append(record)
+            return records
+        except Exception as e:
+            print(f"  [ERROR] 解析任务表JSON失败: {e}")
+            return []
+    return []
+
 
 def get_all_cards():
     """获取所有学习卡记录（使用JSON格式，避免markdown解析问题）"""
@@ -1554,14 +1957,38 @@ def mark_superseded_same_day(card_id, current_event_id):
         print(f"  [S3修复] 标记superseded异常: {e}")
         return 0
 
-def get_interval(result):
-    """根据答题结果获取间隔天数（简化版）"""
-    if result == "会":
-        return 2
+def get_interval(result, consecutive_correct=0):
+    """根据答题结果和连续正确次数获取间隔天数（V15增强：个性化间隔）
+    
+    间隔策略：
+    - 不会：1天
+    - 模糊：1天
+    - 会（根据连续正确次数递增）：
+      * 0次：2天
+      * 1次：3天
+      * 2次：5天
+      * 3次：7天
+      * 4次：15天
+      * 5次+：30天
+    """
+    if result == "不会":
+        return 1
     elif result == "模糊":
         return 1
-    else:
-        return 1
+    else:  # "会"
+        # V15增强：根据连续正确次数调整间隔
+        if consecutive_correct == 0:
+            return 2
+        elif consecutive_correct == 1:
+            return 3
+        elif consecutive_correct == 2:
+            return 5
+        elif consecutive_correct == 3:
+            return 7
+        elif consecutive_correct == 4:
+            return 15
+        else:
+            return 30
 
 def calculate_consecutive_correct(card_id):
     """

@@ -1,0 +1,10 @@
+{
+  "ok": true,
+  "mode": "self_test",
+  "anchor": "rollback-anchor-20260916-030357",
+  "commits_visible": 5,
+  "plan_rev": "71f5535",
+  "plan_blocked": 1,
+  "plan_restorable": 0,
+  "note": "dry-run：仅锚点+计划，不执行 git checkout，不删文件（R3）"
+}

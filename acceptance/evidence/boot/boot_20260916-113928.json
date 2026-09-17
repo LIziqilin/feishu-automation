@@ -1,0 +1,15 @@
+{
+  "ts": "20260916-113928",
+  "ts_iso": "2026-09-16T11:39:28",
+  "host": "DESKTOP-944N6FH",
+  "prev_ts": "2026-09-16T11:35:29",
+  "gap_hours": 0.07,
+  "gap_detected": false,
+  "gap_threshold_hours": 26.0,
+  "steps": [
+    {
+      "script": "task_selfheal.py",
+      "rc": 0
+    }
+  ]
+}

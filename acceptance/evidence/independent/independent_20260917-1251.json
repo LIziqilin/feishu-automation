@@ -1,0 +1,86 @@
+{
+  "ts": "2026-09-17T12:51:25",
+  "independent_verdict": "FAIL",
+  "verifier": "independent_verify.py（施工方以外脚本）",
+  "domains": [
+    {
+      "domain": "runs",
+      "label": "M0验收",
+      "evidence": "result.json",
+      "fresh": true,
+      "age": "22.4h前",
+      "gate": true,
+      "ok": true
+    },
+    {
+      "domain": "golden",
+      "label": "黄金任务",
+      "evidence": "report.json",
+      "fresh": true,
+      "age": "22.4h前",
+      "gate": true,
+      "ok": true
+    },
+    {
+      "domain": "eval",
+      "label": "评测集",
+      "evidence": "report.json",
+      "fresh": true,
+      "age": "22.5h前",
+      "gate": true,
+      "ok": true
+    },
+    {
+      "domain": "chaos",
+      "label": "混沌",
+      "evidence": "chaos_20260916-1419.json",
+      "fresh": true,
+      "age": "22.4h前",
+      "gate": true,
+      "ok": true
+    },
+    {
+      "domain": "security",
+      "label": "安全审计",
+      "evidence": "security_20260917-1246.json",
+      "fresh": true,
+      "age": "0.0h前",
+      "gate": false,
+      "ok": false
+    },
+    {
+      "domain": "restore",
+      "label": "恢复演练",
+      "evidence": "restore_20260916-1419.json",
+      "fresh": true,
+      "age": "22.4h前",
+      "gate": true,
+      "ok": true
+    },
+    {
+      "domain": "redteam",
+      "label": "红队",
+      "evidence": "redteam_20260917-1246.json",
+      "fresh": true,
+      "age": "0.0h前",
+      "gate": false,
+      "ok": false
+    }
+  ],
+  "rerun": {
+    "acceptance_run.py": {
+      "exit": -1,
+      "error": "Command '['C:\\\\Users\\\\Administrator\\\\AppData\\\\Local\\\\Programs\\\\Python\\\\Python310\\\\python.exe', 'D:\\\\AI-Tools\\\\feishu\\\\V13方案增强\\\\scripts\\\\acceptance_run.py']' timed out after 300 seconds"
+    }
+  },
+  "cross_check": {
+    "restore_claims": 3502,
+    "backup_actual": 3502,
+    "match": true
+  },
+  "failures": [
+    "security: evidence=True fresh=True gate=False",
+    "redteam: evidence=True fresh=True gate=False",
+    "独立复跑 acceptance_run 未通过"
+  ]
+}

@@ -1,4 +1,4 @@
-name: V43 外部数据抓取（行情/RSS/天气）
+name: V44 每日三察推送（西安天气+社会/自然/人性洞察）
 
 on:
   schedule:
@@ -14,7 +14,7 @@ env:
   CITY: Xian
 
 jobs:
-  fetch-external-data:
+  daily-insights:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -41,18 +41,10 @@ jobs:
           }
           EOF
 
-      - name: 抓取外部数据并推送
+      - name: 生成每日三察并推送（规则模式，云端零LLM依赖）
         run: |
           cd scripts
-          python fetch_external_data.py --push
+          python insight_daily.py --mode rules --push --no-sink
         env:
           PYTHONIOENCODING: utf-8
           PYTHONUTF8: "1"
-
-      - name: 上传日志
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: external-data-log
-          path: scripts/_tmp_ext_log.json
-          retention-days: 7

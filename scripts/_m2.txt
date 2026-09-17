@@ -1,0 +1,475 @@
+﻿{
+  "ok": true,
+  "identity": "user",
+  "data": {
+    "has_more": true,
+    "messages": [
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "\u003ccard title=\"QClaw\"\u003e\n鏃╂湡 m 鐪嬭蛋鐪间簡銆傜敤鑴氭湰鏂囦欢姝ｇ‘鎶撳彇缇ゆ秷鎭€佸畾浣嶈繖鎵规帹閫佺殑**鐪熷疄鏃堕棿鎴?*锛岀‘璁や慨澶嶅悗鏄惁浠嶅湪閲嶅銆侺et me get the exact content of those post-fix messages (13:59/14:04) to see if the batch is still pushing.Let me verify whether the batch is still repeating after my 13:57 fix, and check what pushed the 14:01/14:04 messages.Let me decisively separate real-user messages from automation echoes (include sender + msg_type\n---\nAgent: QClaw | Model: pool-deepseek-v4-flash | Provider: qclaw\n\u003c/card\u003e",
+        "create_time": "2026-09-16 14:09",
+        "deleted": false,
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1586",
+        "message_id": "om_x100b6597647cc0b8b271ac7a7a2ba67",
+        "message_position": "1586",
+        "msg_type": "interactive",
+        "reply_to": "om_x100b6596b636cca8b3fb0713be6a798",
+        "sender": {
+          "id": "cli_aa0c44c69a389bc9",
+          "id_type": "app_id",
+          "name": "绱簰楹熺殑鏅鸿兘鍔╂墜",
+          "open_bot_id": "ou_b437e5db68d1e0171239a7cfc7e95218",
+          "sender_i18n_names": {
+            "en_us": "绱簰楹熺殑鏅鸿兘鍔╂墜",
+            "zh_cn": "绱簰楹熺殑鏅鸿兘鍔╂墜"
+          },
+          "sender_type": "app",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "update_time": "2026-09-16 14:14",
+        "updated": true
+      },
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "鉂?娌＄湅鎳傘€備粖鏃ュ崱鐗囧凡鍏ㄩ儴绛斿畬\n璇峰彂锛氫細/涓嶄細/妯＄硦锛堟垨銆屼細 2銆嶆寚瀹氱紪鍙凤級",
+        "create_time": "2026-09-16 14:04",
+        "deleted": false,
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1585",
+        "message_id": "om_x100b6597598bbc80b1b45717684ae6a",
+        "message_position": "1585",
+        "msg_type": "text",
+        "sender": {
+          "id": "ou_4983cbbcab635e69796704d28303fdf7",
+          "id_type": "open_id",
+          "name": "绱簰楹?,
+          "sender_i18n_names": {
+            "zh_cn": "绱簰楹?
+          },
+          "sender_type": "user",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "updated": false
+      },
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "鉂?娌＄湅鎳傘€備粖鏃ュ崱鐗囧凡鍏ㄩ儴绛斿畬\n璇峰彂锛氫細/涓嶄細/妯＄硦锛堟垨銆屼細 2銆嶆寚瀹氱紪鍙凤級",
+        "create_time": "2026-09-16 14:04",
+        "deleted": false,
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1584",
+        "message_id": "om_x100b659759cd20a0b1d1e3d7da7075c",
+        "message_position": "1584",
+        "msg_type": "text",
+        "sender": {
+          "id": "ou_4983cbbcab635e69796704d28303fdf7",
+          "id_type": "open_id",
+          "name": "绱簰楹?,
+          "sender_i18n_names": {
+            "zh_cn": "绱簰楹?
+          },
+          "sender_type": "user",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "updated": false
+      },
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "馃挕 绛旀锛氫笉纭畾鎴栦笉鑷俊鐨勮〃鐜癨n馃搮 涓嬫澶嶄範锛?026-09-18锛?澶╁悗锛?,
+        "create_time": "2026-09-16 14:04",
+        "deleted": false,
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1583",
+        "message_id": "om_x100b659758502080b2a25e0c1ee2195",
+        "message_position": "1583",
+        "msg_type": "text",
+        "sender": {
+          "id": "ou_4983cbbcab635e69796704d28303fdf7",
+          "id_type": "open_id",
+          "name": "绱簰楹?,
+          "sender_i18n_names": {
+            "zh_cn": "绱簰楹?
+          },
+          "sender_type": "user",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "updated": false
+      },
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "\u003ccard title=\"QClaw\"\u003e\n鏍稿疄缁撹锛氳繖 6 鏉′笉鏄綘鍦ㄧ瓟棰樸€俓n\n瀹冧滑鏄?*鍚屼竴娆°€屾棭鎶ャ€嶆壒閲忔帹閫?*鐨勭粍鎴愶紙3 寮犲涔犲崱 + 浠婃棩涓変欢浜?+ 浠婃棩寰呭姙 + 鍒版湡鎻愰啋锛夛紝鐢辩郴缁熶互浣犵殑璐﹀彿锛坄--as user`锛夎嚜鍔ㄥ彂鍑猴紝鎵€浠ョ兢閲屾樉绀篭"绱簰楹焅"鍙戦€佲€斺€斿睘姝ｅ父琛ㄧ幇銆俓n\n缇ゆ秷鎭椂闂存埑鏄剧ず杩欐壒 13:56 鍙戝嚭涓€娆★紝姝ｅソ鏄垜淇骞傜瓑 BOM **涔嬪墠鐨勬渶鍚庝竴娆￠噸澶?*銆備慨澶嶅悗閲嶈窇宸插懡涓璡"浠婃棩鏃╂姤宸叉帹閫佽繃锛岃烦杩嘰"锛屼笉浼氬啀鍒枫€俓n\n濡傝绛旈锛岃鍥烇細**浼?/ 涓嶄細 / 妯＄硦**銆俓n---\nAgent: QClaw | Model: pool-deepseek-v4-flash | Provider: qclaw\n\u003c/card\u003e",
+        "create_time": "2026-09-16 14:01",
+        "deleted": false,
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1582",
+        "message_id": "om_x100b659744e008a8b4b1448c8df35e1",
+        "message_position": "1582",
+        "msg_type": "interactive",
+        "reply_to": "om_x100b6596b603c8a4b367a6d01af442b",
+        "sender": {
+          "id": "cli_aa0c44c69a389bc9",
+          "id_type": "app_id",
+          "name": "绱簰楹熺殑鏅鸿兘鍔╂墜",
+          "open_bot_id": "ou_b437e5db68d1e0171239a7cfc7e95218",
+          "sender_i18n_names": {
+            "en_us": "绱簰楹熺殑鏅鸿兘鍔╂墜",
+            "zh_cn": "绱簰楹熺殑鏅鸿兘鍔╂墜"
+          },
+          "sender_type": "app",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "update_time": "2026-09-16 14:07",
+        "updated": true
+      },
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "馃挕 绛旀锛氱敓娲荤儹姘淬€佺粰姘寸郴缁熼€氬父瀛ｅ害/鍗婂勾缁翠繚锛岀粨鍚圫LA娓呭崟鍒嗙骇鎵ц\n馃搮 涓嬫澶嶄範锛?026-09-18锛?澶╁悗锛?,
+        "create_time": "2026-09-16 13:59",
+        "deleted": false,
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1581",
+        "message_id": "om_x100b65974d4c24acb12988f143cd983",
+        "message_position": "1581",
+        "msg_type": "text",
+        "sender": {
+          "id": "ou_4983cbbcab635e69796704d28303fdf7",
+          "id_type": "open_id",
+          "name": "绱簰楹?,
+          "sender_i18n_names": {
+            "zh_cn": "绱簰楹?
+          },
+          "sender_type": "user",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "update_time": "2026-09-16 13:59",
+        "updated": true
+      },
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "\u003ccard title=\"QClaw\"\u003e\n杩欐潯 `馃搰 浠婃棩澶嶄範 1/3` 鏄?*鏃╂姤鐨勫涔犲崱鐗?*锛坄format_morning_report` 浜у嚭锛夛紝涓嶆槸鏂颁换鍔♀€斺€斿畠灏辨槸 `cmd_select` 鏃╂姤鎺ㄩ€佺殑涓€閮ㄥ垎銆傚垰瀹氫綅纭锛氭簮澶翠负 `learning_system.py` 绗?97琛屻€俓n\n缁撳悎鍒氫慨鐨勫箓绛?BOM锛?3:55 杩欐潯鏄?*淇鍓嶇殑鏈€鍚庝竴娆￠噸澶?*銆傜幇鍦ㄩ噸璺戝凡鍛戒腑\"[骞傜瓑淇濇姢] 浠婃棩鏃╂姤宸叉帹閫佽繃锛岃烦杩嘰"锛屼笉浼氬啀鍒枫€俓n\n璇峰洖澶嶏細**浼?/ 涓嶄細 / 妯＄硦**銆俓n---\nAgent: QClaw | Model: pool-deepseek-v4-flash | Provider: qclaw\n\u003c/card\u003e",
+        "create_time": "2026-09-16 13:59",
+        "deleted": false,
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1580",
+        "message_id": "om_x100b65974c2eb4a8b27b98018c362a4",
+        "message_position": "1580",
+        "msg_type": "interactive",
+        "reply_to": "om_x100b6596b8a1b4b0b3e9e5c0ab5d6a4",
+        "sender": {
+          "id": "cli_aa0c44c69a389bc9",
+          "id_type": "app_id",
+          "name": "绱簰楹熺殑鏅鸿兘鍔╂墜",
+          "open_bot_id": "ou_b437e5db68d1e0171239a7cfc7e95218",
+          "sender_i18n_names": {
+            "en_us": "绱簰楹熺殑鏅鸿兘鍔╂墜",
+            "zh_cn": "绱簰楹熺殑鏅鸿兘鍔╂墜"
+          },
+          "sender_type": "app",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "update_time": "2026-09-16 14:00",
+        "updated": true
+      },
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "宸插畬鎴?,
+        "create_time": "2026-09-16 13:58",
+        "deleted": false,
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1579",
+        "message_id": "om_x100b65974ed7b484b1dd4a96867be3e",
+        "message_position": "1579",
+        "msg_type": "text",
+        "reply_to": "om_x100b6596b7f814a8b4a4e3e3c5630f8",
+        "sender": {
+          "id": "ou_4983cbbcab635e69796704d28303fdf7",
+          "id_type": "open_id",
+          "name": "绱簰楹?,
+          "sender_i18n_names": {
+            "zh_cn": "绱簰楹?
+          },
+          "sender_type": "user",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "updated": false
+      },
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "宸插畬鎴?,
+        "create_time": "2026-09-16 13:58",
+        "deleted": false,
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1578",
+        "message_id": "om_x100b6596b14f0c78b3e93005a84a237",
+        "message_position": "1578",
+        "msg_type": "text",
+        "reply_to": "om_x100b6596b7eb7cc8b128967e0eace45",
+        "sender": {
+          "id": "ou_4983cbbcab635e69796704d28303fdf7",
+          "id_type": "open_id",
+          "name": "绱簰楹?,
+          "sender_i18n_names": {
+            "zh_cn": "绱簰楹?
+          },
+          "sender_type": "user",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "updated": false
+      },
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "涓嶄細",
+        "create_time": "2026-09-16 13:58",
+        "deleted": false,
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1577",
+        "message_id": "om_x100b6596b07e58b0b490066831edfe6",
+        "message_position": "1577",
+        "msg_type": "text",
+        "reply_to": "om_x100b6596b636cca8b3fb0713be6a798",
+        "sender": {
+          "id": "ou_4983cbbcab635e69796704d28303fdf7",
+          "id_type": "open_id",
+          "name": "绱簰楹?,
+          "sender_i18n_names": {
+            "zh_cn": "绱簰楹?
+          },
+          "sender_type": "user",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "updated": false
+      },
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "妯＄硦",
+        "create_time": "2026-09-16 13:57",
+        "deleted": false,
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1576",
+        "message_id": "om_x100b6596b0e9d870b26ed7af05aedad",
+        "message_position": "1576",
+        "msg_type": "text",
+        "reply_to": "om_x100b6596b628c0a8b155faafbe2d52b",
+        "sender": {
+          "id": "ou_4983cbbcab635e69796704d28303fdf7",
+          "id_type": "open_id",
+          "name": "绱簰楹?,
+          "sender_i18n_names": {
+            "zh_cn": "绱簰楹?
+          },
+          "sender_type": "user",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "updated": false
+      },
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "浼?,
+        "create_time": "2026-09-16 13:57",
+        "deleted": false,
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1575",
+        "message_id": "om_x100b6596b36930acb3dd6c51c1503a2",
+        "message_position": "1575",
+        "msg_type": "text",
+        "reply_to": "om_x100b6596b8a1b4b0b3e9e5c0ab5d6a4",
+        "sender": {
+          "id": "ou_4983cbbcab635e69796704d28303fdf7",
+          "id_type": "open_id",
+          "name": "绱簰楹?,
+          "sender_i18n_names": {
+            "zh_cn": "绱簰楹?
+          },
+          "sender_type": "user",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "updated": false
+      },
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "@绱簰楹熺殑鏅鸿兘鍔╂墜 C1C2鏀逛负浠ｇ悊鏈氨缁垯璺宠繃銆佷笉鍒ゅけ璐?,
+        "create_time": "2026-09-16 13:57",
+        "deleted": false,
+        "mentions": [
+          {
+            "id": "ou_b437e5db68d1e0171239a7cfc7e95218",
+            "key": "@_user_1",
+            "name": "绱簰楹熺殑鏅鸿兘鍔╂墜"
+          }
+        ],
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1574",
+        "message_id": "om_x100b6596b5b014b0b127e5c97eea8bf",
+        "message_position": "1574",
+        "msg_type": "text",
+        "reply_to": "om_x100b6596ad8928b8b30ba7f5109b44a",
+        "sender": {
+          "id": "ou_4983cbbcab635e69796704d28303fdf7",
+          "id_type": "open_id",
+          "name": "绱簰楹?,
+          "sender_i18n_names": {
+            "zh_cn": "绱簰楹?
+          },
+          "sender_type": "user",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "update_time": "2026-09-16 13:57",
+        "updated": true
+      },
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "馃搵 鍒版湡鎻愰啋锛堟湭鏉?澶╋級",
+        "create_time": "2026-09-16 13:56",
+        "deleted": false,
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1573",
+        "message_id": "om_x100b6596b7940ca0b1ff9958ec682f2",
+        "message_position": "1573",
+        "msg_type": "text",
+        "sender": {
+          "id": "ou_4983cbbcab635e69796704d28303fdf7",
+          "id_type": "open_id",
+          "name": "绱簰楹?,
+          "sender_i18n_names": {
+            "zh_cn": "绱簰楹?
+          },
+          "sender_type": "user",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "updated": false
+      },
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "馃搵 浠婃棩寰呭姙:\n  鈴?钀藉疄娉涘厜鐓ф槑楠屾敹鏃堕棿\n",
+        "create_time": "2026-09-16 13:56",
+        "deleted": false,
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1572",
+        "message_id": "om_x100b6596b7f814a8b4a4e3e3c5630f8",
+        "message_position": "1572",
+        "msg_type": "text",
+        "sender": {
+          "id": "ou_4983cbbcab635e69796704d28303fdf7",
+          "id_type": "open_id",
+          "name": "绱簰楹?,
+          "sender_i18n_names": {
+            "zh_cn": "绱簰楹?
+          },
+          "sender_type": "user",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "updated": false
+      },
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "馃幆 浠婃棩涓変欢浜嬶紙鏈€閲嶈锛?\n  1. 钀藉疄娉涘厜鐓ф槑楠屾敹鏃堕棿\n",
+        "create_time": "2026-09-16 13:56",
+        "deleted": false,
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1571",
+        "message_id": "om_x100b6596b7eb7cc8b128967e0eace45",
+        "message_position": "1571",
+        "msg_type": "text",
+        "sender": {
+          "id": "ou_4983cbbcab635e69796704d28303fdf7",
+          "id_type": "open_id",
+          "name": "绱簰楹?,
+          "sender_i18n_names": {
+            "zh_cn": "绱簰楹?
+          },
+          "sender_type": "user",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "updated": false
+      },
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "馃搰 浠婃棩澶嶄範 3/3\nQ锛氬井琛ㄦ儏涓崟渚ц€歌偐閫氬父鏆楃ず浠€涔堬紵\n锛堢瓟瀹屽悗鎴戜細鍛婅瘔浣犵瓟妗堝拰涓嬫澶嶄範鏃堕棿锛塡n鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€\n鐩存帴鍥炲锛氫細 / 涓嶄細 / 妯＄硦",
+        "create_time": "2026-09-16 13:56",
+        "deleted": false,
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1570",
+        "message_id": "om_x100b6596b636cca8b3fb0713be6a798",
+        "message_position": "1570",
+        "msg_type": "text",
+        "sender": {
+          "id": "ou_4983cbbcab635e69796704d28303fdf7",
+          "id_type": "open_id",
+          "name": "绱簰楹?,
+          "sender_i18n_names": {
+            "zh_cn": "绱簰楹?
+          },
+          "sender_type": "user",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "updated": false
+      },
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "馃搰 浠婃棩澶嶄範 2/3\nQ锛氬鍒╄绠楀叕寮忔槸浠€涔堬紵\n锛堢瓟瀹屽悗鎴戜細鍛婅瘔浣犵瓟妗堝拰涓嬫澶嶄範鏃堕棿锛塡n鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€\n鐩存帴鍥炲锛氫細 / 涓嶄細 / 妯＄硦",
+        "create_time": "2026-09-16 13:56",
+        "deleted": false,
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1569",
+        "message_id": "om_x100b6596b628c0a8b155faafbe2d52b",
+        "message_position": "1569",
+        "msg_type": "text",
+        "sender": {
+          "id": "ou_4983cbbcab635e69796704d28303fdf7",
+          "id_type": "open_id",
+          "name": "绱簰楹?,
+          "sender_i18n_names": {
+            "zh_cn": "绱簰楹?
+          },
+          "sender_type": "user",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "update_time": "2026-09-16 13:56",
+        "updated": true
+      },
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "馃搰 浠婃棩澶嶄範 1/3\nQ锛氶厭搴楃粰鎺掓按绯荤粺缁翠繚涓€鑸寜浠€涔堝懆鏈熸墽琛岋紵\n锛堢瓟瀹屽悗鎴戜細鍛婅瘔浣犵瓟妗堝拰涓嬫澶嶄範鏃堕棿锛塡n鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€\n鐩存帴鍥炲锛氫細 / 涓嶄細 / 妯＄硦",
+        "create_time": "2026-09-16 13:56",
+        "deleted": false,
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1568",
+        "message_id": "om_x100b6596b603c8a4b367a6d01af442b",
+        "message_position": "1568",
+        "msg_type": "text",
+        "sender": {
+          "id": "ou_4983cbbcab635e69796704d28303fdf7",
+          "id_type": "open_id",
+          "name": "绱簰楹?,
+          "sender_i18n_names": {
+            "zh_cn": "绱簰楹?
+          },
+          "sender_type": "user",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "updated": false
+      },
+      {
+        "chat_id": "oc_1fe154e172ab04622b7ffa810ac172bc",
+        "content": "馃搵 鍒版湡鎻愰啋锛堟湭鏉?澶╋級",
+        "create_time": "2026-09-16 13:55",
+        "deleted": false,
+        "message_app_link": "https://applink.feishu.cn/client/chat/open?openChatId=oc_1fe154e172ab04622b7ffa810ac172bc\u0026position=1567",
+        "message_id": "om_x100b6596b83b04bcb1ba797174d3d86",
+        "message_position": "1567",
+        "msg_type": "text",
+        "sender": {
+          "id": "ou_4983cbbcab635e69796704d28303fdf7",
+          "id_type": "open_id",
+          "name": "绱簰楹?,
+          "sender_i18n_names": {
+            "zh_cn": "绱簰楹?
+          },
+          "sender_type": "user",
+          "tenant_key": "19e05e5f3d5fdcbc"
+        },
+        "updated": false
+      }
+    ],
+    "page_token": "4cXSlmN7uFAnWWU5yfIGMAQIyxsdD9lTxTQSxkpnslaYyXDaSxsAhR56Prjdl7HDCCbamsA7fPbpFji4huFLOzL7xA9skq7MSUmr75xEz_iB2OiU_-iFJcUUm5K5exAQ",
+    "total": 20
+  },
+  "meta": {
+    "pagination": {
+      "complete": false,
+      "pages": 1,
+      "items": 20,
+      "next_token": "4cXSlmN7uFAnWWU5yfIGMAQIyxsdD9lTxTQSxkpnslaYyXDaSxsAhR56Prjdl7HDCCbamsA7fPbpFji4huFLOzL7xA9skq7MSUmr75xEz_iB2OiU_-iFJcUUm5K5exAQ"
+    }
+  },
+  "_notice": {
+    "update": {
+      "command": "lark-cli update",
+      "current": "1.0.89",
+      "latest": "1.0.95",
+      "message": "lark-cli 1.0.95 available, current 1.0.89, run: lark-cli update"
+    }
+  }
+}

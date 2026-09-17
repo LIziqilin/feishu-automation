@@ -1,0 +1,11 @@
+{
+  "key": "9af42855057476abee5d056c",
+  "action": "chaos_test",
+  "target": "tbl",
+  "result": {
+    "r": "first"
+  },
+  "undo": null,
+  "ts": "2026-09-16T08:54:55",
+  "expire_at": 1792112095.951518
+}

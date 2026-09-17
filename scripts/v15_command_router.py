@@ -22,7 +22,10 @@ PY = sys.executable
 
 def _run_sub(script, timeout=180):
     try:
-        r = subprocess.run([PY, os.path.join(HERE, script)], capture_output=True,
+        parts = script.split()
+        script_path = os.path.join(HERE, parts[0])
+        args = [PY, script_path] + parts[1:]
+        r = subprocess.run(args, capture_output=True,
                            text=True, encoding="utf-8", errors="replace", timeout=timeout)
         out = (r.stdout or "").strip()
         return r.returncode == 0, out
@@ -116,6 +119,16 @@ def handle_v15_command(text):
     if t in ("画像更新", "更新画像", "越用越懂", "画像演化"):
         ok, out = _run_sub("profile_evolve.py")
         return True, ("🧠 画像已更新，见下方摘要（发「今日推荐」体验新队列）\n" + "\n".join(out.splitlines()[-8:])) if ok else f"⚠️ 画像更新失败：{out[-200:]}"
+
+    # ---------- V44 三察洞察 ----------
+    if t in ("三察", "今日三察", "今日洞察", "规律洞察"):
+        ok, out = _run_sub("insight_daily.py --push")
+        return True, ("🔍 今日三察已生成并推送（天气+社会/自然/人性洞察），已沉淀洞察表\n" + "\n".join(out.splitlines()[:14])) if ok else f"⚠️ 三察生成失败：{out[-200:]}"
+
+    # ---------- V44 洞察沉淀 ----------
+    if t in ("沉淀洞察", "洞察转卡片", "洞察沉淀", "知识自增长"):
+        ok, out = _run_sub("insight_to_card.py")
+        return True, ("🧩 洞察沉淀完成，高价值洞察已转为知识卡片进入复习循环\n" + "\n".join(out.splitlines()[-6:])) if ok else f"⚠️ 沉淀失败：{out[-200:]}"
 
     return False, ""
 
