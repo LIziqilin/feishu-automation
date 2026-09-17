@@ -1,0 +1,58 @@
+name: V43 外部数据抓取（行情/RSS/天气）
+
+on:
+  schedule:
+    - cron: '0 0,12 * * *'   # UTC 0:00/12:00 = 北京时间 08:00/20:00（早报/晚报时段）
+  workflow_dispatch:         # 支持手动触发
+
+env:
+  # 云端 secrets（已在 GitHub 配置：FEISHU_APP_ID/FEISHU_APP_SECRET/FEISHU_BASE_TOKEN）
+  LARK_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+  LARK_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+  BASE_TOKEN: ${{ secrets.FEISHU_BASE_TOKEN }}
+  CHAT_ID: oc_1fe154e172ab04622b7ffa810ac172bc
+  CITY: Xian
+
+jobs:
+  fetch-external-data:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 安装lark-cli
+        run: |
+          npm install -g @larksuite/lark-cli
+          lark-cli --version
+
+      - name: 配置lark-cli（应用身份）
+        run: |
+          mkdir -p ~/.lark-cli
+          cat > ~/.lark-cli/config.json << EOF
+          {
+            "app_id": "${{ secrets.FEISHU_APP_ID }}",
+            "app_secret": "${{ secrets.FEISHU_APP_SECRET }}"
+          }
+          EOF
+
+      - name: 抓取外部数据并推送
+        run: |
+          cd scripts
+          python fetch_external_data.py --push
+        env:
+          PYTHONIOENCODING: utf-8
+          PYTHONUTF8: "1"
+
+      - name: 上传日志
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: external-data-log
+          path: scripts/_tmp_ext_log.json
+          retention-days: 7

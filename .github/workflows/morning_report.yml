@@ -1,8 +1,11 @@
-name: V16 早报推送
+name: V16 早报推送（云端备援·默认手动）
 
 on:
-  schedule:
-    - cron: '30 23 * * *'  # UTC 23:30 = 北京时间 07:30
+  # V43 修正：本地 V16_MorningReport 计划任务（07:30 已验证 LastTaskResult=0）正常运行时，
+  # 云端自动触发会造成同一时段双重推送；且云端 secrets（BASE_TOKEN/CHAT_ID）缺失、
+  # wrapper 为 Windows 硬编码路径，云端无法运行。保留手动触发作备援。
+  # schedule:
+  #   - cron: '30 23 * * *'  # UTC 23:30 = 北京时间 07:30
   workflow_dispatch:  # 支持手动触发
 
 env:

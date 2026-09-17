@@ -1,8 +1,11 @@
-name: V16 日常维护
+name: V16 日常维护（云端备援·默认手动）
 
 on:
-  schedule:
-    - cron: '0 19 * * *'  # UTC 19:00 = 北京时间 03:00
+  # V43 修正：本地 V16_DailyMaintenance（03:00，LastTaskResult=0）正常运行时云端自动触发无必要；
+  # 云端 secrets（BASE_TOKEN/LARK_APP_ID）缺失、wrapper 为 Windows 硬编码路径，云端无法运行。
+  # 保留手动触发作备援。
+  # schedule:
+  #   - cron: '0 19 * * *'  # UTC 19:00 = 北京时间 03:00
   workflow_dispatch:  # 支持手动触发
 
 env:

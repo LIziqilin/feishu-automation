@@ -1,8 +1,11 @@
-name: V16 群消息轮询
+name: V16 群消息轮询（云端备援·默认手动）
 
 on:
-  schedule:
-    - cron: '*/15 * * * *'  # 每15分钟（GitHub Actions最小5分钟，考虑成本用15分钟）
+  # V43 修正：本地 V16_LearningPoll 计划任务正常运行时云端自动触发会造成双重轮询，
+  # 且云端缺少 BASE_TOKEN/CHAT_ID secrets、wrapper 为 Windows 硬编码路径（云端无法运行）。
+  # 保留 workflow_dispatch 作本地故障时的手动备援；如需云端定时，请先解决 secrets 与脚本跨平台问题。
+  # schedule:
+  #   - cron: '*/15 * * * *'
   workflow_dispatch:  # 支持手动触发
 
 env:
