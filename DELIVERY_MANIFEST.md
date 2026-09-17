@@ -799,3 +799,41 @@
 
 | V44 | 云端验证：GitHub Actions 手动触发三察推送（push触发→API直连→bot推送） | ✅ run 35238787409 success，23:13 群消息 sender=紫麒麟的智能助手(app)，rules 模式三察到达总控群 |
 | V44 | 云端修复链：npm装lark-cli失败→飞书API直连；config_local缺失→隔离v19依赖；api_send_message分支覆盖丢失→恢复+失败exit1 | ✅ 4轮迭代至全通 |
+
+---
+
+## V45 交付更新（2026-09-18）
+
+### 1. Obsidian 双向同步深化 ✅（已端到端验证）
+- 新增 scripts/obsidian_sync.py：每日笔记自动生成（当日洞察+任务摘要+frontmatter 写入 Obsidian，复用 27124 Local REST API），MASTERED 卡片回流知识库（幂等 .obsidian_card_archived.json）。
+- 实测：每日笔记 2026-09-18.md 写入+回读命中（洞察/任务/frontmatter 全中）；事件日志表字段已修正（message/detail/source/log_type/severity/timestamp）。
+- 维护链新增步骤29（每日笔记同步）。
+
+### 2. GitHub Actions 失败告警 ✅（已端到端验证）
+- 新增 scripts/alert_fail.py（urllib 直连飞书 API，零依赖）+ workflow if:failure 步骤。
+- 实测：故意失败 run 35245789793 → 00:18 总控群收到「🚨云端任务失败告警」（bot 身份）。关键坑：失败步骤必须在告警步骤之前。
+
+### 3. 系统知识问答（轻量 RAG）✅（已端到端验证）
+- 原定 AnythingLLM 因新版本 API 路径不兼容（documents 404/chat 超时）改为自研 scripts/system_rag.py：docs/*.md + DELIVERY_MANIFEST 建本地索引（551 片段），关键词检索+LLM 生成可溯源答案。
+- 群指令「问系统：xxx」已注册路由并实测：bot 回复正确步骤+引用来源。
+- 维护链新增步骤31（每日重建索引）。
+
+### 4. Coze 工作流接入群路由 ⏸️（实现完成，待发布）
+- 新增 scripts/coze_gateway.py：/v3/chat 调 finished Brain个人AI助理。
+- 阻塞项：Coze Bot 未发布到「Agent As API」渠道（code=4015），需用户在 coze.cn 控制台发布后启用。
+- 群指令「智能：xxx」已注册路由（未发布时返回明确提示）。
+
+### 5. Hermes 架构借鉴 + MarkItDown 导入 ✅（已验证）
+- 新增 scripts/memory_hierarchy.py：短期（近7天事件2926条）/长期（画像15维度）/程序性（卡片+洞察）三层记忆 → Obsidian「系统记忆分层」+ 群摘要。群指令「记忆分层」已注册并实测推送。
+- 新增 scripts/import_knowledge.py：MarkItDown（主Python已装）转 PDF/DOCX/MD → 沉淀洞察表 + Obsidian 技术笔记。实测合同 PDF 转换 2803 字符。
+
+### 6. 历史脚本与乱码目录清理 ✅
+- 归档 D:\AI-Tools\feishu 根目录 56 个 check_/probe_/fix_/verify_ 脚本、scripts/ 30 个 _tmp_*/.bak_* → _archive_20260918\（移动不删除，可恢复）。
+- 乱码目录 V13鏂规澶炲己 已归档（与 V13方案增强 重复）。
+
+### 7. 群指令速查（V45 新增）
+| 指令 | 功能 | 状态 |
+|---|---|---|
+| 问系统：xxx | 系统文档自然语言问答（可溯源） | ✅ 已验证 |
+| 智能：xxx | Coze 复杂 agentic 任务 | ⏸️ 待发布 Bot |
+| 记忆分层 | 三层记忆生成+推送 | ✅ 已验证 |
