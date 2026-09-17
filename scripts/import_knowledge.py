@@ -35,6 +35,25 @@ def convert(path):
     return text.strip()
 
 
+def sink_text(title, text, tag=None):
+    """把文本沉淀为洞察（知识沉淀），返回 record_id；供群指令「导知识」与文件导入共用"""
+    rid = v15.create_record(v15.T_INSIGHT, {
+        "洞察标题": title,
+        "洞察内容": text[:MAX_LEN],
+        "洞察日期": int(datetime.now().timestamp() * 1000),
+        "洞察类型": "知识沉淀",
+        "来源": "MarkItDown导入",
+        "标签": [tag or "文档导入"],
+        "类型": "洞察",
+    })
+    rec = rid.get("data", {}).get("record", {}).get("record_id") if isinstance(rid, dict) else None
+    if rec:
+        print("✅ 已沉淀到洞察表:", rec)
+    else:
+        print("⚠️ 沉淀未返回 record_id:", str(rid)[:200])
+    return rec
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("path")
@@ -55,16 +74,7 @@ def main():
         return 0
 
     # 写入洞察表（知识沉淀）
-    rid = v15.create_record(v15.T_INSIGHT, {
-        "洞察标题": f"文档导入：{name}",
-        "洞察内容": text[:MAX_LEN],
-        "洞察日期": int(datetime.now().timestamp() * 1000),
-        "洞察类型": "知识沉淀",
-        "来源": "MarkItDown导入",
-        "标签": ["文档导入"],
-        "类型": "洞察",
-    })
-    print("✅ 已沉淀到洞察表:", rid.get("data", {}).get("record", {}).get("record_id"))
+    sink_text(f"文档导入：{name}", text)
 
     if args.obsidian:
         title = f"文档导入_{datetime.now().strftime('%Y%m%d')}_{os.path.splitext(name)[0][:40]}"

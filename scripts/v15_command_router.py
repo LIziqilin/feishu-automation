@@ -149,6 +149,17 @@ def handle_v15_command(text):
         except Exception as e:
             return True, f"⚠️ 智能任务失败：{e}"
 
+    # ---------- V45 导知识（文本直达知识沉淀，文件导入走 import_knowledge.py） ----------
+    m = re.match(r"^导知识[：: ]\s*(.+)$", t) or re.match(r"^导入知识[：: ]\s*(.+)$", t)
+    if m:
+        try:
+            import import_knowledge
+            content = m.group(1).strip()[:2000]
+            rid = import_knowledge.sink_text("群指令导入：" + content[:24], content, tag="群指令导入")
+            return True, (f"📥 已沉淀为知识（洞察表）\n🆔 {rid}\n（会进入「沉淀洞察」卡片闭环）" if rid else "⚠️ 沉淀未成功，请稍后重试")
+        except Exception as e:
+            return True, f"⚠️ 导知识失败：{e}"
+
     # ---------- V45 记忆分层 ----------
     if t in ("记忆分层", "系统记忆", "记忆"):
         ok, out = _run_sub("memory_hierarchy.py --push")
