@@ -28,25 +28,13 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: 安装lark-cli
-        run: |
-          npm install -g @larksuite/lark-cli
-          lark-cli --version
-
-      - name: 配置lark-cli（应用身份）
-        run: |
-          mkdir -p ~/.lark-cli
-          cat > ~/.lark-cli/config.json << EOF
-          {
-            "app_id": "${{ secrets.FEISHU_APP_ID }}",
-            "app_secret": "${{ secrets.FEISHU_APP_SECRET }}"
-          }
-          EOF
-
-      - name: 生成每日三察并推送（规则模式，云端零LLM依赖）
+      - name: 生成每日三察并推送（规则模式 + 飞书API直连，零npm依赖）
         run: |
           cd scripts
           python insight_daily.py --mode rules --push --no-sink
         env:
           PYTHONIOENCODING: utf-8
           PYTHONUTF8: "1"
+          LARK_API_MODE: "1"
+          LARK_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          LARK_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
