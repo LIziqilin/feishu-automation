@@ -31,10 +31,18 @@ jobs:
       - name: 生成每日三察并推送（规则模式 + 飞书API直连，零npm依赖）
         run: |
           cd scripts
-          python insight_daily.py --mode rules --push --no-sink
+          python insight_daily.py --mode rules --push --no-sink 2>&1 | tee run_output.log
         env:
           PYTHONIOENCODING: utf-8
           PYTHONUTF8: "1"
           LARK_API_MODE: "1"
           LARK_APP_ID: ${{ secrets.FEISHU_APP_ID }}
           LARK_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+
+      - name: 上传运行输出（诊断用）
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: insight-run-output
+          path: scripts/run_output.log
+          retention-days: 3
