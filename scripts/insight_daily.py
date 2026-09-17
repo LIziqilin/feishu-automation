@@ -57,7 +57,41 @@ def run_cmd(cmd, timeout=90):
         return False, "", str(e)
 
 
+def api_send_message(text):
+    '''云端直连飞书 API 发消息（零 lark-cli/npm 依赖，凭据走环境变量）'''
+    app_id = os.environ.get("LARK_APP_ID", "")
+    app_secret = os.environ.get("LARK_APP_SECRET", "")
+    if not (app_id and app_secret):
+        return False, "缺少 LARK_APP_ID/LARK_APP_SECRET 环境变量"
+    try:
+        body = json.dumps({"app_id": app_id, "app_secret": app_secret}).encode("utf-8")
+        req = urllib.request.Request(
+            "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal",
+            data=body, headers={"Content-Type": "application/json"}, method="POST")
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            tresp = json.loads(resp.read().decode("utf-8", errors="replace"))
+        if tresp.get("code") != 0:
+            return False, "token接口失败 code={} msg={}".format(tresp.get("code"), tresp.get("msg"))
+        tok = tresp["tenant_access_token"]
+        payload = json.dumps({
+            "receive_id": TARGET_CHAT_ID,
+            "msg_type": "text",
+            "content": json.dumps({"text": text}, ensure_ascii=False),
+        }).encode("utf-8")
+        req2 = urllib.request.Request(
+            "https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=chat_id",
+            data=payload, headers={"Content-Type": "application/json",
+                                   "Authorization": "Bearer " + tok}, method="POST")
+        with urllib.request.urlopen(req2, timeout=30) as resp:
+            res = json.loads(resp.read().decode("utf-8", errors="replace"))
+        return res.get("code") == 0, json.dumps(res, ensure_ascii=False)[:300]
+    except Exception as e:
+        return False, str(e)
+
+
 def send_message(text):
+    if os.environ.get("LARK_API_MODE") == "1":
+        return api_send_message(text)
     cmd = ["lark-cli", "im", "+messages-send", "--chat-id", TARGET_CHAT_ID, "--as", "user", "--text", text]
     return run_cmd(cmd)
 
@@ -322,7 +356,9 @@ def main():
     print(report)
     if push:
         ok, _, err = send_message(report)
-        print("\n[推送] " + ("OK" if ok else "失败：" + err[:100]))
+        print("\n[推送] " + ("OK" if ok else "失败：" + err[:160]))
+        if not ok:
+            sys.exit(1)
         if not no_sink:
             s_ok, s_err = sink_insights(data)
             print("[洞察沉淀] " + ("OK（3条已入洞察表）" if s_ok else "失败：" + s_err[:80]))
