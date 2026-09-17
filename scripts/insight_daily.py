@@ -32,7 +32,14 @@ from datetime import datetime
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, SCRIPT_DIR)
-from v19_integration import BASE_TOKEN, INSIGHT_TABLE, TARGET_CHAT_ID, EVENT_LOG_TABLE
+if os.environ.get("LARK_API_MODE") == "1":
+    # 云端零依赖模式：常量内联/环境变量，不 import v19_integration（其依赖 config_local 云端缺失）
+    BASE_TOKEN = os.environ.get("FEISHU_BASE_TOKEN", "")
+    INSIGHT_TABLE = "tblaqKBl87V9C0q1"
+    TARGET_CHAT_ID = os.environ.get("CHAT_ID", "oc_1fe154e172ab04622b7ffa810ac172bc")
+    EVENT_LOG_TABLE = "tblPreh1ipB9LQpf"
+else:
+    from v19_integration import BASE_TOKEN, INSIGHT_TABLE, TARGET_CHAT_ID, EVENT_LOG_TABLE
 
 GLM_URL = "http://127.0.0.1:3003/v4/chat/completions"
 CITY = os.environ.get("CITY", "Xian")
@@ -63,7 +70,10 @@ def http_get(url, timeout=12):
 
 # ---------- 数据源 ----------
 def fetch_weather():
-    j = json.loads(http_get("https://wttr.in/{}?format=j1".format(CITY)))
+    try:
+        j = json.loads(http_get("https://wttr.in/{}?format=j1".format(CITY)))
+    except Exception:
+        return "西安 天气数据暂不可用", 20
     cur = j["current_condition"][0]
     desc = cur["weatherDesc"][0]["value"]
     return "{} {}°C {} 湿度{}% 风{}{}km/h".format(
@@ -316,8 +326,8 @@ def main():
         if not no_sink:
             s_ok, s_err = sink_insights(data)
             print("[洞察沉淀] " + ("OK（3条已入洞察表）" if s_ok else "失败：" + s_err[:80]))
-        l_ok, _ = write_event_log("三察洞察日报｜模式={}".format(mode))
-        print("[事件日志] " + ("OK" if l_ok else "失败"))
+            l_ok, _ = write_event_log("三察洞察日报｜模式={}".format(mode))
+            print("[事件日志] " + ("OK" if l_ok else "失败"))
 
 
 if __name__ == "__main__":
