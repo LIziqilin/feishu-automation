@@ -4,8 +4,6 @@ on:
   schedule:
     - cron: '0 0,12 * * *'   # UTC 0:00/12:00 = 北京时间 08:00/20:00（早报/晚报时段）
   workflow_dispatch:         # 支持手动触发
-  push:
-    branches: [v44-trigger]  # V45验证专用触发分支（验证后移除）
 
 env:
   # 云端 secrets（已在 GitHub 配置：FEISHU_APP_ID/FEISHU_APP_SECRET/FEISHU_BASE_TOKEN）
@@ -46,11 +44,6 @@ jobs:
           name: insight-run-output
           path: scripts/run_output.log
           retention-days: 3
-
-      - name: V45告警链路测试-故意失败（验证后移除）
-        run: |
-          echo "此步骤故意失败，验证失败告警链路"
-          exit 1
 
       - name: 失败告警到总控群（V45：云端挂了主动报群）
         if: failure()
