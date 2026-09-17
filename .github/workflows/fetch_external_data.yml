@@ -47,6 +47,11 @@ jobs:
           path: scripts/run_output.log
           retention-days: 3
 
+      - name: V45告警链路测试-故意失败（验证后移除）
+        run: |
+          echo "此步骤故意失败，验证失败告警链路"
+          exit 1
+
       - name: 失败告警到总控群（V45：云端挂了主动报群）
         if: failure()
         run: |
@@ -58,8 +63,3 @@ jobs:
           LARK_APP_ID: ${{ secrets.FEISHU_APP_ID }}
           LARK_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
           CHAT_ID: ${{ env.CHAT_ID }}
-
-      - name: V45告警链路测试-故意失败（验证后移除）
-        run: |
-          echo "此步骤故意失败，验证失败告警链路"
-          exit 1
