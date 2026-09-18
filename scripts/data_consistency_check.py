@@ -214,17 +214,18 @@ def main():
         print(f"    ❌ 差异 {diff} 条")
         differences.append(f"任务总表活跃任务: 飞书{f_task_active} vs Obsidian{o_task_active}")
     
-    # 学习卡片和洞察笔记：全部对比
+    # 学习卡片和洞察笔记：单向校验（飞书为源，Obsidian 为沉淀/镜像子集）
+    # 飞书多于 Obsidian = 正常（未沉淀/未同步到 Obsidian）；Obsidian 多于飞书 = 异常（脏文件）
     for name in ["学习卡片表", "洞察笔记表"]:
         f_count = feishu_counts.get(name, -1)
         o_count = obsidian_counts.get(name, -1)
         if f_count < 0 or o_count < 0:
             status = "⚠️ 无法校验"
-        elif abs(f_count - o_count) <= 2:
-            status = "✅ 一致"
+        elif o_count > f_count + 2:
+            status = f"❌ Obsidian 多出 {o_count - f_count} 条（疑似脏文件）"
+            differences.append(f"{name}: 飞书{f_count} vs Obsidian{o_count}（Obsidian 多于飞书）")
         else:
-            status = f"❌ 差异 {f_count - o_count} 条"
-            differences.append(f"{name}: 飞书{f_count} vs Obsidian{o_count}")
+            status = f"✅ 正常（飞书{f_count}，Obsidian{o_count}，飞书为源）"
         print(f"  {name}: {status}")
 
     # 告警

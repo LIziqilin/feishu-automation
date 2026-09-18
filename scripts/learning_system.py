@@ -1468,6 +1468,21 @@ def cmd_select():
                 pass
             print("  早报已推送")
 
+            # V44增强：注入每日三察（西安天气+社会规律/自然规律/人性洞察）到早报
+            try:
+                import sys as _sys
+                _sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+                from insight_daily import build_report
+                ins_report, _ = build_report("llm")
+                if ins_report:
+                    body = ins_report.split("\n", 1)[1] if "\n" in ins_report else ins_report
+                    sender._send_message(body)
+                    print("  [V44增强] 三察洞察已注入早报")
+                else:
+                    print("  [V44增强] 三察生成为空，跳过")
+            except Exception as ins_e:
+                print(f"  [WARN] 三察注入失败(已忽略): {ins_e}")
+
             # V39增强：早报合并今日待办+已完成事项
             try:
                 from task_insight_extension import get_tasks_summary
