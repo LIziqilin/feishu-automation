@@ -842,3 +842,4 @@
 - Feishu Mcp 15 工具（文档/文件夹/白板直连）+ Filesystem MCP 14 工具（本系统文件读写），AnythingLLM Agent Skills 页自动加载，实测 @agent 对话搜飞书文档成功。
 - scripts/feishu_mcp_cli.py（飞书文档桥接，凭证环境变量）+ scripts/anyllm_bridge.py（只读 SQLite 桥接）。
 - 详见 方案附录 D.8、施工资料 12.18~12.21。
+- **维护链集成（V45-14）**：run_maintenance_wrapper.py 开头新增"前置: 桥接健康巡检"，每日自动跑 bridge_health_check.py --json，红项用 AlertManager(channel=both) 发 WARN 到总控群。已冒烟测试 JSON 解析通过（8/8 绿）。

@@ -78,6 +78,35 @@ def run_script(script_name, timeout=300, description=""):
         log(f"  [异常] {description or script_name}: {e}")
         return False
 
+# 前置：桥接健康巡检（V45-14，2026-09-18 新增）
+# 每日维护开头 ping 全部子系统桥接；红项用 AlertManager 发 WARN 到总控群
+log("--- 前置: 桥接健康巡检 ---")
+try:
+    hb = subprocess.run(
+        [sys.executable, "bridge_health_check.py", "--json"],
+        capture_output=True, timeout=30, cwd=work_dir,
+    )
+    hb_out = hb.stdout.decode("utf-8", errors="replace") if hb.stdout else ""
+    hb_data = json.loads(hb_out)
+    log(f"  桥接: 共{hb_data['total']} 正常{hb_data['ok']} 异常{hb_data['down']}")
+    if hb_data["down"] > 0:
+        bad_rows = [r for r in hb_data["rows"] if r["status"] != "ok"]
+        lines = "\n".join(f"❌ {r['bridge']}: {r['detail']}" for r in bad_rows)
+        sys.path.insert(0, work_dir)
+        from v19_integration import AlertManager
+        am = AlertManager()
+        res = am.send_alert(
+            level="WARN",
+            title="桥接健康巡检异常",
+            message=f"共{hb_data['down']}项桥接离线：\n{lines}",
+            channel="both",
+        )
+        log(f"  告警已发送: feishu={res.get('feishu')}, local={res.get('local')}")
+    else:
+        log("  桥接全部正常")
+except Exception as e:
+    log(f"  [异常] 桥接巡检: {e}")
+
 # 0. 服务守护（前置）：关键服务探活+自愈，避免下游步骤跑在宕机服务上
 log("--- 步骤0: 服务守护 ---")
 if not run_script("service_watchdog.py", timeout=240, description="服务守护"):
