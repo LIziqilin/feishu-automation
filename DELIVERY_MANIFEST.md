@@ -843,3 +843,8 @@
 - scripts/feishu_mcp_cli.py（飞书文档桥接，凭证环境变量）+ scripts/anyllm_bridge.py（只读 SQLite 桥接）。
 - 详见 方案附录 D.8、施工资料 12.18~12.21。
 - **维护链集成（V45-14）**：run_maintenance_wrapper.py 开头新增"前置: 桥接健康巡检"，每日自动跑 bridge_health_check.py --json，红项用 AlertManager(channel=both) 发 WARN 到总控群。已冒烟测试 JSON 解析通过（8/8 绿）。
+
+## V46-3 Coze 批量任务（2026-09-19）
+- 新增 scripts/coze_batch_tasks.py：4 类批量任务（wrong_answer/weekly_report/profile/health），读多维表格行→调 Coze API→输出 AI 结果。
+- 端到端验证：wrong_answer --limit 1 通过（学习卡片表读题→Coze 回复）。
+- 字段捷径说明：飞书多维表格字段捷径需在 Coze 后台"发布→飞书多维表格"手动配置；本脚本为等价的 API 批量处理，不依赖字段捷径也可跑。
