@@ -45,7 +45,7 @@ def check():
     print("Coze Bot:", cfg.get("bot_name"), "| token 有效期至:", cfg.get("token_expires_at"))
     st, d = _call("POST", "/v3/chat", {
         "bot_id": cfg["bot_id"], "user_id": "feishu-v45-check", "stream": False,
-        "auto_save_history": False,
+        "auto_save_history": True,
         "additional_messages": [{"role": "user", "content": "ping", "content_type": "text"}],
     }, timeout=30)
     if d.get("code") == 0:
@@ -60,25 +60,38 @@ def run(task, timeout=120):
     cfg = _load()
     st, d = _call("POST", "/v3/chat", {
         "bot_id": cfg["bot_id"], "user_id": "feishu-v45-" + uuid.uuid4().hex[:8],
-        "stream": False, "auto_save_history": False,
+        "stream": False, "auto_save_history": True,
         "additional_messages": [{"role": "user", "content": task, "content_type": "text"}],
     }, timeout=timeout)
     if d.get("code") == 0:
-        # v3/chat 返回 chat_id，需轮询 /v3/chat/messages/retrieve
-        chat_id = d.get("data", {}).get("id") or d.get("data", {}).get("chat_id")
-        for _ in range(30):
+        # v3/chat 返回 chat_id + conversation_id，status=in_progress
+        cid = d.get("data", {}).get("id")
+        conv_id = d.get("data", {}).get("conversation_id", "")
+        # 步骤1：轮询 chat 状态直到 completed
+        chat_status = "in_progress"
+        for _ in range(60):
             time.sleep(2)
-            st2, d2 = _call("GET", f"/v3/chat/messages/retrieve?chat_id={chat_id}&conversation_id=" + (d.get("data", {}).get("conversation_id") or ""))
-            if d2.get("code") == 0:
-                msgs = d2.get("data", [])
-                answers = [m["content"] for m in msgs if m.get("role") == "assistant" and m.get("content")]
-                if answers:
-                    return True, answers[-1]
-                if any(m.get("type") == "function_call" for m in msgs):
-                    continue
-                if msgs and msgs[-1].get("role") == "assistant":
-                    return True, msgs[-1].get("content", "（空回复）")
-        return False, "Coze 任务超时（120s 内未完成）"
+            st_s, d_s = _call("GET", f"/v3/chat/retrieve?chat_id={cid}&conversation_id={conv_id}")
+            if d_s.get("code") == 0:
+                chat_status = d_s.get("data", {}).get("status", "")
+                if chat_status == "completed":
+                    break
+                if chat_status in ("failed", "requires_action"):
+                    err = d_s.get("data", {}).get("last_error", {})
+                    return False, f"Coze chat 状态={chat_status}: {err.get('msg','')}"
+        else:
+            return False, "Coze chat 120s 内未完成"
+        # 步骤2：取 assistant 回复（Coze 列消息端点为 /v3/chat/message/list，单数）
+        st2, d2 = _call("GET", f"/v3/chat/message/list?chat_id={cid}&conversation_id={conv_id}")
+        if d2.get("code") == 0:
+            msgs = d2.get("data", [])
+            # 过滤 verbose（系统注入）与 function_call，只取真实 assistant 回复
+            answers = [m["content"] for m in msgs
+                       if m.get("role") == "assistant" and m.get("content")
+                       and m.get("type") not in ("verbose", "function_call")]
+            if answers:
+                return True, answers[-1]
+        return False, f"Coze 未取到回复 (status={chat_status})"
     if d.get("code") == 4015:
         return False, "Coze Bot 未发布到「Agent As API」渠道，请在 coze.cn 控制台发布后重试"
     return False, f"Coze 调用失败 code={d.get('code')} msg={d.get('msg')}"
