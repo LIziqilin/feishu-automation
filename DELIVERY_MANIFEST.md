@@ -838,3 +838,7 @@
 | 智能：xxx | Coze 复杂 agentic 任务 | ⏸️ 待发布 Bot |
 | 记忆分层 | 三层记忆生成+推送 | ✅ 已验证 |
 | 导知识：内容 | 文本直达知识沉淀（洞察表） | ✅ 已验证（本轮新增） |
+### 8. AnythingLLM MCP 双通道 ✅（V45-11/12，2026-09-18，已验证）
+- Feishu Mcp 15 工具（文档/文件夹/白板直连）+ Filesystem MCP 14 工具（本系统文件读写），AnythingLLM Agent Skills 页自动加载，实测 @agent 对话搜飞书文档成功。
+- scripts/feishu_mcp_cli.py（飞书文档桥接，凭证环境变量）+ scripts/anyllm_bridge.py（只读 SQLite 桥接）。
+- 详见 方案附录 D.8、施工资料 12.18~12.21。
