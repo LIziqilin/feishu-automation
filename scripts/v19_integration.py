@@ -2278,7 +2278,7 @@ class DailyPusher:
     """
     
     PUSH_TIMES = {
-        "morning": "07:30",
+        "morning": "08:00",
         "noon": "12:00",
         "evening": "21:00"
     }
