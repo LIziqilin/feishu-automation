@@ -147,3 +147,12 @@ curl -X POST https://api.github.com/repos/LIziqilin/feishu-automation/dispatches
 - ask_cloud.py / webhook_cloud.py 已加固：网络失败自动重试3次（指数退避）、超时90s、DeepSeek失败时把原因也推群（不静默）、空参校验。
 - 端到端验证：本地 code:0；GitHub Actions Run Success；飞书总控群实测收到云端问答消息。
 - 云端代码包已重新同步飞书云盘 feishuAI：feishu_scripts_snapshot_20260919.zip。
+
+
+### XI.5 批量新建任务（V49新增）
+群里 @助手 发一条即可建多个任务，用分号/换行分隔：
+```
+@我的助手 批量新建：任务A；任务B；任务C
+```
+机器人会逐个写入任务表，并回复"✅ 批量新建完成：共3个，成功3个"。
+说明：轮询间隔已在调试验收期临时改为1分钟，验收后调回5分钟。

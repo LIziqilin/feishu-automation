@@ -256,11 +256,11 @@ class InstructionParser:
             return "list_todo", None
 
         # 新建任务指令（支持多种说法）
-        for prefix in ["新建任务：", "新建任务:", "创建任务：", "创建任务:", "记录任务：", "记录任务:", "新增任务：", "新增任务:"]:
+        for prefix in ["批量新建：", "批量新建:", "新建任务：", "新建任务:", "创建任务：", "创建任务:", "记录任务：", "记录任务:", "新增任务：", "新增任务:"]:
             if text.startswith(prefix):
                 task_name = text[len(prefix):].strip()
                 if task_name:
-                    return "create_task", {"task_name": task_name}
+                    return "create_task", {"task_name": task_name, "batch": prefix.startswith("批量新建")}
 
         # 恢复
         if text in ("恢复", "继续", "resume"):
@@ -782,6 +782,7 @@ def cmd_poll():
 
         # P0修复：先处理基础任务指令（创建/完成/归档），不要被扩展指令吃掉
         task_prefixes = [
+            "批量新建：", "批量新建:",
             "新建任务：", "新建任务:", "创建任务：", "创建任务:",
             "记录任务：", "记录任务:", "新增任务：", "新增任务:",
             "完成：", "完成:", "归档：", "归档:"
@@ -1190,9 +1191,16 @@ def cmd_poll():
 
 
         elif action == "create_task":
-            # 新建任务
+            # 新建任务（V49批量新建：按 ；;换行 拆分）
             task_name = data.get("task_name", "")
-            print(f"  [新建任务] 收到任务: {task_name}")
+            _batch = data.get("batch", False)
+            if _batch:
+                _items = [x.strip() for x in re.split(r"[;；\n]", task_name) if x.strip()]
+            else:
+                _items = [task_name]
+            print(f"  [新建任务] 收到任务(批量={_batch}, {len(_items)}个): {task_name[:40]}")
+            task_name = _items[0] if _items else task_name
+            _success_cnt = 0
             try:
                 import urllib.request as ur
                 import json as js
@@ -1233,13 +1241,28 @@ def cmd_poll():
                 with ur.urlopen(req, timeout=30) as r:
                     resp = js.load(r)
                 if resp.get("code") == 0:
-                    sender._send_message(f"✅ 已创建任务：{task_name}")
+                    _success_cnt += 1
                     print(f"  [新建任务] 成功: {task_name}")
                 else:
-                    sender._send_message(f"❌ 创建失败: {resp.get('msg', '未知错误')}")
+                    print(f"  [新建任务] 失败: {resp.get('msg')}")
             except Exception as e:
-                sender._send_message(f"❌ 创建任务异常: {str(e)[:50]}")
                 print(f"  [新建任务] 异常: {e}")
+            # 批量：继续创建剩余项
+            if _batch and len(_items) > 1:
+                for _next in _items[1:]:
+                    try:
+                        task_name = _next
+                        body = {"fields": {"任务名称": task_name, "状态": "待办", "优先级": "中", "类别": "工作", "截止日期": int(dt.now().timestamp()*1000)}}
+                        req = ur.Request(url, data=js.dumps(body).encode(), headers={"Authorization": "Bearer " + token, "Content-Type": "application/json"}, method="POST")
+                        with ur.urlopen(req, timeout=30) as r2:
+                            if js.load(r2).get("code") == 0:
+                                _success_cnt += 1
+                                print(f"  [批量] 成功: {task_name}")
+                    except Exception as _e:
+                        print(f"  [批量] 异常: {_e}")
+                sender._send_message(f"✅ 批量新建完成：共{len(_items)}个，成功{_success_cnt}个")
+            elif _success_cnt == 1:
+                sender._send_message(f"✅ 已创建任务：{_items[0]}")
         elif action == "revoke":
             # D6: 手动撤回 - 标记原流水superseded，写入REVOKE流水
             target_eid = data.get("target_event_id")
