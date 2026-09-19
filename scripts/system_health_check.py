@@ -10,6 +10,7 @@ import subprocess
 import json
 import os
 import sys
+import re
 import datetime
 import glob
 
@@ -66,28 +67,21 @@ print("\n【1】任务计划检查（8个）")
 print("-" * 70)
 task_failures = 0
 for task in TASKS:
-    code, stdout, stderr = run_cmd(["schtasks", "/query", "/tn", f"\\{task}", "/fo", "LIST", "/v"])
-    info = {}
-    for line in stdout.split("\n"):
-        if ":" in line:
-            key, _, val = line.partition(":")
-            info[key.strip()] = val.strip()
-    last_result = info.get("Last Result", "?")
-    task_to_run = info.get("Task To Run", "")
-    next_run = info.get("Next Run Time", "?")
-
-    # 检查Last Result（0=成功，267009=未运行，267011=已创建未运行）
+    # V49: 用 PowerShell Get-ScheduledTask 取结果码/命令行(纯ASCII,绕开schtasks中文编码)
+    code, out_res, _ = run_cmd(
+        ["powershell", "-NoProfile", "-Command",
+         f"(Get-ScheduledTask -TaskName '{task}' | Get-ScheduledTaskInfo).LastTaskResult"])
+    last_result = out_res.strip().splitlines()[-1].strip() if out_res.strip() else "?"
+    code, out_act, _ = run_cmd(
+        ["powershell", "-NoProfile", "-Command",
+         f"(Get-ScheduledTask -TaskName '{task}').Actions.Execute"])
+    task_to_run = out_act.strip()
     result_ok = last_result in ("0", "267009", "267011")
-
-    # 检查是否使用完整路径（包含脚本的绝对路径）
-    has_full_path = "D:\\" in task_to_run or "C:\\" in task_to_run.replace("python.exe", "")
-
-    # 检查StartWhenAvailable
+    has_full_path = bool(re.search(r"[DC]:[\\/]", task_to_run))
     code2, xml_out, _ = run_cmd(["schtasks", "/query", "/tn", f"\\{task}", "/xml"])
     has_start_when = "StartWhenAvailable>true" in xml_out
-
     all_ok = result_ok and has_full_path and has_start_when
-    detail = f"结果={last_result}, 完整路径={'✓' if has_full_path else '✗'}, StartWhenAvailable={'✓' if has_start_when else '✗'}"
+    detail = f"结果={last_result}, 完整路径={'Y' if has_full_path else 'N'}, StartWhenAvailable={'Y' if has_start_when else 'N'}"
     if not check(task, all_ok, detail):
         task_failures += 1
 
