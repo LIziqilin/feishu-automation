@@ -1,77 +1,90 @@
 # AI系统综合方案-客户使用指导手册
-**版本**：V46.1 | **日期**：2026-09-19 | **适用**：个人日常使用
+**版本**：V47 | **日期**：2026-09-19 | **对象**：系统所有者（单人日常使用）
 
 ---
 
-## 一、日常使用场景
+## 一、系统能帮你做什么（速览）
+1. **飞书总控群@机器人**：下任务、销项、归档、记洞察、问系统、智能对话、闪卡复习、系统体检。
+2. **早晚自动推送**：早报07:30、晚报20:00（西安天气+社会/自然/人性三察洞察）。
+3. **多维表格批量AI**：错题解析、学习周报、画像演化、健康诊断（飞书点数耗尽自动走DeepSeek）。
+4. **AnythingLLM深度问答**：5个工作区，1939篇文档，可直接问方案/手册/学习内容。
+5. **自动运维**：每日03:00维护+7轮备份、每小时备份、8桥接巡检、失败企微告警。
 
-### 场景1：群里@机器人下指令
-打开飞书总控群，直接@你的助手：
-- `新建任务：落实泛光照明验收节奏` → 创建任务
-- `搞定了：【P3】GitHub抓外部数据` → 标记完成
-- `归档 【P3】GitHub` → 归档
-- `洞察：事情落实清楚再想办法` → 记录洞察
-- `智能：帮我分析一下这个错题` → 调Coze复杂对话
-- `开始闪卡复习` → 开始学习
-- `系统体检` → 健康检查
+## 二、飞书总控群指令（最常用）
+在总控群 @机器人，发送：
+| 你想做的事 | 直接发 |
+|---|---|
+| 新建任务 | `新建任务：落实泛光照明验收节奏` |
+| 标记完成 | `搞定了：【P3】GitHub抓外部数据` |
+| 归档任务 | `归档 【P3】GitHub抓外部数据` |
+| 记一条洞察 | `洞察：事情落实清楚后再找对策` |
+| 让Coze办复杂事 | `智能：帮我把这条任务拆成3步` |
+| 查系统怎么运作 | `问系统：系统的备份策略是什么` |
+| 开始复习 | `开始闪卡复习` |
+| 系统健康检查 | `系统体检` |
+| 学一个知识点 | `学知识：工程总监` |
 
-### 场景2：多维表格批量AI处理
-打开多维表格学习卡片表：
-1. 找到 `AI解析_错题` 列（等字段捷径审核通过后）
-2. 点某行单元格 → 自动调Coze/DeepSeek → 结果写入
-3. 无飞书AI点数时自动切DeepSeek，不中断
+> 机器人无反应时：先看是否@对、再跑桥接自检（见第六节）。
 
-### 场景3：早晚推送
-- **早报**：每天早7:30本地推送（西安天气+三察洞察）
-- **晚报**：每天晚8:00 GitHub云端推送
-- 无需操作，自动收到
-
-### 场景4：深度问答（AnythingLLM）
-打开AnythingLLM桌面端：
-- 学习助手Agent → 问学习问题
-- 知识库Agent → 查方案/手册
-- 洞察Agent → 问决策复盘
-
----
-
-## 二、脚本手动用法
-
-```bash
-# 切到项目目录
+## 三、多维表格批量AI（4类）
+**方式A（脚本，现已可用，推荐）**：打开PowerShell
+```powershell
 cd D:\AI-Tools\feishu\V13方案增强
+$env:DEEPSEEK_API_KEY="sk-你的key"   # 已写入shared配置，通常无需再设
+python scripts\coze_batch_tasks.py wrong_answer --limit 3   # 错题解析
+python scripts\coze_batch_tasks.py weekly_report            # 学习周报
+python scripts\coze_batch_tasks.py profile --limit 5        # 画像演化
+python scripts\coze_batch_tasks.py health --limit 5         # 健康诊断
+```
+**方式B（表格内字段捷径）**：等Coze发布的"错题解析助手"等4个捷径飞书审批通过后，在对应表新建"字段捷径"列，点单元格即生成。
+- 错题解析→学习卡片表；学习周报→复习流水表；画像→用户画像表；健康诊断→系统健康表。
 
-# LLM网关（Coze优先，失败自动切DeepSeek）
-python scripts\llm_router.py "你的问题"
-python scripts\llm_router.py --check
+## 四、AnythingLLM 用法
+1. 打开 AnythingLLM 桌面端。
+2. 左侧选工作区：学习助手Agent / 知识库Agent / 洞察Agent。
+3. 直接提问；@agent 可调用飞书文档工具（feishu-mcp）或读写文件（filesystem MCP）。
+4. 长期记忆：正常对话即自动积累（memories表），无需配置。
 
-# 批量任务
-python scripts\coze_batch_tasks.py wrong_answer --limit 3
-python scripts\coze_batch_tasks.py weekly_report
-python scripts\coze_batch_tasks.py profile
-python scripts\coze_batch_tasks.py health
+## 五、自动推送与定时任务（无需操作）
+- 早报07:30 / 午报 / 晚报20:00：本地计划任务 + GitHub云端（fetch_external_data，北京8/20点）。
+- 每日03:00：维护链（开头先跑桥接巡检，红项自动报总控群）。
+- 每小时：hourly_backup滚动备份。
+- 云端失败：alert_fail.py自动发消息到总控群。
 
-# 桥接自检
-python scripts\bridge_health_check.py
+## 六、故障自查（按顺序）
+| 现象 | 第一步 | 命令/动作 |
+|---|---|---|
+| 群@机器人没反应 | 桥接自检 | `python scripts\bridge_health_check.py`，红项即故障桥 |
+| 早/晚报没收到 | 查GitHub | github.com/LIziqilin/feishu-automation/actions 看 fetch_external_data 日志；失败会有群告警 |
+| Coze不回/积分耗尽 | 看fallback | llm_router会自动切DeepSeek；手动验证 `python scripts\llm_router.py --check` |
+| 表格AI字段不工作 | 用脚本 | 走第三节方式A（DeepSeek），不等字段捷径 |
+| 想全面体检 | 健康自检 | `python scripts\system_health_check.py` |
+| 查备份 | 看backups目录 | 最新应为每小时的 hourly_*.json |
+
+## 七、常用命令速查
+```powershell
+cd D:\AI-Tools\feishu\V13方案增强
+python scripts\llm_router.py "你的问题"        # 统一LLM（Coze→DeepSeek）
+python scripts\llm_router.py --check           # LLM双通道自检
+python scripts\bridge_health_check.py          # 8桥接巡检
+python scripts\system_health_check.py          # 计划任务+系统体检
+python scripts\anyllm_bridge.py stats          # AnythingLLM状态
+python scripts\coze_gateway.py --check         # Coze连通性
+python scripts\mastery_recalc.py               # 掌握度重算
+python scripts\system_rag.py "你的问题"         # 查本地方案/手册
 ```
 
----
-
-## 三、故障排查
-
-| 现象 | 处理 |
+## 八、日常维护节奏
+| 频率 | 事项 |
 |---|---|
-| 群里@机器人没反应 | 跑 `python scripts\bridge_health_check.py` 看哪个桥接红 |
-| 早报没收到 | 去GitHub Actions看fetch_external_data.yml日志 |
-| 多维表格AI字段不工作 | 已自动切DeepSeek，等字段捷径审核通过 |
-| Coze调用失败 | llm_router自动切DeepSeek，无需干预 |
+| 每天 | 确认早报/晚报收到；看是否有红色告警 |
+| 每周 | 跑一次 bridge_health_check + system_health_check；做学习周报 |
+| 每月 | 检查Coze令牌有效期（当前2026-10-10到期，需提前换服务访问令牌）；核对GitHub secrets |
+| 每季度 | 跑一次 recovery_drill/restore_drill 恢复演练；git push确认异地代码备份 |
+| 变更/删除前 | 手动跑 backup_with_rotation.py |
 
----
-
-## 四、日常维护
-
-| 频率 | 操作 |
-|---|---|
-| 每天 | 看早报/晚报是否收到 |
-| 每周 | 跑 `python scripts\bridge_health_check.py` |
-| 每月 | 检查Coze token是否快过期（当前到10-10） |
-| 每季度 | git push 确认GitHub有最新备份 |
+## 九、密钥与配置位置
+- Coze + DeepSeek：`D:\AI-Tools\shared\coze_config.json`（coze_api_token / bot_id / deepseek_api_key）。
+- 企业微信：`scripts\wecom_config.json`。
+- 多维表格/群ID：见《综合方案-预验收版》第3章。
+- 切勿把密钥发到群里或写进前端页面。
