@@ -823,9 +823,10 @@ def cmd_poll():
                 new_processed_count += 1
                 continue
 
-        # 扩展指令处理（2026-09-17 修复：去掉 not is_task_instruction，让"完成/销项/归档"能进 handle_extension_command；
-        # handle_extension_command 自带 handled 标记，非指令会自然返回 False，不会误吞普通消息）
-        if not is_task_instruction and EXTENSION_AVAILABLE:
+        # 扩展指令处理（V49修复：只挡"新建类"前缀，完成/归档/批量完成/自然语态销项都放行进extension=S8销项）
+        _new_prefixes = ["批量新建", "新建任务", "创建任务", "记录任务", "新增任务"]
+        _is_new_task = any(text.startswith(p) for p in _new_prefixes)
+        if not _is_new_task and EXTENSION_AVAILABLE:
             handled, result = handle_extension_command(text)
             if handled:
                 print(f"  消息: {text[:30]}... → 扩展指令已处理: {result}")
