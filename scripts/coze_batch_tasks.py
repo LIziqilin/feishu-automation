@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """coze_batch_tasks.py — V46 Coze 批量任务（字段捷径脚本版）
 ====================================================================
@@ -105,3 +105,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

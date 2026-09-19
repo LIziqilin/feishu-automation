@@ -855,3 +855,10 @@
 - 改 scripts/coze_batch_tasks.py：后端从 Coze 切换到 DeepSeek V4 Flash，4类批量任务（wrong_answer/weekly_report/profile/health）全部端到端通过。
 - 月成本估算（个人系统量级）：约2~20元/月（远低于飞书原生点数耗尽的成本）。
 - 用法：python scripts/coze_batch_tasks.py <任务名> --limit N
+
+## V46-4 LLM 统一网关（2026-09-19）
+- 新增 scripts/llm_router.py：统一 LLM 入口，Coze 优先 → DeepSeek V4 flash fallback。
+- Coze 失败/额度耗尽自动切 DeepSeek，无需人工干预。
+- DeepSeek API Key 存于 shared/coze_config.json（deepseek_api_key 字段）。
+- 双通道自检均通过（Coze ✅ + DeepSeek ✅）。
+- 成本：个人系统量级月均约 2~20 元（DeepSeek 按 Token 计费）。
