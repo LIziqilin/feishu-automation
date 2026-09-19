@@ -144,3 +144,11 @@ backup/
 scripts/*_secrets.env
 *.env
 
+
+# === 核心脚本白名单（通配规则误伤，强制纳管 2026-09-19；config_local.py 仍忽略）===
+!scripts/system_health_check.py
+!scripts/health_monitor.py
+!scripts/hourly_backup.py
+!scripts/cleanup_test_data.py
+!scripts/restore_drill.py
+!scripts/regression_baseline.py
