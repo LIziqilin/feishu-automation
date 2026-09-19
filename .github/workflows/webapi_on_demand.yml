@@ -37,9 +37,4 @@ jobs:
           CHAT_ID: "oc_1fe154e172ab04622b7ffa810ac172bc"
           TITLE: ${{ github.event.client_payload.title || '云端事件' }}
           TEXT: ${{ github.event.client_payload.text || '来自 on-demand webhook' }}
-        run: python -c "import urllib.request,json,os;
-import urllib.request as u;
-tid=json.load(u.urlopen(u.Request('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal',data=json.dumps({'app_id':os.environ['FEISHU_APP_ID'],'app_secret':os.environ['FEISHU_APP_SECRET']}).encode(),headers={'Content-Type':'application/json'})))['tenant_access_token'];
-body={'receive_id':os.environ['CHAT_ID'],'msg_type':'text','content':json.dumps({'text':os.environ['TITLE']+chr(10)+os.environ['TEXT']})};
-req=u.Request('https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=chat_id',data=json.dumps(body).encode(),headers={'Authorization':'Bearer '+tid,'Content-Type':'application/json'});
-print(u.urlopen(req).read().decode())"
+        run: python .github/workflows/webhook_cloud.py
