@@ -1,10 +1,5 @@
 name: webapi on-demand
-# 关机后可用的云端 webapi：外部 POST 到 GitHub repository_dispatch 即可触发
-# 用法（从任意机器）：
-#   curl -X POST https://api.github.com/repos/LIziqilin/feishu-automation/dispatches \
-#     -H "Authorization: Bearer <github_pat>" -H "Accept: application/vnd.github+json" \
-#     -d '{"event_type":"ask","client_payload":{"q":"今天要做什么"}}'
-# 结果会推回飞书总控群。
+# 关机后可用的云端问答：外部/手动触发 -> 云端 runner 调 DeepSeek -> 答案推回飞书总控群
 on:
   repository_dispatch:
     types: [ask, webhook]
@@ -15,7 +10,7 @@ on:
         default: ask
       q:
         description: "问题（ask时）"
-        default: ""
+        default: "云端连通性测试"
 
 jobs:
   run:
@@ -25,20 +20,26 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - name: ask via DeepSeek
-        if: github.event.client_payload.action == 'ask' || inputs.action == 'ask'
+      - name: ask -> DeepSeek -> 推飞书群
+        if: (github.event.client_payload.action == 'ask') || (inputs.action == 'ask')
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-          WEBAPI_TOKEN: ${{ secrets.WEBAPI_TOKEN }}
-        run: |
-          Q="${{ github.event.client_payload.q || inputs.q }}"
-          echo "问: $Q"
-          python - <<'PY'
-          import os,sys
-          sys.path.insert(0,"scripts")
-          os.environ["DEEPSEEK_BASE"]="https://api.deepseek.com"
-          print("[云端ask占位] 请在此实现调用 llm_router/deepseek_assistants 并把结果推飞书群")
-          PY
-      - name: webhook event
-        if: github.event.client_payload.action == 'webhook' || inputs.action == 'webhook'
-        run: echo "[云端webhook] 收到事件，转发飞书群（复用 send_chat）"
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+          CHAT_ID: "oc_1fe154e172ab04622b7ffa810ac172bc"
+          Q: ${{ github.event.client_payload.q || inputs.q }}
+        run: python .github/workflows/ask_cloud.py
+      - name: webhook -> 推飞书群
+        if: (github.event.client_payload.action == 'webhook') || (inputs.action == 'webhook')
+        env:
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+          CHAT_ID: "oc_1fe154e172ab04622b7ffa810ac172bc"
+          TITLE: ${{ github.event.client_payload.title || '云端事件' }}
+          TEXT: ${{ github.event.client_payload.text || '来自 on-demand webhook' }}
+        run: python -c "import urllib.request,json,os;
+import urllib.request as u;
+tid=json.load(u.urlopen(u.Request('https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal',data=json.dumps({'app_id':os.environ['FEISHU_APP_ID'],'app_secret':os.environ['FEISHU_APP_SECRET']}).encode(),headers={'Content-Type':'application/json'})))['tenant_access_token'];
+body={'receive_id':os.environ['CHAT_ID'],'msg_type':'text','content':json.dumps({'text':os.environ['TITLE']+chr(10)+os.environ['TEXT']})};
+req=u.Request('https://open.feishu.cn/open-apis/im/v1/messages?receive_id_type=chat_id',data=json.dumps(body).encode(),headers={'Authorization':'Bearer '+tid,'Content-Type':'application/json'});
+print(u.urlopen(req).read().decode())"
