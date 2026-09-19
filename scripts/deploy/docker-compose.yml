@@ -1,0 +1,13 @@
+services:
+  webapi:
+    build: .
+    container_name: feishu-webapi
+    restart: always
+    ports:
+      - "8765:8765"
+    environment:
+      - BIND_HOST=0.0.0.0
+      - WEBAPI_TOKEN=${WEBAPI_TOKEN}        # 从 .env 读，不写进镜像
+      - PYTHONIOENCODING=utf-8
+    env_file:
+      - .env

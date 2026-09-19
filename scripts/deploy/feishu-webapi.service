@@ -1,0 +1,15 @@
+[Unit]
+Description=Feishu Automation WebAPI (V49)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/feishu-automation/scripts
+EnvironmentFile=/opt/feishu-automation/scripts/webapi_secrets.env
+Environment=BIND_HOST=0.0.0.0
+ExecStart=/usr/bin/python3 -X utf8 /opt/feishu-automation/scripts/webapi.py --port 8765
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

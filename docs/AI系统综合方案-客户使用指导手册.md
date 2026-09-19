@@ -88,3 +88,35 @@ python scripts\system_rag.py "你的问题"         # 查本地方案/手册
 - 企业微信：`scripts\wecom_config.json`。
 - 多维表格/群ID：见《综合方案-预验收版》第3章。
 - 切勿把密钥发到群里或写进前端页面。
+
+
+## 十、webapi 云端部署与整机恢复（V49新增）
+
+### 10.1 三种运行位置，关机后能力对照
+| 组件 | 本机 | GitHub Actions 云端 | 云服务器 |
+|---|---|---|---|
+| 早/午/晚报 | 关机停 | 关机照常推送 | 关机照常 |
+| webapi /ask /webhook | 仅本机127.0.0.1 | on-demand（已配） | 公网常驻 |
+| 4个DeepSeek助手 | 手动 | 可定时 | 可定时 |
+
+### 10.2 云服务器部署（买好服务器后，约10分钟）
+1. 把项目 scp 到服务器 /opt/feishu-automation
+2. 编辑 scripts/webapi_secrets.env，把 WEBAPI_TOKEN 改成强口令
+3. 执行：bash scripts/deploy/deploy_cloud.sh
+4. 云厂商安全组放行 8765；建议套 Nginx + HTTPS 后再对公网开
+5. 验证：curl http://服务器IP:8765/health 返回 ok
+（产物：scripts/deploy/ 下 Dockerfile / docker-compose.yml / feishu-webapi.service / deploy_cloud.sh）
+
+### 10.3 GitHub Actions on-demand（零成本关机可用，已配好）
+外部机器触发云端问答（示例，github_pat 换成你自己的）：
+```
+curl -X POST https://api.github.com/repos/LIziqilin/feishu-automation/dispatches   -H "Authorization: Bearer 你的github_pat"   -H "Accept: application/vnd.github+json"   -d '{"event_type":"ask","client_payload":{"q":"今天做什么"}}'
+```
+workflow：.github/workflows/webapi_on_demand.yml；需在 GitHub 仓库 Settings- Secrets 配 DEEPSEEK_API_KEY、WEBAPI_TOKEN。
+
+### 10.4 整机恢复（电脑坏了/重装后）
+1. 装 Python3.10、Node、git
+2. git clone 仓库到 D:\AI-Tools\feishu\V13方案增强
+3. 从飞书云盘 feishuAI 文件夹下载 feishu_scripts_snapshot_*.zip，解压覆盖 scripts/ docs/
+4. 还原密钥：D:\AI-Tools\shared\coze_config.json、scripts\webapi_secrets.env（这两个不入仓）
+5. 跑 python scripts/control_center.py all 自检，全 PASS 即恢复完成

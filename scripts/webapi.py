@@ -108,10 +108,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--port", type=int, default=int(os.environ.get("WEBAPI_PORT", 8765)))
     a = ap.parse_args()
+    bind = os.environ.get("BIND_HOST", "127.0.0.1")  # 云服务器部署时设 0.0.0.0
     if not API_TOKEN:
         print("[警告] 未设 WEBAPI_TOKEN 环境变量，/ask 与 /webhook 将返回401")
-    srv = ThreadingHTTPServer(("127.0.0.1", a.port), Handler)
-    print(f"webapi 监听 http://127.0.0.1:{a.port}  (health/tasks/ask/webhook)")
+    srv = ThreadingHTTPServer((bind, a.port), Handler)
+    print(f"webapi 监听 http://{bind}:{a.port}  (health/tasks/ask/webhook)")
     srv.serve_forever()
 
 

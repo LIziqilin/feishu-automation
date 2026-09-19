@@ -1,0 +1,44 @@
+name: webapi on-demand
+# 关机后可用的云端 webapi：外部 POST 到 GitHub repository_dispatch 即可触发
+# 用法（从任意机器）：
+#   curl -X POST https://api.github.com/repos/LIziqilin/feishu-automation/dispatches \
+#     -H "Authorization: Bearer <github_pat>" -H "Accept: application/vnd.github+json" \
+#     -d '{"event_type":"ask","client_payload":{"q":"今天要做什么"}}'
+# 结果会推回飞书总控群。
+on:
+  repository_dispatch:
+    types: [ask, webhook]
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "ask / webhook"
+        default: ask
+      q:
+        description: "问题（ask时）"
+        default: ""
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: ask via DeepSeek
+        if: github.event.client_payload.action == 'ask' || inputs.action == 'ask'
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          WEBAPI_TOKEN: ${{ secrets.WEBAPI_TOKEN }}
+        run: |
+          Q="${{ github.event.client_payload.q || inputs.q }}"
+          echo "问: $Q"
+          python - <<'PY'
+          import os,sys
+          sys.path.insert(0,"scripts")
+          os.environ["DEEPSEEK_BASE"]="https://api.deepseek.com"
+          print("[云端ask占位] 请在此实现调用 llm_router/deepseek_assistants 并把结果推飞书群")
+          PY
+      - name: webhook event
+        if: github.event.client_payload.action == 'webhook' || inputs.action == 'webhook'
+        run: echo "[云端webhook] 收到事件，转发飞书群（复用 send_chat）"
