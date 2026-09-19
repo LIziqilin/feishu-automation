@@ -824,7 +824,7 @@ def cmd_poll():
 
         # 扩展指令处理（2026-09-17 修复：去掉 not is_task_instruction，让"完成/销项/归档"能进 handle_extension_command；
         # handle_extension_command 自带 handled 标记，非指令会自然返回 False，不会误吞普通消息）
-        if EXTENSION_AVAILABLE:
+        if not is_task_instruction and EXTENSION_AVAILABLE:
             handled, result = handle_extension_command(text)
             if handled:
                 print(f"  消息: {text[:30]}... → 扩展指令已处理: {result}")
