@@ -141,3 +141,9 @@ curl -X POST https://api.github.com/repos/LIziqilin/feishu-automation/dispatches
 ```
 安全提醒：PAT 等同账号密码，不要发群、不要写进前端；泄露了就到同一页面 Revoke 删掉再生成。
 不想用 curl 时，也可直接在仓库 Actions 页点 webapi on-demand -> Run workflow 手动问。
+
+
+### 10.6 云端问答加固记录（V49，2026-09-19）
+- ask_cloud.py / webhook_cloud.py 已加固：网络失败自动重试3次（指数退避）、超时90s、DeepSeek失败时把原因也推群（不静默）、空参校验。
+- 端到端验证：本地 code:0；GitHub Actions Run Success；飞书总控群实测收到云端问答消息。
+- 云端代码包已重新同步飞书云盘 feishuAI：feishu_scripts_snapshot_20260919.zip。
