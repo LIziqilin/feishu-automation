@@ -120,3 +120,24 @@ workflow：.github/workflows/webapi_on_demand.yml；需在 GitHub 仓库 Setting
 3. 从飞书云盘 feishuAI 文件夹下载 feishu_scripts_snapshot_*.zip，解压覆盖 scripts/ docs/
 4. 还原密钥：D:\AI-Tools\shared\coze_config.json、scripts\webapi_secrets.env（这两个不入仓）
 5. 跑 python scripts/control_center.py all 自检，全 PASS 即恢复完成
+
+
+### 10.5 生成 GitHub Personal Access Token（PAT）—— 关机触发云端问答用
+外部从手机/别的电脑触发云端问答（repository_dispatch）需要一个有 repo 权限的 PAT：
+
+1. 浏览器登录 GitHub，右上角头像 -> Settings
+2. 左侧最下方 Developer settings -> Personal access tokens
+3. 选 Tokens (classic) -> Generate new token (classic)
+4. Note 填 feishu-cloud-trigger；Expiration 选 No expiration（或 1 年）
+5. 勾选权限：只勾 **repo**（整个 repo 大类即可）
+6. 点 Generate token，复制形如 ghp_xxxxxxxxxxxx 的串，立刻存好（只显示一次）
+
+用法（把 ghp_xxx 换成你复制的）：
+```
+curl -X POST https://api.github.com/repos/LIziqilin/feishu-automation/dispatches \
+  -H "Authorization: Bearer ghp_xxx" \
+  -H "Accept: application/vnd.github+json" \
+  -d '{"event_type":"ask","client_payload":{"q":"今天做什么"}}'
+```
+安全提醒：PAT 等同账号密码，不要发群、不要写进前端；泄露了就到同一页面 Revoke 删掉再生成。
+不想用 curl 时，也可直接在仓库 Actions 页点 webapi on-demand -> Run workflow 手动问。
