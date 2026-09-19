@@ -46,3 +46,9 @@ dulwich_commit / dulwich_commit_simple / dulwich_commit_v2v5 / dulwich_remove_te
 2. 归档后必须回归：bridge_health_check + system_health_check 全PASS才算完成。
 3. 归档只移动不删除；archive/ 不进计划任务、不进PATH。
 4. 第三节清单可整批移动，第二节清单禁止移动。
+
+## 五、归档执行记录（2026-09-19）
+- 实际归档 60 个一次性脚本到 scripts/archive/（fix_*/check_*/ops_*/dulwich_*/optimize_* + 10杂项）。
+- 归档后回归：bridge_health_check 8/8正常；27个维护链脚本全部在位；核心wrapper/网关 py_compile 通过；grep确认零保留脚本引用归档模块。
+- 根目录保留 105 个 .py。
+- 新发现（与归档无关的既有故障）：心跳表120h、健康表105h未更新，FeishuAssistant-Heartbeat-Night 结果码267011，需专项排查。
