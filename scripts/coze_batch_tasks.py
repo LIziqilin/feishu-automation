@@ -19,7 +19,7 @@
 """
 import os, sys, json, argparse, subprocess
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import coze_gateway
+import deepseek_gateway as llm_gw  # V47: 默认 DeepSeek V4 Flash（替代 Coze 省积分）
 
 BASE = "X8N1bvN3na99dFsyu0gcU8zTnHf"
 TABLES = {
@@ -84,8 +84,8 @@ def run_task(task, limit=5):
         else:
             prompt = PROMPTS[task].format(r=str(fields)[:300])
 
-        print(f"  -> {rid[:12]}... 调 Coze...")
-        ok, resp = coze_gateway.run(prompt[:500])
+        print(f"  -> {str(rid)[:12]}... 调 DeepSeek V4 Flash...")
+        ok, resp = llm_gw.run(prompt[:500])
         if ok:
             print(f"     ✅ {resp[:80]}...")
             ok_count += 1
