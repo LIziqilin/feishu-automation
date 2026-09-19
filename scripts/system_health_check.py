@@ -45,7 +45,15 @@ def check(name, passed, detail=""):
 def run_cmd(cmd, timeout=30):
     try:
         r = subprocess.run(cmd, capture_output=True, timeout=timeout)
-        return r.returncode, r.stdout.decode("utf-8", errors="replace"), r.stderr.decode("utf-8", errors="replace")
+        def _dec(b):
+            try:
+                return b.decode("utf-8")
+            except Exception:
+                try:
+                    return b.decode("gbk", errors="replace")
+                except Exception:
+                    return b.decode("utf-8", errors="replace")
+        return r.returncode, _dec(r.stdout), _dec(r.stderr)
     except Exception as e:
         return -1, "", str(e)
 
