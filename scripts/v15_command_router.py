@@ -71,6 +71,22 @@ def handle_v15_command(text):
         except Exception as e:
             return True, f"⚠️ 记录错题失败：{e}"
 
+    # ---------- V49新增：周报/画像/健康诊断 群指令 ----------
+    match_obj = re.match(r"^生成学习周报[：:]\s*(.*)$", t)
+    if match_obj:
+        ok, output = _run_sub("deepseek_assistants.py weekly_report", timeout=150)
+        return True, "✅ 学习周报已生成并写入洞察笔记表\n" + output[:400]
+
+    match_obj = re.match(r"^更新用户画像[：:]\s*(.*)$", t)
+    if match_obj:
+        ok, output = _run_sub("deepseek_assistants.py profile", timeout=150)
+        return True, "✅ 用户画像已更新并写入用户画像表\n" + output[:400]
+
+    match_obj = re.match(r"^系统健康诊断[：:]\s*(.*)$", t)
+    if match_obj:
+        ok, output = _run_sub("deepseek_assistants.py health", timeout=150)
+        return True, "✅ 系统健康诊断完成并写入系统健康表\n" + output[:400]
+
     # ---------- 费曼抽题 ----------
     m = re.match(r"^费曼\s*(.*)$", t)
     if m:
