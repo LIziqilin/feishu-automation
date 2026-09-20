@@ -1,0 +1,89 @@
+{
+  "ts": "2026-09-20T03:04:40",
+  "independent_verdict": "FAIL",
+  "verifier": "independent_verify.py（施工方以外脚本）",
+  "domains": [
+    {
+      "domain": "runs",
+      "label": "M0验收",
+      "evidence": "result.json",
+      "fresh": true,
+      "age": "24.0h前",
+      "gate": true,
+      "ok": true
+    },
+    {
+      "domain": "golden",
+      "label": "黄金任务",
+      "evidence": "report.json",
+      "fresh": true,
+      "age": "24.0h前",
+      "gate": true,
+      "ok": true
+    },
+    {
+      "domain": "eval",
+      "label": "评测集",
+      "evidence": "report.json",
+      "fresh": false,
+      "age": "84.8h前",
+      "gate": true,
+      "ok": false
+    },
+    {
+      "domain": "chaos",
+      "label": "混沌",
+      "evidence": "chaos_20260916-1419.json",
+      "fresh": false,
+      "age": "84.7h前",
+      "gate": true,
+      "ok": false
+    },
+    {
+      "domain": "security",
+      "label": "安全审计",
+      "evidence": "security_20260920-0303.json",
+      "fresh": true,
+      "age": "0.0h前",
+      "gate": false,
+      "ok": false
+    },
+    {
+      "domain": "restore",
+      "label": "恢复演练",
+      "evidence": "restore_20260919-0305.json",
+      "fresh": true,
+      "age": "24.0h前",
+      "gate": true,
+      "ok": true
+    },
+    {
+      "domain": "redteam",
+      "label": "红队",
+      "evidence": "redteam_20260920-0303.json",
+      "fresh": true,
+      "age": "0.0h前",
+      "gate": false,
+      "ok": false
+    }
+  ],
+  "rerun": {
+    "acceptance_run.py": {
+      "exit": 0,
+      "tail": [
+        "证据包: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\runs\\20260920-0303"
+      ]
+    }
+  },
+  "cross_check": {
+    "restore_claims": 5679,
+    "backup_actual": 5679,
+    "match": true
+  },
+  "failures": [
+    "eval: evidence=True fresh=False gate=True",
+    "chaos: evidence=True fresh=False gate=True",
+    "security: evidence=True fresh=True gate=False",
+    "redteam: evidence=True fresh=True gate=False"
+  ]
+}

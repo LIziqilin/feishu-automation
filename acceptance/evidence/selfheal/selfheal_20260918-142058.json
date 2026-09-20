@@ -1,0 +1,58 @@
+{
+  "ts": "20260918-142058",
+  "mode": "apply",
+  "tasks_checked": 8,
+  "findings": [
+    {
+      "task": "V16_DailyMaintenance",
+      "last_result": "0",
+      "bad": false,
+      "last_run": "2026/9/18 3:00:01"
+    },
+    {
+      "task": "V16_HourlyBackup",
+      "last_result": "0",
+      "bad": false,
+      "last_run": "2026/9/18 13:15:00"
+    },
+    {
+      "task": "V16_ServiceWatchdog",
+      "last_result": "0",
+      "bad": false,
+      "last_run": "2026/9/18 13:30:00"
+    },
+    {
+      "task": "V16_LearningPoll",
+      "last_result": "0",
+      "bad": false,
+      "last_run": "2026/9/18 14:19:01"
+    },
+    {
+      "task": "V16_MorningReport",
+      "last_result": "0",
+      "bad": false,
+      "last_run": "2026/9/18 7:30:01"
+    },
+    {
+      "task": "V16_NoonReport",
+      "last_result": "0",
+      "bad": false,
+      "last_run": "2026/9/18 12:00:01"
+    },
+    {
+      "task": "V16_EveningReport",
+      "last_result": "0",
+      "bad": false,
+      "last_run": "2026/9/17 21:00:01"
+    },
+    {
+      "task": "V16_BootRecover",
+      "last_result": "0",
+      "bad": false,
+      "last_run": "2026/9/18 14:18:38"
+    }
+  ],
+  "actions": [],
+  "backup_dir": "C:\\Users\\Administrator\\.openclaw\\workspace\\schtask_xml_backup\\20260918-142058",
+  "bad_count": 0
+}

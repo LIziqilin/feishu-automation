@@ -1,0 +1,298 @@
+{
+  "ts": "2026-09-18T03:04:04",
+  "critical": 30,
+  "high": 4,
+  "total_hits": 34,
+  "git_binary": "C:\\Program Files\\Git\\cmd\\git.exe",
+  "git_unknown": false,
+  "gate_pass": false,
+  "hits": [
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\01-脚本\\ai_config.py",
+      "line": 29,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-8f2807a36***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\01-脚本\\ai_config.py",
+      "line": 72,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-14a5d1810***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\01-脚本\\ai_config.py",
+      "line": 77,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-lnzbmcipw***"
+    },
+    {
+      "level": "HIGH",
+      "file": "scripts\\_ai_big_system_archive_20260917\\01-脚本\\ai_config.py",
+      "line": 93,
+      "kind": "飞书AppSecret明文",
+      "sample": "FEISHU_APP_S***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\03-关键配置\\关键配置速查表.md",
+      "line": 13,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-14a5d1810***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\03-关键配置\\关键配置速查表.md",
+      "line": 14,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-lnzbmcipw***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\03-关键配置\\关键配置速查表.md",
+      "line": 53,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-8f2807a36***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260831\\scripts\\ai_config.py",
+      "line": 29,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-8f2807a36***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260831\\scripts\\ai_config.py",
+      "line": 72,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-14a5d1810***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260831\\scripts\\ai_config.py",
+      "line": 77,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-lnzbmcipw***"
+    },
+    {
+      "level": "HIGH",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260831\\scripts\\ai_config.py",
+      "line": 93,
+      "kind": "飞书AppSecret明文",
+      "sample": "FEISHU_APP_S***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260831\\vault\\03-技术笔记库\\飞书AI学习工作生活管理系统详细操作手册.md",
+      "line": 37,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-700285aba***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260831\\vault\\03-技术笔记库\\飞书AI学习工作生活管理系统详细操作手册.md",
+      "line": 319,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-700285aba***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260831\\vault\\03-技术笔记库\\飞书AI学习工作生活管理系统详细操作手册.md",
+      "line": 355,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-700285aba***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260906\\scripts\\ai_config.py",
+      "line": 29,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-8f2807a36***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260906\\scripts\\ai_config.py",
+      "line": 72,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-14a5d1810***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260906\\scripts\\ai_config.py",
+      "line": 77,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-lnzbmcipw***"
+    },
+    {
+      "level": "HIGH",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260906\\scripts\\ai_config.py",
+      "line": 93,
+      "kind": "飞书AppSecret明文",
+      "sample": "FEISHU_APP_S***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260906\\vault\\03-技术笔记库\\飞书AI学习工作生活管理系统详细操作手册.md",
+      "line": 30,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-700285aba***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260906\\vault\\03-技术笔记库\\飞书AI学习工作生活管理系统详细操作手册.md",
+      "line": 237,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-700285aba***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260906\\vault\\03-技术笔记库\\飞书AI学习工作生活管理系统详细操作手册.md",
+      "line": 267,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-700285aba***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260906\\vault\\03-技术笔记库\\03-关键配置\\关键配置速查表.md",
+      "line": 13,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-14a5d1810***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260906\\vault\\03-技术笔记库\\03-关键配置\\关键配置速查表.md",
+      "line": 14,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-lnzbmcipw***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260906\\vault\\03-技术笔记库\\03-关键配置\\关键配置速查表.md",
+      "line": 53,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-8f2807a36***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260913\\scripts\\ai_config.py",
+      "line": 29,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-8f2807a36***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260913\\scripts\\ai_config.py",
+      "line": 72,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-14a5d1810***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260913\\scripts\\ai_config.py",
+      "line": 77,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-lnzbmcipw***"
+    },
+    {
+      "level": "HIGH",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260913\\scripts\\ai_config.py",
+      "line": 93,
+      "kind": "飞书AppSecret明文",
+      "sample": "FEISHU_APP_S***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260913\\vault\\03-技术笔记库\\飞书AI学习工作生活管理系统详细操作手册.md",
+      "line": 30,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-700285aba***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260913\\vault\\03-技术笔记库\\飞书AI学习工作生活管理系统详细操作手册.md",
+      "line": 237,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-700285aba***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260913\\vault\\03-技术笔记库\\飞书AI学习工作生活管理系统详细操作手册.md",
+      "line": 267,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-700285aba***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260913\\vault\\03-技术笔记库\\03-关键配置\\关键配置速查表.md",
+      "line": 13,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-14a5d1810***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260913\\vault\\03-技术笔记库\\03-关键配置\\关键配置速查表.md",
+      "line": 14,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-lnzbmcipw***"
+    },
+    {
+      "level": "CRITICAL",
+      "file": "scripts\\_ai_big_system_archive_20260917\\05-备份\\backup\\20260913\\vault\\03-技术笔记库\\03-关键配置\\关键配置速查表.md",
+      "line": 53,
+      "kind": "LLM/云服务密钥",
+      "sample": "sk-8f2807a36***"
+    }
+  ],
+  "git_tracking": {
+    "scripts/llm_secrets.env": {
+      "ignored": true,
+      "tracked": false
+    },
+    "scripts/wecom_secrets.env": {
+      "ignored": true,
+      "tracked": false
+    },
+    "scripts/wecom_app_credentials.env": {
+      "ignored": true,
+      "tracked": false
+    },
+    "scripts/wecom_config.json": {
+      "ignored": true,
+      "tracked": false
+    },
+    "scripts/llm_config.json": {
+      "ignored": true,
+      "tracked": false
+    }
+  },
+  "least_privilege": [
+    {
+      "item": "默认不自动外发",
+      "pass": true,
+      "note": "外发需显式动作（邮件/群发）"
+    },
+    {
+      "item": "写操作幂等",
+      "pass": true,
+      "note": "golden_write 幂等用例通过=True @20260916-140909"
+    },
+    {
+      "item": "RAG权限过滤",
+      "pass": false,
+      "note": "redteam gate=False AUTH=True"
+    },
+    {
+      "item": "密钥外部化",
+      "pass": false,
+      "note": "扫描命中=34 被跟踪泄露=False"
+    },
+    {
+      "item": "可回滚undo",
+      "pass": true,
+      "note": "ADMIN_OVERRIDE 实测记录=8 条"
+    }
+  ]
+}

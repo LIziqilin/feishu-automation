@@ -1,0 +1,30 @@
+{
+  "ts": "2026-09-18T14:20:42",
+  "total": 3,
+  "up": 1,
+  "down": [
+    "Ollama",
+    "ObsidianREST"
+  ],
+  "recovered": [],
+  "results": [
+    {
+      "service": "Ollama",
+      "up": false,
+      "detail": "<urlopen error [WinError 10061] 由于目标计算机积极拒绝，无法连接。>",
+      "action": "none"
+    },
+    {
+      "service": "AnythingLLM",
+      "up": true,
+      "detail": "HTTP 200",
+      "action": "none"
+    },
+    {
+      "service": "ObsidianREST",
+      "up": false,
+      "detail": "<urlopen error [WinError 10061] 由于目标计算机积极拒绝，无法连接。>",
+      "action": "restart(spawned)"
+    }
+  ]
+}

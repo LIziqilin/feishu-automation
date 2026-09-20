@@ -1,0 +1,73 @@
+{
+  "ts": "2026-09-20T03:03:05",
+  "veto": [
+    {
+      "item": "#1 无硬编码密钥",
+      "pass": false,
+      "evidence": "security_audit critical=30 high=4 @2026-09-20T03:03:05"
+    },
+    {
+      "item": "#2 越权/外发受控",
+      "pass": false,
+      "evidence": "redteam gate=False AUTH通过=True 最小权限项=5"
+    },
+    {
+      "item": "#3 备份可恢复",
+      "pass": true,
+      "evidence": "restore pass=True 11表 4926条 校验=3f256ff56ce81cc5"
+    },
+    {
+      "item": "#4 高风险可回滚",
+      "pass": false,
+      "evidence": "golden_write 回滚applied=False R3拦截=False @NA"
+    },
+    {
+      "item": "#5 RAG有来源/拒答",
+      "pass": false,
+      "evidence": "eval/rag 证据 @NA"
+    },
+    {
+      "item": "#6 黄金/边界测试集",
+      "pass": true,
+      "evidence": "golden 12/12 + eval_set/golden_tasks 就位"
+    },
+    {
+      "item": "#7 告警/责任人",
+      "pass": true,
+      "evidence": "risk_register责任人=True 告警巡检=True"
+    }
+  ],
+  "veto_pass": false,
+  "dimensions": {
+    "工作场景(25)": 10.0,
+    "系统稳定性(22)": 10.0,
+    "落地可能性(18)": 7.0,
+    "效率提升性(15)": 10.0,
+    "使用场景(12)": 10.0,
+    "使用便捷性(8)": 10.0
+  },
+  "min_dimension": 7.0,
+  "pending_dimensions": [],
+  "weights_covered": 1.0,
+  "full_house_6dims_ge8": false,
+  "strict_score": 9.46,
+  "strict_score_ceiling": 10.0,
+  "provisional_score": 9.46,
+  "uptime_days": 3.64,
+  "independent_sample_ok": true,
+  "stage": "M0",
+  "stage_progress": "M0",
+  "stage_verified": "M0",
+  "stage_policy": "进度阶段用临时分（跟踪M0-M3）；受验阶段用保守分；对外声明/放行以受验阶段为准",
+  "next_gap_hint": null,
+  "release": "继续施工",
+  "next_stage_blocker": "需连续30天（已 3.64 天）",
+  "m4_hard_gates": {
+    "一票否决7/7": false,
+    "六维全≥8": false,
+    "连续30天": false,
+    "独立抽样复现": true,
+    "RPO/RTO实测": true,
+    "学习业务KPI": true
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "ts": "2026-09-20T00:45:04",
+  "total": 3,
+  "up": 3,
+  "down": [],
+  "recovered": [],
+  "results": [
+    {
+      "service": "Ollama",
+      "up": true,
+      "detail": "HTTP 200",
+      "action": "none"
+    },
+    {
+      "service": "AnythingLLM",
+      "up": true,
+      "detail": "HTTP 200",
+      "action": "none"
+    },
+    {
+      "service": "ObsidianREST",
+      "up": true,
+      "detail": "HTTP 200",
+      "action": "none"
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "ts": "20260919-011538",
+  "src": "D:\\AI-Tools\\feishu\\V13方案增强\\backups",
+  "dst": "D:\\AI-Backups\\V16_Offsite",
+  "copied": [
+    "hourly_20260919_011538.json"
+  ],
+  "verified": [
+    "hourly_20260919_011538.json"
+  ],
+  "skipped": [
+    "cards_backup_20260911_075210.json",
+    "backup_20260914_104539.json",
+    "backup_20260914_105118.json",
+    "backup_20260915_022847.json",
+    "backup_20260915_030018.json",
+    "backup_20260916_030030.json",
+    "backup_20260917_124331.json",
+    "backup_20260918_030041.json",
+    "hourly_20260918_031533.json",
+    "hourly_20260918_041534.json",
+    "hourly_20260918_051534.json",
+    "hourly_20260918_061536.json",
+    "hourly_20260918_071536.json",
+    "hourly_20260918_082144.json",
+    "hourly_20260918_091538.json",
+    "hourly_20260918_093820.json",
+    "hourly_20260918_101544.json",
+    "hourly_20260918_111542.json",
+    "hourly_20260918_121555.json",
+    "hourly_20260918_131538.json",
+    "hourly_20260918_142240.json",
+    "hourly_20260918_151541.json",
+    "hourly_20260918_161539.json",
+    "hourly_20260918_171540.json",
+    "hourly_20260918_181539.json",
+    "hourly_20260918_191539.json",
+    "hourly_20260918_201537.json",
+    "hourly_20260918_211537.json",
+    "hourly_20260918_221539.json",
+    "hourly_20260918_231537.json",
+    "hourly_20260919_001538.json"
+  ],
+  "failed": [],
+  "dry_run": false,
+  "status": "PASS",
+  "counts": {
+    "src": 32,
+    "copied": 1,
+    "verified": 1,
+    "skipped": 31,
+    "failed": 0
+  },
+  "lark_drive": "PUSHED"
+}

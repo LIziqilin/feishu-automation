@@ -1,0 +1,29 @@
+{
+  "ts": "2026-09-18T17:30:07",
+  "total": 3,
+  "up": 2,
+  "down": [
+    "Ollama"
+  ],
+  "recovered": [],
+  "results": [
+    {
+      "service": "Ollama",
+      "up": false,
+      "detail": "<urlopen error [WinError 10061] 由于目标计算机积极拒绝，无法连接。>",
+      "action": "none"
+    },
+    {
+      "service": "AnythingLLM",
+      "up": true,
+      "detail": "HTTP 200",
+      "action": "none"
+    },
+    {
+      "service": "ObsidianREST",
+      "up": true,
+      "detail": "HTTP 200",
+      "action": "none"
+    }
+  ]
+}

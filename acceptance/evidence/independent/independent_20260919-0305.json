@@ -1,0 +1,91 @@
+{
+  "ts": "2026-09-19T03:05:28",
+  "independent_verdict": "FAIL",
+  "verifier": "independent_verify.py（施工方以外脚本）",
+  "domains": [
+    {
+      "domain": "runs",
+      "label": "M0验收",
+      "evidence": "result.json",
+      "fresh": true,
+      "age": "23.9h前",
+      "gate": false,
+      "ok": false
+    },
+    {
+      "domain": "golden",
+      "label": "黄金任务",
+      "evidence": "report.json",
+      "fresh": true,
+      "age": "23.9h前",
+      "gate": false,
+      "ok": false
+    },
+    {
+      "domain": "eval",
+      "label": "评测集",
+      "evidence": "report.json",
+      "fresh": false,
+      "age": "60.8h前",
+      "gate": true,
+      "ok": false
+    },
+    {
+      "domain": "chaos",
+      "label": "混沌",
+      "evidence": "chaos_20260916-1419.json",
+      "fresh": false,
+      "age": "60.7h前",
+      "gate": true,
+      "ok": false
+    },
+    {
+      "domain": "security",
+      "label": "安全审计",
+      "evidence": "security_20260919-0303.json",
+      "fresh": true,
+      "age": "0.0h前",
+      "gate": false,
+      "ok": false
+    },
+    {
+      "domain": "restore",
+      "label": "恢复演练",
+      "evidence": "restore_20260918-0306.json",
+      "fresh": true,
+      "age": "23.9h前",
+      "gate": true,
+      "ok": true
+    },
+    {
+      "domain": "redteam",
+      "label": "红队",
+      "evidence": "redteam_20260919-0303.json",
+      "fresh": true,
+      "age": "0.0h前",
+      "gate": false,
+      "ok": false
+    }
+  ],
+  "rerun": {
+    "acceptance_run.py": {
+      "exit": 0,
+      "tail": [
+        "证据包: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\runs\\20260919-0303"
+      ]
+    }
+  },
+  "cross_check": {
+    "restore_claims": 4926,
+    "backup_actual": 4926,
+    "match": true
+  },
+  "failures": [
+    "runs: evidence=True fresh=True gate=False",
+    "golden: evidence=True fresh=True gate=False",
+    "eval: evidence=True fresh=False gate=True",
+    "chaos: evidence=True fresh=False gate=True",
+    "security: evidence=True fresh=True gate=False",
+    "redteam: evidence=True fresh=True gate=False"
+  ]
+}
