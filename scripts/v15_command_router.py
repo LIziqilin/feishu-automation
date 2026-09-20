@@ -45,6 +45,32 @@ def handle_v15_command(text):
         except Exception as e:
             return True, f"⚠️ 错题本生成失败：{e}"
 
+    # ---------- 记录错题（V49新增）：记录错题→建学习卡片→DeepSeek解析 ----------
+    m = re.match(r"^记录错题[：:]\s*(.+)$", t) or re.match(r"^记录错题\s+(.+)$", t)
+    if m:
+        try:
+            wrong = m.group(1).strip()
+            from deepseek_assistants import ds_chat, lark, CARD_TABLE, BASE
+            import json as _json
+            prompt = ("我错了这道题：" + wrong + "\n请输出JSON：{\"分析\":\"一句话核心概念澄清\",\"知识点\":\"分类标签\",\"正解\":\"简明正确思路\",\"规律\":\"底层规律\"}")
+            ans = ds_chat(prompt, system="你是错题解析助手，只输出JSON。", max_tokens=400)
+            try:
+                j = _json.loads(ans[ans.find("{"):ans.rfind("}")+1])
+            except Exception:
+                j = {"分析": ans, "知识点": "待整理", "正解": "", "规律": ""}
+            lark(["+record-batch-create", "--base-token", BASE, "--table-id", CARD_TABLE,
+                  "--json", _json.dumps({"records": [{"fields": {
+                      "卡片问题正面": wrong,
+                      "标准答案_AI": j.get("正解", ""),
+                      "AI解析_错题": j.get("分析", ""),
+                      "知识点分类_AI": j.get("知识点", ""),
+                      "底层规律": j.get("规律", ""),
+                      "卡片状态": "LEARNING",
+                  }}]}, ensure_ascii=False)])
+            return True, ("✅ 已记录错题并AI解析\n📝 错题：" + wrong[:50] + "\n🏷️ 知识点：" + j.get("知识点","") + "\n💡 解析：" + j.get("分析","")[:80])
+        except Exception as e:
+            return True, f"⚠️ 记录错题失败：{e}"
+
     # ---------- 费曼抽题 ----------
     m = re.match(r"^费曼\s*(.*)$", t)
     if m:
