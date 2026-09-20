@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """ask_cloud.py — GitHub Actions 云端问答（V49 加固版）
 DeepSeek 回答 -> 推飞书总控群。零依赖标准库；带重试/超时/失败降级。
 任何环节失败都会把原因推群，不静默。
@@ -7,8 +7,8 @@ import os, sys, json, time, urllib.request, urllib.error
 
 Q = os.environ.get("Q", "").strip()
 DS_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
-APP_ID = os.environ.get("FEISHU_APP_ID", "")
-APP_SECRET = os.environ.get("FEISHU_APP_SECRET", "")
+APP_ID = os.environ.get("FEISHU_APP_ID", "cli_aa0cd56c99785bb5")
+APP_SECRET = os.environ.get("FEISHU_APP_SECRET", "qs3P6ZtozERd9jInHCuYYfMrBYoKgQpp")
 CHAT_ID = os.environ.get("CHAT_ID", "")
 
 
