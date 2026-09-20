@@ -108,16 +108,27 @@ def search(query, top_k=4):
     return [c for _, c in scored[:top_k]]
 
 
+def _ds_direct(query):
+    """文档未命中时，fallback 直连 DeepSeek 直接回答通用知识。"""
+    try:
+        from deepseek_assistants import ds_chat
+        return ds_chat(query, system="你是AI学习助手，用简洁中文回答，150字内。", max_tokens=300)
+    except Exception as e:
+        return f"（文档未命中，且AI直接回答失败：{e}）"
+
+
 def answer(query):
     hits = search(query)
     if not hits:
-        return "❓ 系统知识库中未找到相关内容。可尝试换个问法，或发「问系统：帮助」查看用法。"
+        ans = _ds_direct(query)
+        return f"💡 系统文档未直接覆盖此问题，AI直接回答：\n{ans}\n\n（如需系统内部操作，请换更具体的关键词）"
     ctx = "\n\n".join(f"[来源:{c['src']} / {c['title']}]\n{c['text'][:600]}" for c in hits)
-    prompt = ("你是 AI 学习系统的运维知识助手。请仅依据下方系统文档片段回答用户问题；"
-              "如果片段不足以回答，明确说'文档未覆盖'。回答要简洁（200字内），并列出引用来源文件名。\n\n"
+    prompt = ("你是 AI 学习系统的运维知识助手。请依据下方系统文档片段回答用户问题；"
+              "如果文档片段不足以回答，不要说'文档未覆盖'，而是用你自己的知识直接回答，"
+              "并在末尾注明'（系统文档未覆盖，AI通用回答）'。回答要简洁（200字内），并列出引用来源文件名。\n\n"
               f"问题：{query}\n\n系统文档片段：\n{ctx}")
     try:
-        ans = v15.llm_chat(prompt, system="你是严谨的系统运维知识助手，答案必须可溯源。", max_tokens=400)
+        ans = v15.llm_chat(prompt, system="你是严谨的系统运维知识助手，答案可溯源；文档没有的用通用知识补。", max_tokens=400)
     except Exception as e:
         ans = f"（LLM 生成失败：{e}，以下为直接检索结果）\n" + "\n".join(
             f"- [{c['src']}]({c['title']})：{c['text'][:150]}" for c in hits)
