@@ -58,15 +58,17 @@ def handle_v15_command(text):
                 j = _json.loads(ans[ans.find("{"):ans.rfind("}")+1])
             except Exception:
                 j = {"分析": ans, "知识点": "待整理", "正解": "", "规律": ""}
-            lark(["+record-batch-create", "--base-token", BASE, "--table-id", CARD_TABLE,
-                  "--json", _json.dumps({"records": [{"fields": {
+            rw = lark(["+record-batch-create", "--base-token", BASE, "--table-id", CARD_TABLE,
+                  "--json", _json.dumps({"create_records": [{
                       "卡片问题正面": wrong,
                       "标准答案_AI": j.get("正解", ""),
                       "AI解析_错题": j.get("分析", ""),
                       "知识点分类_AI": j.get("知识点", ""),
                       "底层规律": j.get("规律", ""),
                       "卡片状态": "LEARNING",
-                  }}]}, ensure_ascii=False)])
+                  }]}, ensure_ascii=False)])
+            if not rw.get("ok"):
+                return True, ("⚠️ 错题写入失败：" + str(rw.get("raw",""))[:150])
             return True, ("✅ 已记录错题并AI解析\n📝 错题：" + wrong[:50] + "\n🏷️ 知识点：" + j.get("知识点","") + "\n💡 解析：" + j.get("分析","")[:80])
         except Exception as e:
             return True, f"⚠️ 记录错题失败：{e}"

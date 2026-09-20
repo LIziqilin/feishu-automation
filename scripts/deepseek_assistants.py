@@ -149,11 +149,13 @@ def weekly_report():
               "请写一份简短学习周报，含：本周完成情况/薄弱环节/下周计划三点。")
     rep = ds_chat(prompt, system="你是学习周报助手，写150字内的周报。", max_tokens=400)
     title = f"学习周报 {datetime.date.today().strftime('%m-%d')}"
-    lark(["+record-batch-create", "--base-token", BASE, "--table-id", INSIGHT_TABLE,
-          "--json", json.dumps({"records": [{"fields": {
-              "洞察标题": title, "内容": rep, "行动建议": "按薄弱环节复习",
-              "来源": "DeepSeek周报助手", "整理日期": now_ms(),
-          }}]}, ensure_ascii=False)])
+    r1 = lark(["+record-batch-create", "--base-token", BASE, "--table-id", INSIGHT_TABLE,
+              "--json", json.dumps({"create_records": [{
+                  "洞察标题": title, "内容": rep, "行动建议": "按薄弱环节复习",
+                  "来源": "DeepSeek周报助手", "整理日期": now_ms(),
+              }]}, ensure_ascii=False)])
+    if not r1.get("ok"):
+        print("⚠️ 周报写入失败:", r1.get("raw","")[:200]); return
     print(f"✅ 周报已写入洞察笔记表：{title}\n{rep}")
 
 
@@ -173,11 +175,13 @@ def profile():
             items = [items]
     except Exception:
         items = [{"维度": "关注领域", "值": ans[:50], "置信度": 0.6}]
-    recs = [{"fields": {"画像维度": it.get("维度", ""), "画像值": str(it.get("值", "")),
-                        "置信度": float(it.get("置信度", 0.7)),
-                        "数据来源": "自动演化", "更新时间": now_ms()}} for it in items]
-    lark(["+record-batch-create", "--base-token", BASE, "--table-id", PROFILE_TABLE,
-          "--json", json.dumps({"records": recs}, ensure_ascii=False)])
+    recs = [{"画像维度": it.get("维度", ""), "画像值": str(it.get("值", "")),
+             "置信度": float(it.get("置信度", 0.7)),
+             "数据来源": "自动演化", "更新时间": now_ms()} for it in items]
+    r2 = lark(["+record-batch-create", "--base-token", BASE, "--table-id", PROFILE_TABLE,
+          "--json", json.dumps({"create_records": recs}, ensure_ascii=False)])
+    if not r2.get("ok"):
+        print("⚠️ 画像写入失败:", r2.get("raw","")[:200]); return
     print(f"✅ 画像演化 {len(recs)} 条已写入用户画像表")
 
 
@@ -197,15 +201,17 @@ def health():
         print("诊断失败:", e); return
     level = j.get("结论", "正常")
     level_map = {"正常": "正常", "预警": "预警", "告警": "告警", "严重": "严重"}
-    lark(["+record-batch-create", "--base-token", BASE, "--table-id", HEALTH_TABLE,
-          "--json", json.dumps({"records": [{"fields": {
+    r3 = lark(["+record-batch-create", "--base-token", BASE, "--table-id", HEALTH_TABLE,
+          "--json", json.dumps({"create_records": [{
               "检查项": j.get("检查项", "综合诊断"),
               "异常描述": j.get("描述", ""),
               "告警等级": level_map.get(level, "正常"),
               "处理状态": "已自动修复" if level == "正常" else "待人工",
               "最近检查时间": now_ms(),
-              "当前使用通道": "DeepSeek",
-          }}]}, ensure_ascii=False)])
+              "自动修复动作": "DeepSeek诊断",
+          }]}, ensure_ascii=False)])
+    if not r3.get("ok"):
+        print("⚠️ 健康写入失败:", r3.get("raw","")[:200]); return
     print(f"✅ 健康诊断已写入系统健康表：{level} - {j.get('描述','')}")
 
 
