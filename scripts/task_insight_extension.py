@@ -170,14 +170,19 @@ def handle_insight(text):
 # ============================================================
 
 def parse_complete_command(text):
-    """解析「完成 xxx」或「完成：xxx」指令（V15增强：增加别名）"""
+    """解析「完成 xxx」或「完成：xxx」指令（V15别名；V49剥离多行/日期状态尾巴）"""
+    def _clean_keyword(raw):
+        kw = raw.splitlines()[0].strip() if raw else ""
+        kw = re.split(r'\s+-\s*\d{4}-\d{2}-\d{2}', kw)[0]
+        kw = re.split(r'\s+状态[:：]', kw)[0]
+        return kw.strip(" ：:，。.、[]【】")
     # 主指令：完成
-    match = re.match(r'^完成[：:]\s*(.+)$', text)
+    match = re.match(r'^完成[：:]\s*(.+)', text)
     if match:
-        return match.group(1).strip()
-    match = re.match(r'^完成\s+(.+)$', text)
+        return _clean_keyword(match.group(1))
+    match = re.match(r'^完成\s+(.+)', text)
     if match:
-        return match.group(1).strip()
+        return _clean_keyword(match.group(1))
     # V15增强：增加别名
     aliases = ['销项', '搞定', 'done', '已完成']
     for alias in aliases:
