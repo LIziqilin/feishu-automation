@@ -789,7 +789,16 @@ def cmd_poll():
         ]
         is_task_instruction = any(text.startswith(p) for p in task_prefixes)
         # D2修复：自然语态销项/归档（无冒号前缀也识别），对齐用户手册XI
-        if not is_task_instruction and not _is_display_cmd:
+        # V49修复：如果是洞察指令，跳过自然语态销项（避免"洞察：...归档"被误判）
+        _skip_nl = False
+        try:
+            from task_insight_extension import is_insight_command as _is_insight
+            if _is_insight(text):
+                _skip_nl = True
+                print(f"  [V49] 检测到洞察指令，跳过自然语态销项: {text[:30]}...")
+        except Exception:
+            pass
+        if not _skip_nl and not is_task_instruction and not _is_display_cmd:
             _nl_complete = ["搞定", "已完成", "做完了", "done", "完成"]
             _nl_archive = ["收起来", "存档", "归档"]
             _low = text.lower()
