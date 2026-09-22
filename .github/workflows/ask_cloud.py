@@ -7,8 +7,8 @@ import os, sys, json, time, urllib.request, urllib.error
 
 Q = os.environ.get("Q", "").strip()
 DS_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
-APP_ID = os.environ.get("FEISHU_APP_ID", "cli_aa0cd56c99785bb5")
-APP_SECRET = os.environ.get("FEISHU_APP_SECRET", "qs3P6ZtozERd9jInHCuYYfMrBYoKgQpp")
+APP_ID = os.environ.get("FEISHU_APP_ID", "")
+APP_SECRET = os.environ.get("FEISHU_APP_SECRET", "")
 CHAT_ID = os.environ.get("CHAT_ID", "")
 
 
