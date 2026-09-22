@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 """
 task_insight_extension.py - S7/S8/S9功能扩展
 S7: 随手记洞察（「洞察：xxx」指令）
@@ -55,18 +55,18 @@ def send_message(text):
 # ============================================================
 
 def parse_insight_command(text):
-    """解析「写洞察：xxx」「洞察 xxx」「记录洞察 xxx」等指令"""
+    """解析「写洞察：xxx」「洞察 xxx」「记录洞察 xxx」等指令
+    V49修复：兼容用户误加「完成：」前缀的情况（如「完成：写洞察：xxx」）"""
+    # 剥离误加的「完成：」「搞定：」前缀
+    clean_text = re.sub(r'^(完成|搞定|已完成|done)[：:]\s*', '', text, flags=re.IGNORECASE)
     for prefix in ("写洞察", "记录洞察", "记洞察", "洞察"):
-        m = re.match(r'^' + prefix + r'[：:]\s*(.+)$', text)
+        m = re.match(r'^' + prefix + r'[：:]\s*(.+)$', clean_text)
         if m:
             return m.group(1).strip()
-        m = re.match(r'^' + prefix + r'\s+(.+)$', text)
+        m = re.match(r'^' + prefix + r'\s+(.+)$', clean_text)
         if m:
             return m.group(1).strip()
     return None
-
-def create_insight(content):
-    """在洞察笔记表创建新记录"""
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
     # 生成标题（取前20字）
     title = content[:20] + "..." if len(content) > 20 else content
@@ -762,6 +762,11 @@ def handle_extension_command(text):
     处理扩展指令
     返回：(handled, result) - handled=True表示已处理
     """
+    # V49修复：先剥离完成：/搞定：误加前缀，再判断是否洞察
+    _stripped = re.sub(r'^(完成|销项|搞定|done|已完成)了?[：:\s]*', '', text).strip()
+    if is_insight_command(_stripped):
+        return True, handle_insight(_stripped)
+
     if is_insight_command(text):
         return True, handle_insight(text)
 

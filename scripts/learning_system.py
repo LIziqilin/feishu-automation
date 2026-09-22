@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 """
 learning_system.py - 间隔重复学习系统主运行模块
 V16交付保障版
@@ -357,14 +357,14 @@ class InstructionParser:
             if text.startswith(_p):
                 return True
         # V42修复：闪卡复习 / 系统体检 / 学知识
-        if any(_k in text for _k in ("闪卡", "体检", "学知识")):
+        # V42修复：闪卡复习 / 系统体检（学知识走 knowledge_extension）
+        if any(_k in text for _k in ("闪卡", "体检")):
             return True
+        # V49修复：洞察指令前缀（之前被_looks_like_instruction漏掉导致洞察被ignore）
+        for _p in ["洞察：", "洞察:", "写洞察：", "写洞察:", "记录洞察：", "记录洞察:", "记洞察：", "记洞察:"]:
+            if text.startswith(_p):
+                return True
         return False
-
-    def reset_index(self):
-        """重置消费索引（每日早报推送后调用）"""
-        self.current_index = 0
-        self._save_index()
 
 # ============================================================
 # T9: 两段式回执
@@ -840,21 +840,21 @@ def cmd_poll():
             handled, result = handle_knowledge_command(text)
             if handled:
                 print(f"  消息: {text[:30]}... → 知识检索已处理: {result}")
-                # V38修复：标记消息为已处理
+                # knowledge_extension.py 内部已推群完整回答，这里不重复推
                 mark_message_processed(msg_id, processed_messages, action="knowledge")
                 new_processed_count += 1
                 continue
+                continue
+
 
         # S5-10: 管理员修正指令（!admin override <event_id> <new_result> [reason]）
-        if V19_INTEGRATION_AVAILABLE and text.startswith("!admin"):
-            print(f"  消息: {text[:50]}... → 管理员修正指令")
-            # 获取发送者ID（尝试多种可能的字段名）
+        if text.startswith("!admin"):
             sender_info = msg.get("sender", {})
             sender_id = sender_info.get("id", "") or sender_info.get("open_id", "") or sender_info.get("user_id", "") or sender_info.get("sender_id", "")
             
             # 白名单校验
             if not AdminOverrideManager.is_admin(sender_id):
-                reject_msg = f"❌ 权限拒绝：您不在管理员白名单中，无权执行管理员修正指令。\n当前白名单管理员数: {len(AdminOverrideManager.get_admin_list())}"
+                reject_msg = "❌ 权限拒绝：您不在管理员白名单中，无权执行管理员修正指令。"
                 sender._send_message(reject_msg)
                 print(f"  [管理员修正] 非白名单用户拒绝: sender_id={sender_id}")
                 write_system_log("SECURITY", "管理员修正指令被拒绝", "WARN", "admin_override", f"sender_id={sender_id}, text={text[:50]}")
@@ -865,7 +865,7 @@ def cmd_poll():
             # 白名单用户：解析并执行修正指令
             parse_result = AdminOverrideManager.parse_admin_command(text)
             if not parse_result.get("valid"):
-                sender._send_message(f"❌ 指令解析失败: {parse_result.get('error', '未知错误')}\n格式: !admin override <event_id> <new_result> [reason]\n允许结果: 会/不会/模糊")
+                sender._send_message("❌ 指令解析失败")
                 mark_message_processed(msg_id, processed_messages, action="admin_parse_error")
                 new_processed_count += 1
                 continue
@@ -879,21 +879,29 @@ def cmd_poll():
             )
             
             if override_result.get("success"):
-                success_msg = f"✅ 管理员修正成功\n原event_id: {parse_result['event_id']}\n修正结果: {parse_result['new_result']}\n新event_id: {override_result.get('new_event_id', '未知')}"
-                if parse_result.get("reason"):
-                    success_msg += f"\n修正原因: {parse_result['reason']}"
-                sender._send_message(success_msg)
-                print(f"  [管理员修正] 修正成功: {parse_result['event_id']} -> {parse_result['new_result']}")
-                write_system_log("INSTRUCTION", "管理员修正执行成功", "INFO", "admin_override", f"event_id={parse_result['event_id']}, new_result={parse_result['new_result']}, new_event_id={override_result.get('new_event_id', '')}")
+                sender._send_message("✅ 管理员修正成功")
+                print("  [管理员修正] 修正成功")
             else:
-                sender._send_message(f"❌ 管理员修正失败: {override_result.get('error', '未知错误')}")
-                print(f"  [管理员修正] 修正失败: {override_result.get('error', '未知')}")
+                sender._send_message("❌ 管理员修正失败")
             
             mark_message_processed(msg_id, processed_messages, action="admin_override")
             new_processed_count += 1
             continue
 
         action, data = parser.parse(text, today_cards)
+
+        # V49兜底修复：如果parse_error但文本以洞察/完成/归档开头，再试一次extension
+        if action == "parse_error" and EXTENSION_AVAILABLE:
+            try:
+                _fb_handled, _fb_result = handle_extension_command(text)
+                if _fb_handled:
+                    print(f"  消息: {text[:30]}... → 兜底扩展指令已处理: {_fb_result}")
+                    mark_message_processed(msg_id, processed_messages, action="extension_fallback")
+                    new_processed_count += 1
+                    continue
+            except Exception as _fb_e:
+                print(f"  [兜底扩展] 异常: {_fb_e}")
+
         # V38修复：解析后的消息统一标记为已处理（包括answer/revoke/requery/parse_error等）
         mark_message_processed(msg_id, processed_messages, action=action)
         new_processed_count += 1
@@ -1609,11 +1617,27 @@ def cmd_select():
             except Exception as dlq_e:
                 print(f"  [DLQ补录] DLQ汇总补录异常: {dlq_e}")
 
-        # S9: 推送到期提醒（如果有即将到期的任务）
+        # S9: 推送到期提醒（V49修复：每天只推一次，避免每5分钟重复刷屏）
         if EXTENSION_AVAILABLE:
             try:
-                send_due_reminder(3)
-                print("  到期提醒已推送")
+                import json as _json
+                _due_state_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.due_reminder_state.json')
+                _today_str = datetime.now().strftime('%Y-%m-%d')
+                _due_state = {}
+                if os.path.exists(_due_state_file):
+                    try:
+                        with open(_due_state_file, 'r', encoding='utf-8') as _f:
+                            _due_state = _json.load(_f)
+                    except Exception:
+                        _due_state = {}
+                if _due_state.get('last_date') != _today_str:
+                    send_due_reminder(3)
+                    _due_state['last_date'] = _today_str
+                    with open(_due_state_file, 'w', encoding='utf-8') as _f:
+                        _json.dump(_due_state, _f, ensure_ascii=False)
+                    print("  到期提醒已推送（每日首次）")
+                else:
+                    print("  到期提醒今日已推送，跳过")
             except Exception as e:
                 print(f"  到期提醒推送失败: {e}")
 
