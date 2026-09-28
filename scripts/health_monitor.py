@@ -125,22 +125,26 @@ def main():
     now_ms = int(datetime.datetime.now().timestamp() * 1000)
     now_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+    # (名称, URL, 是否必需) — Ollama和AnythingLLM是可选服务，失败不告警只记录
     services = [
-        ("Ollama本地模型", "http://localhost:11434/api/tags"),
-        ("AnythingLLM知识库", "http://localhost:3001/"),
-        ("飞书API连通性", "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal"),
+        ("Ollama本地模型", "http://localhost:11434/api/tags", False),
+        ("AnythingLLM知识库", "http://localhost:3001/", False),
+        ("飞书API连通性", "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal", True),
     ]
 
     results = []
     all_ok = True
     failed_services = []
 
-    for name, url in services:
+    for name, url, required in services:
         ok, msg = check_service(name, url)
         status = "正常" if ok else "异常"
         if not ok:
-            all_ok = False
-            failed_services.append(f"{name}({msg})")
+            if required:
+                all_ok = False
+                failed_services.append(f"{name}({msg})")
+            else:
+                print(f"  [可选服务异常，不告警] {name}: {msg}")
         results.append({
             "检查项": f"服务健康-{name}",
             "实际状态": status,
