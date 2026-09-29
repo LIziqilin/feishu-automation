@@ -152,3 +152,6 @@ scripts/*_secrets.env
 !scripts/cleanup_test_data.py
 !scripts/restore_drill.py
 !scripts/regression_baseline.py
+
+# V51.13: 敏感配置
+scripts/.webapi_token
