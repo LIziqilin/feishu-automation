@@ -1,0 +1,51 @@
+{
+  "ts": "20260923-090316",
+  "date": "2026-09-23",
+  "since": "2026-09-16T11:43:03",
+  "continuous_days": 6.89,
+  "target_days": 30,
+  "tasks": [
+    {
+      "task": "V16_DailyMaintenance",
+      "last_run": "2026/9/23 8:50:31",
+      "last_result": "0",
+      "next_run": "2026/9/24 3:00:00",
+      "status": "就绪"
+    },
+    {
+      "task": "V16_HourlyBackup",
+      "last_run": "2026/9/23 8:50:31",
+      "last_result": "0",
+      "next_run": "2026/9/23 9:15:00",
+      "status": "就绪"
+    },
+    {
+      "task": "V16_ServiceWatchdog",
+      "last_run": "2026/9/23 9:00:00",
+      "last_result": "0",
+      "next_run": "2026/9/23 9:15:00",
+      "status": "就绪"
+    },
+    {
+      "task": "V16_BootRecover",
+      "last_run": "2026/9/22 17:42:49",
+      "last_result": "0",
+      "next_run": "N/A",
+      "status": "就绪"
+    }
+  ],
+  "alive_tasks": 4,
+  "failed_tasks": [],
+  "not_run_tasks": [],
+  "running_tasks": [],
+  "all_alive": true,
+  "met": false,
+  "logged_days": [
+    "2026-09-16",
+    "2026-09-17",
+    "2026-09-18",
+    "2026-09-19",
+    "2026-09-20",
+    "2026-09-23"
+  ]
+}

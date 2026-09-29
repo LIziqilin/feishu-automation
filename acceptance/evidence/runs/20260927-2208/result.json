@@ -1,0 +1,60 @@
+{
+  "run_id": "20260927-2208",
+  "fingerprint": {
+    "ts": "2026-09-27T22:08:58",
+    "host": "DESKTOP-944N6FH",
+    "os": "Windows-10-10.0.19041-SP0",
+    "python": "3.10.3",
+    "git_head": "9414d13",
+    "git_dirty": true,
+    "code_hash": {
+      "v15_features.py": "9016847aad87ee59",
+      "learning_system.py": "f0f2c8070230574b",
+      "run_maintenance_wrapper.py": "68efe4dd37e691bf"
+    },
+    "model": {
+      "cloud": "Qwen/Qwen2.5-7B-Instruct",
+      "local": "qwen2.5:1.5b"
+    }
+  },
+  "total": 5,
+  "passed": 2,
+  "pass_rate": 0.4,
+  "results": [
+    {
+      "id": "GT-03",
+      "name": "查询任务(只读口径)",
+      "pass": false,
+      "sec": 0.31,
+      "detail": "module_import_code=1"
+    },
+    {
+      "id": "GT-11",
+      "name": "健康巡检",
+      "pass": false,
+      "sec": 31.85,
+      "detail": " (服务运行中) ❌ 健康记录写入失败: 服务健康-Ollama本地模型 - <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。> ✅ 健康记录已写入: 服务健康-AnythingLLM知识库 ❌ 健康记录写入失败: 服务健康-飞书API连通性 - <urlopen error [WinError 10054] 远程主机强迫关闭了一个现有的连接。> "
+    },
+    {
+      "id": "GT-12",
+      "name": "恢复演练(只读)",
+      "pass": true,
+      "sec": 0.17,
+      "detail": "=== 每月恢复演练 2026-09-27 22:09 ===   非每月1号，跳过恢复演练（不发送报告） "
+    },
+    {
+      "id": "SUP-01",
+      "name": "备份存在性",
+      "pass": true,
+      "sec": 0.02,
+      "detail": "backup_files=8 latest_parsed=True"
+    },
+    {
+      "id": "GOLDEN",
+      "name": "12条黄金任务端到端(只读)",
+      "pass": false,
+      "sec": 67.58,
+      "detail": "golden=7/12"
+    }
+  ]
+}

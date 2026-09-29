@@ -21,7 +21,7 @@ from datetime import datetime, timedelta
 # 导入扩展模块（S7随手记/S8快速销项/S9到期提醒）
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 try:
-    from task_insight_extension import handle_extension_command, is_insight_command, is_complete_command, is_task_list_command, send_due_reminder
+    from task_insight_extension import handle_extension_command, is_insight_command, is_complete_command, is_task_list_command, send_due_reminder, is_remind_command, handle_remind, check_immediate_reminders, mark_reminder_sent
     EXTENSION_AVAILABLE = True
 except ImportError:
     EXTENSION_AVAILABLE = False
@@ -216,6 +216,11 @@ class InstructionParser:
                            "updated_at": datetime.now().isoformat()}, f, ensure_ascii=False)
         except:
             pass
+
+    def reset_index(self):
+        """重置消费索引（每日早报推送后调用）"""
+        self.current_index = 0
+        self._save_index()
 
     def parse(self, message_text, today_cards):
         """
@@ -458,6 +463,21 @@ class ReceiptSender:
         except Exception as e:
             print(f"  [WARN] 告警落盘失败: {e}")
 
+    def _send_card(self, card):
+        """发送交互式卡片到群"""
+        cmd = [LARK_NODE_EXE, LARK_CLI_SCRIPT, "im", "+messages-send",
+               "--chat-id", CHAT_ID, "--as", "bot",
+               "--msg-type", "interactive", "--content", json.dumps(card, ensure_ascii=False)]
+        try:
+            ok, stdout, stderr = run_cmd(cmd)
+            if ok:
+                return True
+            print(f"  [卡片发送失败] {stderr[:200]}")
+            return False
+        except Exception as e:
+            print(f"  [卡片发送异常] {e}")
+            return False
+
 # ============================================================
 # T10: 选题算法
 # ============================================================
@@ -668,7 +688,12 @@ def cmd_poll():
     cmd = ["lark-cli", "im", "+chat-messages-list",
            "--chat-id", CHAT_ID, "--as", "user",
            "--page-size", "50", "--order", "desc"]
-    ok, stdout, stderr = run_cmd(cmd, timeout=60)
+    # V51.10修复：消息读取加1次自动重试（网络临时超时不再直接失败）
+    ok, stdout, stderr = run_cmd(cmd, timeout=45)
+    if not ok:
+        print(f"  [V51.10] 消息读取首次失败，3秒后重试: {stderr[:100]}")
+        time.sleep(3)
+        ok, stdout, stderr = run_cmd(cmd, timeout=45)
     
     # R8 S5-09: 熔断器记录 - 读取消息结果
     if poll_circuit_breaker:
@@ -825,18 +850,27 @@ def cmd_poll():
                 v15_handled, v15_reply = False, ""
                 print(f"  [V15路由异常] {_ve}")
             if v15_handled:
+                _sent = True
                 if v15_reply:
-                    sender._send_message(v15_reply)
-                print(f"  消息: {text[:30]}... → V15功能指令已处理")
-                mark_message_processed(msg_id, processed_messages, action="v15_feature")
-                new_processed_count += 1
+                    _sent = sender._send_message(v15_reply)
+                if _sent:
+                    print(f"  消息: {text[:30]}... → V15功能指令已处理")
+                    mark_message_processed(msg_id, processed_messages, action="v15_feature")
+                    new_processed_count += 1
+                else:
+                    print(f"  消息: {text[:30]}... → V15回复发送失败，保留待下轮重试")
                 continue
 
         # 扩展指令处理（V49修复：只挡"新建类"前缀，完成/归档/批量完成/自然语态销项都放行进extension=S8销项）
         _new_prefixes = ["批量新建", "新建任务", "创建任务", "记录任务", "新增任务"]
         _is_new_task = any(text.startswith(p) for p in _new_prefixes)
         if not _is_new_task and EXTENSION_AVAILABLE:
-            handled, result = handle_extension_command(text)
+            try:
+                handled, result = handle_extension_command(text)
+            except Exception as _ext_e:
+                print(f"  [V51.7] 扩展指令处理异常: {_ext_e}")
+                write_system_log("ERROR", f"扩展指令处理异常: {text[:50]}", "ERROR", "extension", str(_ext_e))
+                handled, result = False, ""
             if handled:
                 print(f"  消息: {text[:30]}... → 扩展指令已处理: {result}")
                 # V38修复：标记消息为已处理
@@ -846,13 +880,17 @@ def cmd_poll():
 
         # 知识链路扩展指令（S10知识检索）- 同样跳过基础任务指令
         if not is_task_instruction and KNOWLEDGE_EXTENSION_AVAILABLE:
-            handled, result = handle_knowledge_command(text)
+            try:
+                handled, result = handle_knowledge_command(text)
+            except Exception as _kn_e:
+                print(f"  [V51.7] 知识检索处理异常: {_kn_e}")
+                write_system_log("ERROR", f"知识检索处理异常: {text[:50]}", "ERROR", "knowledge", str(_kn_e))
+                handled, result = False, ""
             if handled:
                 print(f"  消息: {text[:30]}... → 知识检索已处理: {result}")
                 # knowledge_extension.py 内部已推群完整回答，这里不重复推
                 mark_message_processed(msg_id, processed_messages, action="knowledge")
                 new_processed_count += 1
-                continue
                 continue
 
 
@@ -1344,6 +1382,38 @@ def cmd_poll():
 
         elif action == "ignore":
             pass  # 闲聊，静默丢弃
+
+    # V51.10: 即时提醒（交互式卡片，每轮轮询都检查）
+    if EXTENSION_AVAILABLE:
+        try:
+            _due_now = check_immediate_reminders()
+            for _dr in _due_now:
+                _card = {
+                    "config": {"wide_screen_mode": True},
+                    "header": {
+                        "title": {"tag": "plain_text", "content": "📋 任务详情"},
+                        "template": "blue"
+                    },
+                    "elements": [
+                        {"tag": "div", "text": {"tag": "lark_md",
+                            "content": f"**任务名称：** {_dr['name']}\n**状态：** 待办\n**提醒时间：** {_dr['due_time']}"}},
+                        {"tag": "hr"},
+                        {"tag": "action", "actions": [
+                            {"tag": "button", "text": {"tag": "plain_text", "content": "✅ 完成任务"},
+                             "type": "primary", "value": {"action": "complete_task",
+                                 "record_id": _dr["record_id"], "task_name": _dr["name"]}},
+                            {"tag": "button", "text": {"tag": "plain_text", "content": "📦 归档"},
+                             "type": "default", "value": {"action": "archive_task",
+                                 "record_id": _dr["record_id"], "task_name": _dr["name"]}}
+                        ]}
+                    ]
+                }
+                _sent = sender._send_card(_card)
+                if _sent:
+                    mark_reminder_sent(_dr["record_id"])
+                    print(f"  [即时提醒] 卡片已推送: {_dr['name']}")
+        except Exception as _ire:
+            print(f"  [即时提醒] 检查异常: {_ire}")
 
     elapsed = time.time() - start_time
     print(f"轮询完成（耗时{elapsed:.1f}s）")

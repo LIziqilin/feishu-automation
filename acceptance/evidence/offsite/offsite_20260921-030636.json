@@ -1,0 +1,64 @@
+{
+  "ts": "20260921-030636",
+  "src": "D:\\AI-Tools\\feishu\\V13方案增强\\backups",
+  "dst": "D:\\AI-Backups\\V16_Offsite",
+  "copied": [
+    "cards_backup_20260911_075210.json",
+    "backup_20260915_030018.json",
+    "backup_20260916_030030.json",
+    "backup_20260921_030059.json"
+  ],
+  "verified": [
+    "cards_backup_20260911_075210.json",
+    "backup_20260915_030018.json",
+    "backup_20260916_030030.json",
+    "backup_20260921_030059.json"
+  ],
+  "skipped": [
+    "backup_20260917_124331.json",
+    "backup_20260918_030041.json",
+    "backup_20260919_030046.json",
+    "backup_20260920_030042.json",
+    "hourly_20260920_031535.json",
+    "hourly_20260920_041536.json",
+    "hourly_20260920_051536.json",
+    "hourly_20260920_061536.json",
+    "hourly_20260920_071536.json",
+    "hourly_20260920_083713.json",
+    "hourly_20260920_091547.json",
+    "hourly_20260920_101547.json",
+    "hourly_20260920_111550.json",
+    "hourly_20260920_121547.json",
+    "hourly_20260920_131548.json",
+    "hourly_20260920_141559.json",
+    "hourly_20260920_151551.json",
+    "hourly_20260920_161555.json",
+    "hourly_20260920_171553.json",
+    "hourly_20260920_181553.json",
+    "hourly_20260920_191552.json",
+    "hourly_20260920_201552.json",
+    "hourly_20260920_211551.json",
+    "hourly_20260920_221552.json",
+    "hourly_20260920_231551.json",
+    "hourly_20260921_001552.json",
+    "hourly_20260921_011558.json",
+    "hourly_20260921_021552.json"
+  ],
+  "failed": [],
+  "dry_run": false,
+  "rotated_out": [
+    "hourly_20260916_231533.json",
+    "backup_20260916_030030.json",
+    "backup_20260915_030018.json",
+    "cards_backup_20260911_075210.json"
+  ],
+  "status": "PASS",
+  "counts": {
+    "src": 32,
+    "copied": 4,
+    "verified": 4,
+    "skipped": 28,
+    "failed": 0
+  },
+  "lark_drive": "FAIL: {\n  \"ok\": false,\n  \"identity\": \"bot\",\n  \"error\": {\n    \"type\": \"validation\",\n    \"subtype\": \"failed_precondition\",\n    \"message\": \"2 rel_path(s) map to multiple Drive entries\",\n    \"hint\": \"resolve th"
+}

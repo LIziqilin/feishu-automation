@@ -1,0 +1,93 @@
+{
+  "ts": "2026-09-26T12:24:03",
+  "independent_verdict": "FAIL",
+  "verifier": "independent_verify.py（施工方以外脚本）",
+  "domains": [
+    {
+      "domain": "runs",
+      "label": "M0验收",
+      "evidence": "result.json",
+      "fresh": false,
+      "age": "57.3h前",
+      "gate": true,
+      "ok": false
+    },
+    {
+      "domain": "golden",
+      "label": "黄金任务",
+      "evidence": "report.json",
+      "fresh": false,
+      "age": "57.3h前",
+      "gate": true,
+      "ok": false
+    },
+    {
+      "domain": "eval",
+      "label": "评测集",
+      "evidence": "report.json",
+      "fresh": false,
+      "age": "238.1h前",
+      "gate": true,
+      "ok": false
+    },
+    {
+      "domain": "chaos",
+      "label": "混沌",
+      "evidence": "chaos_20260916-1419.json",
+      "fresh": false,
+      "age": "238.0h前",
+      "gate": true,
+      "ok": false
+    },
+    {
+      "domain": "security",
+      "label": "安全审计",
+      "evidence": "security_20260924-0303.json",
+      "fresh": false,
+      "age": "57.3h前",
+      "gate": false,
+      "ok": false
+    },
+    {
+      "domain": "restore",
+      "label": "恢复演练",
+      "evidence": "restore_20260924-0305.json",
+      "fresh": false,
+      "age": "57.3h前",
+      "gate": true,
+      "ok": false
+    },
+    {
+      "domain": "redteam",
+      "label": "红队",
+      "evidence": "redteam_20260926-1221.json",
+      "fresh": true,
+      "age": "0.0h前",
+      "gate": false,
+      "ok": false
+    }
+  ],
+  "rerun": {
+    "acceptance_run.py": {
+      "exit": 2,
+      "tail": [
+        "证据包: D:\\AI-Tools\\feishu\\V13方案增强\\acceptance\\evidence\\runs\\20260926-1221"
+      ]
+    }
+  },
+  "cross_check": {
+    "restore_claims": 8669,
+    "backup_actual": 8669,
+    "match": true
+  },
+  "failures": [
+    "runs: evidence=True fresh=False gate=True",
+    "golden: evidence=True fresh=False gate=True",
+    "eval: evidence=True fresh=False gate=True",
+    "chaos: evidence=True fresh=False gate=True",
+    "security: evidence=True fresh=False gate=False",
+    "restore: evidence=True fresh=False gate=True",
+    "redteam: evidence=True fresh=True gate=False",
+    "独立复跑 acceptance_run 未通过"
+  ]
+}

@@ -1,0 +1,19 @@
+[event] consuming as cli_aa0cd56c99785bb5 (cli_aa0cd56c99785bb5)
+{
+  "ok": false,
+  "identity": "bot",
+  "error": {
+    "type": "validation",
+    "subtype": "failed_precondition",
+    "message": "cannot start consumer: another consumer (pid 25684) is already running for this subscription",
+    "hint": "EventKey card.action.trigger allows only one consumer; run `lark-cli event status` to find the running one, then stop it before retrying"
+  },
+  "_notice": {
+    "update": {
+      "command": "lark-cli update",
+      "current": "1.0.95",
+      "latest": "1.0.97",
+      "message": "lark-cli 1.0.97 available, current 1.0.95, run: lark-cli update"
+    }
+  }
+}

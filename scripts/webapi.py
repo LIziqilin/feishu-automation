@@ -71,7 +71,8 @@ class Handler(BaseHTTPRequestHandler):
             self._json(404, {"error": "not found"})
 
     def do_POST(self):
-        if not self._auth_ok():
+        # /card-callback 飞书卡片回调无需X-API-KEY（飞书不会带这个头）
+        if self.path != "/card-callback" and not self._auth_ok():
             self._json(401, {"error": "unauthorized", "hint": "请带 X-API-KEY 头"})
             return
         length = int(self.headers.get("Content-Length", 0))
@@ -94,6 +95,73 @@ class Handler(BaseHTTPRequestHandler):
                 self._json(200, {"q": q, "answer": ans[-1500:]})
             except Exception as e:
                 self._json(500, {"error": str(e)[:200]})
+
+        elif self.path == "/card-callback":
+            # 飞书交互式卡片回调（无需X-API-KEY，飞书签名验证在后续完善）
+            try:
+                callback = json.loads(raw.decode("utf-8"))
+            except Exception:
+                self._json(400, {"error": "bad json"}); return
+
+            # 1. URL验证（飞书配置回调URL时首次验证）
+            if callback.get("type") == "url_verification":
+                challenge = callback.get("challenge", "")
+                print(f"[card-callback] URL验证: challenge={challenge[:20]}...")
+                self._json(200, {"challenge": challenge})
+                return
+
+            # 2. 按钮事件处理
+            action = callback.get("action", {})
+            value = action.get("value", {})
+            tag = action.get("tag", "")
+            open_id = callback.get("open_id", "")
+            open_message_id = callback.get("open_message_id", "")
+
+            print(f"[card-callback] 按钮点击: tag={tag}, value={value}, open_id={open_id[:20]}...")
+
+            # 根据按钮value执行动作
+            action_type = value.get("action", "")
+            task_name = value.get("task_name", "")
+            record_id = value.get("record_id", "")
+
+            if action_type == "complete_task":
+                # 完成任务：调用learning_system的完成逻辑
+                try:
+                    import subprocess
+                    # 直接在多维表格中更新任务状态
+                    cmd = ["lark-cli", "base", "+record-upsert",
+                           "--base-token", "X8N1bvN3na99dFsyu0gcU8zTnHf",
+                           "--table-id", "tblz3H4lV7PCrBrX",
+                           "--as", "user",
+                           "--json", json.dumps({"records": [{"record_id": record_id, "fields": {"状态": "已完成"}}]}, ensure_ascii=False)]
+                    r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", timeout=30)
+                    if r.returncode == 0:
+                        reply = f"✅ 任务已完成：{task_name}"
+                        # 发送更新到群
+                        _send_group(reply)
+                        self._json(200, {"toast": {"type": "success", "content": "任务已完成"}, "card": {"type": "raw", "content": {"header": {"title": {"tag": "plain_text", "content": "✅ 已完成"}}, "elements": [{"tag": "div", "text": {"tag": "lark_md", "content": f"**{task_name}**\n已标记为完成"}}]}}})
+                    else:
+                        self._json(200, {"toast": {"type": "error", "content": f"完成失败: {r.stderr[:100]}"}})
+                except Exception as e:
+                    self._json(200, {"toast": {"type": "error", "content": f"异常: {str(e)[:100]}"}})
+            elif action_type == "archive_task":
+                try:
+                    import subprocess
+                    cmd = ["lark-cli", "base", "+record-upsert",
+                           "--base-token", "X8N1bvN3na99dFsyu0gcU8zTnHf",
+                           "--table-id", "tblz3H4lV7PCrBrX",
+                           "--as", "user",
+                           "--json", json.dumps({"records": [{"record_id": record_id, "fields": {"状态": "已归档"}}]}, ensure_ascii=False)]
+                    r = subprocess.run(cmd, capture_output=True, text=True, encoding="utf-8", timeout=30)
+                    if r.returncode == 0:
+                        _send_group(f"📦 任务已归档：{task_name}")
+                        self._json(200, {"toast": {"type": "success", "content": "任务已归档"}})
+                    else:
+                        self._json(200, {"toast": {"type": "error", "content": "归档失败"}})
+                except Exception as e:
+                    self._json(200, {"toast": {"type": "error", "content": f"异常: {str(e)[:100]}"}})
+            else:
+                self._json(200, {"toast": {"type": "info", "content": f"收到: {action_type}"}})
 
         elif self.path == "/webhook":
             title = data.get("title") or "外部事件"

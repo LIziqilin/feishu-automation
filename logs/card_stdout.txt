@@ -1,0 +1,2 @@
+[2026-09-29 20:04:35] 卡片事件长连接处理器启动
+[2026-09-29 20:04:36] 启动: C:\Users\Administrator\AppData\Local\hermes\node\lark-cli.cmd event consume card.action.trigger --as bot

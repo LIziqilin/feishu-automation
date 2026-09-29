@@ -478,17 +478,21 @@ def parse_create_task_command(text):
 
 
 def create_task_in_table(task_info):
-    """在任务总表创建新任务"""
+    """在任务总表创建新任务。V51.7修复：兼容英文键(name/priority/category/due_date)和中文键(任务名称/优先级/类别/截止日期)两种格式"""
     now = datetime.now().strftime("%Y-%m-%d %H:%M")
+    task_name = task_info.get("name") or task_info.get("任务名称", "未命名任务")
+    priority = task_info.get("priority") or task_info.get("优先级", "中")
+    category = task_info.get("category") or task_info.get("类别", "工作")
+    due_date = task_info.get("due_date") or task_info.get("截止日期")
     fields = {
-        "任务名称": task_info["name"],
+        "任务名称": task_name,
         "状态": "待办",
-        "优先级": task_info["priority"],
-        "类别": task_info["category"],
+        "优先级": priority,
+        "类别": category,
         "创建日期": now,
     }
-    if task_info.get("due_date"):
-        fields["截止日期"] = task_info["due_date"]
+    if due_date:
+        fields["截止日期"] = due_date
 
     tmp_filename = f"tmp_createtask_{int(time.time()*1000)}.json"
     tmp_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), tmp_filename)
@@ -753,6 +757,111 @@ def is_task_list_command(text):
     return text in ("任务", "任务列表", "待办", "todo")
 
 
+def is_remind_command(text):
+    """检测是否为提醒指令（支持 提醒/提醒我/remind）"""
+    # 匹配格式：
+    # 提醒：xxx / 提醒 xxx / 提醒我：xxx / 提醒我 xxx / 提醒我xxx / remind xxx
+    # 要求后面必须有内容（不能单独"提醒"）
+    return bool(re.match(r'^(提醒我|提醒|remind)[：:\s]*[\u4e00-\u9fa5a-zA-Z0-9]', text, re.IGNORECASE))
+
+
+def handle_remind(text):
+    """
+    处理提醒指令
+    格式：提醒我明天下午3点开会
+    格式：提醒：明天下午3点开会
+    格式：提醒 1小时后复习
+    """
+    # 剥离前缀（支持"提醒我xxx"、"提醒：xxx"、"提醒 xxx"等格式）
+    body = re.sub(r'^(提醒我|提醒|remind)[：:\s]*', '', text, flags=re.IGNORECASE).strip()
+    if not body:
+        send_message("❌ 请告诉我提醒什么内容。例如：提醒我明天下午3点开会")
+        return True, "提醒内容为空"
+    
+    # 解析时间
+    remind_time = None
+    remind_content = body
+    
+    # 匹配"X小时后"
+    hour_match = re.search(r'(\d+)\s*小时后', body)
+    if hour_match:
+        hours = int(hour_match.group(1))
+        remind_time = datetime.now() + timedelta(hours=hours)
+        remind_content = re.sub(r'\d+\s*小时后\s*', '', body).strip()
+    
+    # 匹配"X分钟后"
+    if not remind_time:
+        minute_match = re.search(r'(\d+)\s*分钟后', body)
+        if minute_match:
+            minutes = int(minute_match.group(1))
+            remind_time = datetime.now() + timedelta(minutes=minutes)
+            remind_content = re.sub(r'\d+\s*分钟后\s*', '', body).strip()
+    
+    # 匹配"明天"
+    if not remind_time:
+        if "明天" in body:
+            tomorrow = datetime.now() + timedelta(days=1)
+            time_match = re.search(r'明天(?:上午|下午|晚上)?\s*(\d{1,2})[点:：](\d{1,2})', body)
+            if time_match:
+                hour = int(time_match.group(1))
+                minute = int(time_match.group(2))
+                if ("下午" in body or "晚上" in body) and hour < 12:
+                    hour += 12
+                remind_time = tomorrow.replace(hour=hour, minute=minute, second=0, microsecond=0)
+            else:
+                remind_time = tomorrow.replace(hour=9, minute=0, second=0, microsecond=0)
+            remind_content = re.sub(r'明天(?:上午|下午|晚上)?\s*\d{1,2}[点:：]\d{1,2}', '', body).strip()
+            remind_content = re.sub(r'明天(?:上午|下午|晚上)?', '', remind_content).strip()
+    
+    # 匹配"后天"
+    if not remind_time:
+        if "后天" in body:
+            day_after = datetime.now() + timedelta(days=2)
+            time_match = re.search(r'后天(?:上午|下午|晚上)?\s*(\d{1,2})[点:：](\d{1,2})', body)
+            if time_match:
+                hour = int(time_match.group(1))
+                minute = int(time_match.group(2))
+                if ("下午" in body or "晚上" in body) and hour < 12:
+                    hour += 12
+                remind_time = day_after.replace(hour=hour, minute=minute, second=0, microsecond=0)
+            else:
+                remind_time = day_after.replace(hour=9, minute=0, second=0, microsecond=0)
+            remind_content = re.sub(r'后天(?:上午|下午|晚上)?\s*\d{1,2}[点:：]\d{1,2}', '', body).strip()
+            remind_content = re.sub(r'后天(?:上午|下午|晚上)?', '', remind_content).strip()
+    
+    # 默认：30分钟后
+    if not remind_time:
+        remind_time = datetime.now() + timedelta(minutes=30)
+    
+    # 清理内容
+    remind_content = re.sub(r'^(在|于|大约)\s*', '', remind_content).strip()
+    if not remind_content:
+        remind_content = "待办提醒"
+    
+    # 格式时间
+    time_str = remind_time.strftime("%Y-%m-%d %H:%M")
+    
+    # 创建任务（带提醒时间）
+    task_data = {
+        "任务名称": f"⏰ 提醒：{remind_content}",
+        "状态": "待办",
+        "截止日期": time_str,
+        "优先级": "中",
+        "类别": "提醒",
+        "创建日期": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "备注": f"由提醒指令自动创建，提醒时间：{time_str}"
+    }
+    
+    # 写入多维表格
+    success, result = create_task_in_table(task_data)
+    if success:
+        send_message(f"✅ 提醒已设置\n⏰ 时间：{time_str}\n📝 内容：{remind_content}\n\n到点我会自动提醒你！")
+        return True, f"提醒已设置：{remind_content} @ {time_str}"
+    else:
+        send_message(f"❌ 提醒设置失败：{result}")
+        return False, result
+
+
 def is_create_task_command(text):
     """检测是否为创建待办指令（V42修复：兼容 待办/新建任务/创建任务/记录任务/新增任务 前缀）"""
     return bool(re.match(r'^(待办|新建任务|创建任务|记录任务|新增任务)[：:\s]', text))
@@ -769,6 +878,10 @@ def handle_extension_command(text):
 
     if is_insight_command(text):
         return True, handle_insight(text)
+
+    # 提醒指令优先于创建任务（避免"提醒：xxx"被当成普通任务）
+    if is_remind_command(text):
+        return True, handle_remind(text)
 
     if is_create_task_command(text):
         return True, handle_create_task(text)
@@ -803,3 +916,91 @@ if __name__ == "__main__":
             handle_complete("完成 测试任务")
     else:
         print("用法: python task_insight_extension.py [due|test_insight|test_complete]")
+
+
+# ============================================================
+# V51.10: 即时提醒（精确到分钟）
+# ============================================================
+
+def check_immediate_reminders():
+    """检查是否有类别=提醒且截止时间已到的任务，返回需要提醒的任务列表"""
+    now = datetime.now()
+    cmd = ["lark-cli", "base", "+record-list", "--base-token", BASE_TOKEN,
+           "--table-id", TASK_TABLE, "--as", "user", "--limit", "100",
+           "--format", "json"]
+    ok, stdout, stderr = run_cmd(cmd)
+    if not ok:
+        return []
+
+    try:
+        import json as _j
+        data = _j.loads(stdout)
+        inner = data.get("data", {})
+        fields = inner.get("fields", [])
+        rows = inner.get("data", [])
+        record_ids = data.get("record_id_list", []) or inner.get("record_id_list", [])
+    except Exception:
+        return []
+
+    # 找字段索引
+    try:
+        name_idx = fields.index("任务名称")
+        due_idx = fields.index("截止日期")
+        cat_idx = fields.index("类别")
+        status_idx = fields.index("状态")
+    except ValueError:
+        return []
+
+    due_now = []
+    for i, row in enumerate(rows):
+        try:
+            record_id = record_ids[i] if i < len(record_ids) else ""
+            name = row[name_idx]
+            due_val = row[due_idx]
+            cat = row[cat_idx]
+            status = row[status_idx]
+
+            # 只处理类别=提醒且状态=待办的任务
+            if not name or not due_val:
+                continue
+            cat_list = cat if isinstance(cat, list) else [str(cat)]
+            if "提醒" not in cat_list:
+                continue
+            status_str = str(status) if status else ""
+            if "待办" not in status_str:
+                continue
+
+            # 解析截止时间
+            if isinstance(due_val, str):
+                try:
+                    due_dt = datetime.strptime(due_val[:19], "%Y-%m-%dT%H:%M:%S")
+                except Exception:
+                    try:
+                        due_dt = datetime.strptime(due_val[:16], "%Y-%m-%d %H:%M")
+                    except Exception:
+                        continue
+            else:
+                continue
+
+            # 截止时间已到（±2分钟容忍）
+            diff = (now - due_dt).total_seconds()
+            if -120 <= diff <= 3600:  # 已到点1分钟内，不超过1小时
+                due_now.append({
+                    "record_id": record_id,
+                    "name": name,
+                    "due_time": due_dt.strftime("%H:%M"),
+                })
+        except Exception:
+            continue
+
+    return due_now
+
+
+def mark_reminder_sent(record_id):
+    """标记提醒任务为已完成（复用complete_task）"""
+    try:
+        ok, result = complete_task(record_id)
+        return ok
+    except Exception as e:
+        print(f"  [即时提醒] 标记失败: {e}")
+        return False

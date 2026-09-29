@@ -1,0 +1,66 @@
+{
+  "ts": "20260922-111559",
+  "src": "D:\\AI-Tools\\feishu\\V13方案增强\\backups",
+  "dst": "D:\\AI-Backups\\V16_Offsite",
+  "copied": [
+    "cards_backup_20260911_075210.json",
+    "backup_20260916_030030.json",
+    "backup_20260917_124331.json",
+    "backup_20260918_030041.json",
+    "hourly_20260922_111559.json"
+  ],
+  "verified": [
+    "cards_backup_20260911_075210.json",
+    "backup_20260916_030030.json",
+    "backup_20260917_124331.json",
+    "backup_20260918_030041.json",
+    "hourly_20260922_111559.json"
+  ],
+  "skipped": [
+    "backup_20260919_030046.json",
+    "backup_20260920_030042.json",
+    "backup_20260921_030059.json",
+    "hourly_20260921_131555.json",
+    "hourly_20260921_141559.json",
+    "hourly_20260921_151607.json",
+    "hourly_20260921_161604.json",
+    "hourly_20260921_164940.json",
+    "hourly_20260921_171559.json",
+    "hourly_20260921_181647.json",
+    "hourly_20260921_191557.json",
+    "hourly_20260921_201559.json",
+    "hourly_20260921_211633.json",
+    "hourly_20260921_221607.json",
+    "hourly_20260921_231556.json",
+    "hourly_20260922_001553.json",
+    "hourly_20260922_011554.json",
+    "hourly_20260922_021551.json",
+    "backup_20260922_030057.json",
+    "hourly_20260922_031553.json",
+    "hourly_20260922_041552.json",
+    "hourly_20260922_051551.json",
+    "hourly_20260922_061552.json",
+    "hourly_20260922_071549.json",
+    "hourly_20260922_081547.json",
+    "hourly_20260922_091555.json",
+    "hourly_20260922_101600.json"
+  ],
+  "failed": [],
+  "dry_run": false,
+  "rotated_out": [
+    "hourly_20260918_093820.json",
+    "backup_20260918_030041.json",
+    "backup_20260917_124331.json",
+    "backup_20260916_030030.json",
+    "cards_backup_20260911_075210.json"
+  ],
+  "status": "PASS",
+  "counts": {
+    "src": 32,
+    "copied": 5,
+    "verified": 5,
+    "skipped": 27,
+    "failed": 0
+  },
+  "lark_drive": "FAIL: {\n  \"ok\": false,\n  \"identity\": \"bot\",\n  \"error\": {\n    \"type\": \"validation\",\n    \"subtype\": \"failed_precondition\",\n    \"message\": \"2 rel_path(s) map to multiple Drive entries\",\n    \"hint\": \"resolve th"
+}

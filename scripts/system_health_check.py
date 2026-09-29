@@ -66,20 +66,35 @@ print("=" * 70)
 print("\n【1】任务计划检查（8个）")
 print("-" * 70)
 task_failures = 0
+# V51.10修复：24次PowerShell合并为1次批量查询，避免逐个启动powershell导致卡顿
+_ps_tasks = "','".join(TASKS)
+_ps_script = f"""
+$tasks = '{_ps_tasks}'.Split(',')
+foreach ($t in $tasks) {{
+  try {{
+    $st = Get-ScheduledTask -TaskName $t -ErrorAction Stop
+    $info = $st | Get-ScheduledTaskInfo
+    $exec = ($st.Actions | Select-Object -First 1).Execute
+    $xml = ($st | Export-ScheduledTask)
+    $sw = if ($xml -match 'StartWhenAvailable>true') {{ 'Y' }} else {{ 'N' }}
+    Write-Output "$t|$($info.LastTaskResult)|$exec|$sw"
+  }} catch {{
+    Write-Output "$t|ERROR||N"
+  }}
+}}
+"""
+code, batch_out, _ = run_cmd(
+    ["powershell", "-NoProfile", "-Command", _ps_script], timeout=20)
+_task_map = {}
+for line in batch_out.strip().splitlines():
+    parts = line.strip().split("|")
+    if len(parts) >= 4:
+        _task_map[parts[0]] = (parts[1], parts[2], parts[3])
 for task in TASKS:
-    # V49: 用 PowerShell Get-ScheduledTask 取结果码/命令行(纯ASCII,绕开schtasks中文编码)
-    code, out_res, _ = run_cmd(
-        ["powershell", "-NoProfile", "-Command",
-         f"(Get-ScheduledTask -TaskName '{task}' | Get-ScheduledTaskInfo).LastTaskResult"])
-    last_result = out_res.strip().splitlines()[-1].strip() if out_res.strip() else "?"
-    code, out_act, _ = run_cmd(
-        ["powershell", "-NoProfile", "-Command",
-         f"(Get-ScheduledTask -TaskName '{task}').Actions.Execute"])
-    task_to_run = out_act.strip()
+    last_result, task_to_run, sw = _task_map.get(task, ("?", "", "N"))
     result_ok = last_result in ("0", "267009", "267011")
     has_full_path = bool(re.search(r"[DC]:[\\/]", task_to_run))
-    code2, xml_out, _ = run_cmd(["schtasks", "/query", "/tn", f"\\{task}", "/xml"])
-    has_start_when = "StartWhenAvailable>true" in xml_out
+    has_start_when = (sw == "Y")
     all_ok = result_ok and has_full_path and has_start_when
     detail = f"结果={last_result}, 完整路径={'Y' if has_full_path else 'N'}, StartWhenAvailable={'Y' if has_start_when else 'N'}"
     if not check(task, all_ok, detail):
