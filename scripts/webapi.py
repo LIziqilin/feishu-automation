@@ -21,6 +21,10 @@ sys.path.insert(0, str(HERE))
 os.chdir(HERE)
 os.environ.setdefault("PYTHONIOENCODING", "utf-8")
 
+# 优先读环境变量，其次读本地配置文件（计划任务启动时环境变量可能未加载）
+_API_TOKEN_FILE = HERE / ".webapi_token"
+if not os.environ.get("WEBAPI_TOKEN") and _API_TOKEN_FILE.exists():
+    os.environ["WEBAPI_TOKEN"] = _API_TOKEN_FILE.read_text(encoding="utf-8").strip()
 API_TOKEN = os.environ.get("WEBAPI_TOKEN", "")
 
 

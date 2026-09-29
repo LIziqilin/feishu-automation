@@ -17,10 +17,21 @@ LLM 调用统一入口，按优先级自动切换：
 """
 import os, sys, json, time, urllib.request, urllib.error
 
+# V51.12: 导入缓存模块
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from llm_cache import get_cache, set_cache
+
 # 配置
 DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")  # 环境变量优先
 DEEPSEEK_BASE = "https://api.deepseek.com"
 DEEPSEEK_MODEL = "deepseek-chat"  # V4 flash
+
+# V51.12: 固定系统提示词前缀（利用DeepSeek前缀缓存，降低50-90%输入成本）
+# 公共前缀稳定不变，只有用户问题部分变化
+_SYSTEM_PREFIX = (
+    "你是一个专业的中文AI助手，擅长学习辅导、任务管理和知识问答。"
+    "回答简洁准确，不编造内容。"
+)
 
 # Coze 配置文件
 COZE_CONFIG = r"D:\AI-Tools\shared\coze_config.json"
@@ -78,21 +89,34 @@ def _call_coze(prompt, timeout=120):
 
 
 def _call_deepseek(prompt, timeout=60):
-    """通道2：DeepSeek V4 flash（OpenAI 兼容）"""
+    """通道2：DeepSeek V4 flash（OpenAI 兼容）+ 缓存 + 前缀缓存"""
+    # V51.12: 先查缓存（request_hash去重）
+    hit = get_cache(DEEPSEEK_MODEL, prompt)
+    if hit:
+        print(f"[llm_router] 缓存命中（request_hash去重，省Token）")
+        return True, hit
+
     key = DEEPSEEK_API_KEY
     if not key:
         return False, "DEEPSEEK_API_KEY 未设置"
+    # V51.12: 使用固定system前缀（利用DeepSeek prompt caching）
     body = json.dumps({
         "model": DEEPSEEK_MODEL,
-        "messages": [{"role": "user", "content": prompt}],
-        "max_tokens": 800,
+        "messages": [
+            {"role": "system", "content": _SYSTEM_PREFIX},
+            {"role": "user", "content": prompt},
+        ],
+        "max_tokens": 600,  # V51.12: 限制输出，降低成本
     }).encode()
     req = urllib.request.Request(DEEPSEEK_BASE + "/v1/chat/completions", data=body,
         headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"})
     try:
         r = urllib.request.urlopen(req, timeout=timeout)
         d = json.loads(r.read().decode())
-        return True, d["choices"][0]["message"]["content"]
+        answer = d["choices"][0]["message"]["content"]
+        # V51.12: 写入缓存
+        set_cache(DEEPSEEK_MODEL, prompt, answer)
+        return True, answer
     except urllib.error.HTTPError as e:
         return False, f"deepseek HTTP {e.code}: {e.read().decode()[:200]}"
     except Exception as e:
