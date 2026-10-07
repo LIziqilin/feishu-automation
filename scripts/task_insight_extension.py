@@ -970,16 +970,26 @@ def check_immediate_reminders():
             if "待办" not in status_str:
                 continue
 
-            # 解析截止时间
-            if isinstance(due_val, str):
+            # 解析截止时间（V53: 兼容字符串/毫秒时间戳/秒时间戳，避免lark-cli返回数字时静默跳过）
+            due_dt = None
+            if isinstance(due_val, (int, float)):
+                try:
+                    _ms = float(due_val)
+                    if _ms > 1e12:      # 毫秒
+                        due_dt = datetime.fromtimestamp(_ms/1000.0)
+                    elif _ms > 1e9:     # 秒
+                        due_dt = datetime.fromtimestamp(_ms)
+                except Exception:
+                    due_dt = None
+            elif isinstance(due_val, str):
                 try:
                     due_dt = datetime.strptime(due_val[:19], "%Y-%m-%dT%H:%M:%S")
                 except Exception:
                     try:
                         due_dt = datetime.strptime(due_val[:16], "%Y-%m-%d %H:%M")
                     except Exception:
-                        continue
-            else:
+                        due_dt = None
+            if due_dt is None:
                 continue
 
             # 截止时间已到（±2分钟容忍）

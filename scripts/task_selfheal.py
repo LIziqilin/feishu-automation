@@ -25,7 +25,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 EVID = ROOT / "acceptance" / "evidence" / "selfheal"
-BACKUP_ROOT = Path(r"C:\Users\Administrator\.openclaw\workspace\schtask_xml_backup")
+BACKUP_ROOT = Path(r"D:\AI-Tools\feishu\V13方案增强\backups\schtask_xml_backup")
 
 # 白名单：M4 连续性所依赖的任务
 WATCH_TASKS = [

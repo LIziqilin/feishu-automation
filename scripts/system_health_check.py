@@ -70,26 +70,41 @@ task_failures = 0
 _ps_tasks = "','".join(TASKS)
 _ps_script = f"""
 $tasks = '{_ps_tasks}'.Split(',')
+[Console]::OutputEncoding = [Text.Encoding]::UTF8
+$out = @()
 foreach ($t in $tasks) {{
   try {{
     $st = Get-ScheduledTask -TaskName $t -ErrorAction Stop
     $info = $st | Get-ScheduledTaskInfo
     $exec = ($st.Actions | Select-Object -First 1).Execute
     $xml = ($st | Export-ScheduledTask)
-    $sw = if ($xml -match 'StartWhenAvailable>true') {{ 'Y' }} else {{ 'N' }}
-    Write-Output "$t|$($info.LastTaskResult)|$exec|$sw"
+    $sw = if ($xml -match 'StartWhenAvailable>true') {{ $true }} else {{ $false }}
+    $out += [PSCustomObject]@{{ name=$t; result=$info.LastTaskResult; exec=$exec; sw=$sw }}
   }} catch {{
-    Write-Output "$t|ERROR||N"
+    $out += [PSCustomObject]@{{ name=$t; result='ERROR'; exec=''; sw=$false }}
   }}
 }}
+$out | ConvertTo-Json -Compress
 """
 code, batch_out, _ = run_cmd(
     ["powershell", "-NoProfile", "-Command", _ps_script], timeout=20)
 _task_map = {}
-for line in batch_out.strip().splitlines():
-    parts = line.strip().split("|")
-    if len(parts) >= 4:
-        _task_map[parts[0]] = (parts[1], parts[2], parts[3])
+try:
+    import json as _json
+    _i = batch_out.find('[')
+    if _i >= 0:
+        _dec = _json.JSONDecoder()
+        _items, _ = _dec.raw_decode(batch_out[_i:])
+        for item in _items:
+            _nm = item['name']
+            if isinstance(_nm, list):
+                _nm = _nm[0] if _nm else ''
+            _task_map[str(_nm)] = (str(item['result']), item.get('exec',''), 'Y' if item.get('sw') else 'N')
+except Exception:
+    for line in batch_out.strip().splitlines():
+        parts = line.strip().split('|')
+        if len(parts) >= 4:
+            _task_map[parts[0]] = (parts[1], parts[2], parts[3])
 for task in TASKS:
     last_result, task_to_run, sw = _task_map.get(task, ("?", "", "N"))
     result_ok = last_result in ("0", "267009", "267011")

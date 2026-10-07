@@ -26,6 +26,23 @@ DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")  # 环境变量优先
 DEEPSEEK_BASE = "https://api.deepseek.com"
 DEEPSEEK_MODEL = "deepseek-chat"  # V4 flash
 
+# V53: Coze熔断——Coze连续失败/空回复后，冷却期内直接走DeepSeek，避免每次白等40秒轮询
+_COZE_COOLDOWN = 1800  # 30分钟
+# 熔断状态用文件持久化（webapi每次ask都新起子进程，内存变量会丢）
+_CIRCUIT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".coze_circuit")
+
+def _circuit_read():
+    try:
+        return float(open(_CIRCUIT_FILE).read().strip())
+    except Exception:
+        return 0.0
+
+def _circuit_write(ts):
+    try:
+        open(_CIRCUIT_FILE, "w").write(str(ts))
+    except Exception:
+        pass
+
 # V51.12: 固定系统提示词前缀（利用DeepSeek前缀缓存，降低50-90%输入成本）
 # 公共前缀稳定不变，只有用户问题部分变化
 _SYSTEM_PREFIX = (
@@ -83,7 +100,9 @@ def _call_coze(prompt, timeout=120):
             headers={"Authorization": "Bearer " + token})
         d3 = json.loads(urllib.request.urlopen(req3, timeout=15).read().decode())
         msgs = [m for m in d3.get("data", []) if m.get("type") == "answer"]
-        return True, msgs[0]["content"] if msgs else "coze 无回复"
+        if not msgs or not msgs[0].get("content", "").strip():
+            return False, "coze 返回空回复，自动切DeepSeek"
+        return True, msgs[0]["content"].strip()
     except Exception as e:
         return False, f"coze 失败: {e}"
 
@@ -124,13 +143,24 @@ def _call_deepseek(prompt, timeout=60):
 
 
 def chat(prompt):
-    """统一入口：Coze 优先，失败自动切 DeepSeek"""
+    """统一入口：Coze 优先，失败自动切 DeepSeek（V53: Coze熔断快速回退）"""
     t0 = time.time()
+    # 熔断冷却期内（文件持久化）：直接跳过Coze，避免白等~40秒
+    _dead = _circuit_read()
+    if time.time() < _dead:
+        print(f"[llm_router] Coze熔断中（剩余{int(_dead-time.time())}s）→ 直连DeepSeek")
+        ok2, resp2 = _call_deepseek(prompt)
+        if ok2:
+            print(f"[llm_router] DeepSeek 通道 ✅ ({time.time()-t0:.1f}s)")
+            return resp2
+        return f"[DeepSeek失败] {resp2}"
     ok, resp = _call_coze(prompt)
     if ok:
         print(f"[llm_router] Coze 通道 ✅ ({time.time()-t0:.1f}s)")
         return resp
-    print(f"[llm_router] Coze 失败 → 切 DeepSeek: {resp}")
+    # Coze失败/空回复 → 触发熔断，冷却期内不再试Coze
+    _circuit_write(time.time() + _COZE_COOLDOWN)
+    print(f"[llm_router] Coze 失败 → 熔断{_COZE_COOLDOWN}s并切 DeepSeek: {resp}")
     ok2, resp2 = _call_deepseek(prompt)
     if ok2:
         print(f"[llm_router] DeepSeek 通道 ✅ ({time.time()-t0:.1f}s)")

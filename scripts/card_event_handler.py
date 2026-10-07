@@ -4,11 +4,14 @@ card_event_handler.py — 飞书交互式卡片按钮事件长连接处理（V51
 通过 lark-cli event consume card.action.trigger 长连接接收按钮点击，
 无需公网URL、无需内网穿透。
 
-V51.12 加固：
+V53.0 加固：
 - CREATE_NO_WINDOW 隐藏所有子进程窗口（消除cmd弹窗）
 - while True 自动重连循环（断开后5秒自动重连，永不退出）
 - 心跳日志每60秒输出一次
 - 所有subprocess调用统一隐藏窗口
+- 断线时发飞书群告警（V53.0新增）
+- 连续断开3次发紧急告警（V53.0新增）
+- 连接成功时发恢复通知（V53.0新增）
 """
 import subprocess, json, sys, os, time, re
 from pathlib import Path
@@ -137,16 +140,31 @@ def run_consumer_once():
 
 def main():
     log("=" * 50)
-    log("卡片事件长连接处理器启动 (V51.12 加固版)")
+    log("卡片事件长连接处理器启动 (V53.0 加固版)")
     log("=" * 50)
     reconnect_count = 0
+    alert_sent = False
     while True:
         duration = run_consumer_once()
         if duration == -1:
             log("用户主动退出，结束")
             break
         reconnect_count += 1
-        log(f"长连接断开 (持续{int(duration)}秒)，第{reconnect_count}次重连，5秒后...")
+        # V53.0: 断线告警
+        if duration < 30:
+            # 短时间内断开（连接不稳定）
+            msg = f"⚠️ 卡片事件长连接异常断开（仅持续{int(duration)}秒，第{reconnect_count}次），5秒后自动重连"
+            log(msg)
+            send_group(msg)
+            if reconnect_count >= 3 and not alert_sent:
+                send_group(f"🚨 卡片事件长连接连续断开{reconnect_count}次，可能存在网络或飞书服务问题！")
+                alert_sent = True
+        else:
+            # 正常断开后重连
+            log(f"长连接断开 (持续{int(duration)}秒)，第{reconnect_count}次重连，5秒后...")
+            if alert_sent:
+                send_group("✅ 卡片事件长连接已恢复稳定")
+                alert_sent = False
         time.sleep(5)
 
 if __name__ == "__main__":

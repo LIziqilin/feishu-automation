@@ -144,15 +144,15 @@ def main():
                 all_ok = False
                 failed_services.append(f"{name}({msg})")
             else:
-                print(f"  [可选服务异常，不告警] {name}: {msg}")
+                # V53: 可选服务离线——只记录日志，不写负向健康记录，避免污染健康表/触发告警
+                print(f"  [可选服务离线，不告警不写异常记录] {name}: {msg}")
+                continue
         results.append({
             "检查项": f"服务健康-{name}",
             "实际状态": status,
             "最近检查时间": now_ms,
             "处理状态": status,
             "类型": "服务监控",
-            # V41增强（2026-09-17）：补充组件健康度/系统健康评分——系统监控中心页面按此 Avg 渲染，
-            # 缺值会导致页面显示 0% / 0.0/5.0。正常=100/5.0，异常=40/1.5（触发告警可视）。
             "组件健康度": 100 if ok else 40,
             "系统健康评分": 5.0 if ok else 1.5,
         })

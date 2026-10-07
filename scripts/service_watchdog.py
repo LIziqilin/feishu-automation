@@ -8,22 +8,29 @@
 安全（R1/R3）：只启动进程，绝不删除数据/配置；重启失败仅告警，不反复狂拉。
 产出 acceptance/evidence/watchdog/watchdog_<ts>.json
 """
-import sys, io, json, time, ssl, subprocess, urllib.request, urllib.error
+import sys, io, json, time, ssl, subprocess, urllib.request, urllib.error, os
 from datetime import datetime
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+SCRIPTS = ROOT / "scripts"
 EVID = ROOT / "acceptance" / "evidence" / "watchdog"
 
 ANYTHINGLLM_EXE = Path(r"C:\Users\Administrator\AppData\Local\Programs\AnythingLLM\AnythingLLM.exe")
 OBSIDIAN_EXE = r"D:\AI\obsidian安装包\安装流程\Obsidian.exe"
+OLLAMA_EXE = Path(os.environ.get("LOCALAPPDATA", r"C:\Users\Administrator\AppData\Local")) / "Programs" / "Ollama" / "ollama.exe"
+PYTHONW = Path(sys.executable).with_name("pythonw.exe")
 
 # name, probe_url, restart(kind,arg), ready_timeout_s, insecure_tls
 # kind: "explorer"=经 explorer 拉新实例; "kill_explorer"=先清障再 explorer 拉起（用于僵尸进程）
+#       "kill_exe"=杀exe后重启; "pyw"=以pythonw+正确工作目录后台拉起python脚本（用于webapi/card_event）
+#       "ollama"=后台拉起ollama serve; "proc"=仅按命令行特征探活进程（无http端口）
 SERVICES = [
-    ("Ollama", "http://localhost:11434/", None, 0, False),
+    ("Ollama", "http://localhost:11434/", ("ollama", str(OLLAMA_EXE)), 30, False),
     ("AnythingLLM", "http://localhost:3001/api/ping", ("kill_exe", ANYTHINGLLM_EXE), 120, False),
     ("ObsidianREST", "https://127.0.0.1:27124/", ("kill_explorer", OBSIDIAN_EXE), 90, True),
+    ("WebAPI", "http://localhost:8765/health", ("pyw", ("webapi.py", ["--port", "8765"])), 25, False),
+    ("CardEventHandler", None, ("pyw", ("card_event_handler.py", [])), 15, False),
 ]
 
 # 重启前需清理的僵尸进程映像名（2026-09-16 修复：Obsidian 进程在但插件未监听）
@@ -48,6 +55,19 @@ def _kill_alive(images):
     return killed
 
 
+def _proc_alive(keyword):
+    """按命令行特征判断python脚本进程是否在跑（用于无http端口的card_event_handler）"""
+    try:
+        r = subprocess.run(["wmic", "process", "where",
+                            "name='pythonw.exe' or name='python.exe'",
+                            "get", "CommandLine"],
+                           capture_output=True, timeout=20)
+        out = (r.stdout or b).decode("gbk", "replace")
+        return keyword in out
+    except Exception:
+        return False
+
+
 def _ssl_ctx(insecure):
     if not insecure:
         return None
@@ -69,14 +89,29 @@ def probe(url, timeout=6, insecure=False):
 
 
 def start_app(kind, arg):
+    DETACHED = 0x00000008 | 0x00000200   # DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP
     try:
+        if kind == "pyw":
+            # 以 pythonw + 正确工作目录后台拉起python脚本（关键：cwd=scripts，否则import config失败）
+            script, extra = arg
+            subprocess.Popen([str(PYTHONW), str(SCRIPTS / script)] + extra,
+                             cwd=str(SCRIPTS),
+                             creationflags=DETACHED,
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                             close_fds=True)
+            return True, f"spawned({script})"
+        if kind == "ollama":
+            subprocess.Popen([str(arg), "serve"],
+                             creationflags=DETACHED,
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                             close_fds=True)
+            return True, "spawned(ollama serve)"
         imgs = KILL_IMAGES.get(kind)
         killed = _kill_alive(imgs) if imgs else []
         if kind in ("explorer", "kill_explorer"):
             # Obsidian 需通过 explorer 走用户会话（兼容远程桌面）
             subprocess.Popen(["explorer.exe", str(arg)])
         else:
-            DETACHED = 0x00000008 | 0x00000200   # DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP
             subprocess.Popen([str(arg)], creationflags=DETACHED,
                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, close_fds=True)
         info = "spawned" + (f",killed={killed}" if killed else "")
@@ -88,7 +123,12 @@ def start_app(kind, arg):
 def main():
     results = []
     for name, url, restart, ready_to, insecure in SERVICES:
-        ok, detail = probe(url, insecure=insecure)
+        if url is None:
+            # 无http端口的服务：按命令行特征探活进程
+            ok = _proc_alive("card_event_handler")
+            detail = "process:alive" if ok else "process:missing"
+        else:
+            ok, detail = probe(url, insecure=insecure)
         action = "none"
         if not ok and restart:
             spawned, sinfo = start_app(*restart)
@@ -97,7 +137,11 @@ def main():
                 deadline = time.time() + ready_to
                 while time.time() < deadline:
                     time.sleep(5)
-                    ok, detail = probe(url, insecure=insecure)
+                    if url is None:
+                        ok = _proc_alive("card_event_handler")
+                        detail = "process:alive" if ok else "process:missing"
+                    else:
+                        ok, detail = probe(url, insecure=insecure)
                     if ok:
                         break
         results.append({"service": name, "up": ok, "detail": detail, "action": action})
