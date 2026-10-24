@@ -1,0 +1,51 @@
+name: V16 云端健康检查+心跳（P1-4 备援）
+
+on:
+  # 每 30 分钟心跳（UTC */2 分钟字段 0/30 → */30）；健康时静默，异常时推送
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:      # 保留手动触发
+
+env:
+  FEISHU_BASE_TOKEN: ${{ secrets.FEISHU_BASE_TOKEN }}
+  LARK_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+  LARK_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+  CHAT_ID: oc_1fe154e172ab04622b7ffa810ac172bc
+  PYTHONIOENCODING: utf-8
+  PYTHONUTF8: "1"
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 云端健康检查（心跳，健康静默/异常推送）
+        run: |
+          cd scripts
+          python health_check_cloud.py --quiet 2>&1 | tee health_check.log
+
+      - name: 上传运行输出（诊断用）
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: health-check-log
+          path: scripts/health_check.log
+          retention-days: 3
+
+      - name: 失败告警到总控群
+        if: failure()
+        run: |
+          cd scripts
+          python alert_fail.py "「V16健康检查·云端」云端健康检查失败，请到 Actions 页查看日志" || true
+        env:
+          LARK_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          LARK_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+          CHAT_ID: oc_1fe154e172ab04622b7ffa810ac172bc
